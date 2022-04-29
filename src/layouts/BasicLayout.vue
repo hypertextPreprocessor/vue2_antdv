@@ -21,8 +21,8 @@
     -->
     <template v-slot:menuHeaderRender>
       <div>
-        <logo-svg />
-        <h1>{{ title }}</h1>
+        <!--<logo-svg />-->
+        <h1>{{ title }}ssss</h1>
       </div>
     </template>
     <!-- 1.0.0+ 版本 pro-layout 提供 API,
@@ -62,7 +62,7 @@ import defaultSettings from '@/config/defaultSettings'
 import RightContent from '@/components/GlobalHeader/RightContent'
 import GlobalFooter from '@/components/GlobalFooter'
 import Ads from '@/components/Other/CarbonAds'
-import LogoSvg from '../assets/logo.svg?inline'
+//import LogoSvg from '../assets/logo.svg?inline'
 
 export default {
   name: 'BasicLayout',
@@ -70,7 +70,7 @@ export default {
     SettingDrawer,
     RightContent,
     GlobalFooter,
-    LogoSvg,
+    //LogoSvg,
     Ads
   },
   data () {

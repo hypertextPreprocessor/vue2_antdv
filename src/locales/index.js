@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import {Vue} from 'vue'
 import VueI18n from 'vue-i18n'
 import storage from 'store'
 import moment from 'moment'

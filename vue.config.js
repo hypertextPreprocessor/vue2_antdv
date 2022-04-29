@@ -1,9 +1,15 @@
+
+const { defineConfig } = require('@vue/cli-service')
+
+
 const path = require('path')
 const webpack = require('webpack')
-const GitRevisionPlugin = require('git-revision-webpack-plugin')
+const {GitRevisionPlugin} = require('git-revision-webpack-plugin')
 const GitRevision = new GitRevisionPlugin()
 const buildDate = JSON.stringify(new Date().toLocaleString())
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
+const { VueLoaderPlugin } = require('vue-loader')
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 function resolve (dir) {
   return path.join(__dirname, dir)
@@ -45,53 +51,51 @@ const vueConfig = {
     // webpack plugins
     plugins: [
       // Ignore all locale files of moment.js
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      //new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^\.\/locale$/,
+        contextRegExp: /moment$/,
+      }),
       new webpack.DefinePlugin({
         APP_VERSION: `"${require('./package.json').version}"`,
         GIT_HASH: JSON.stringify(getGitHash()),
         BUILD_DATE: buildDate
-      })
+      }),
+      new ESLintPlugin({
+        //eslintPath:'src',
+        exclude:"node_modules",
+        lintDirtyModulesOnly:true
+      }),
+      new VueLoaderPlugin()
     ],
     // if prod, add externals
     externals: isProd ? assetsCDN.externals : {}
   },
 
   chainWebpack: config => {
-    
-    //config.module
-      /*
-      .rule('complie')
-        .test(/\.js$/)
-        //.exclude(/(node_modules|bower_components)/)
-        .use('babel-loader')
-        .loader('babel-loader')
-        .options({presets: ['@babel/preset-env']})
-        .end()
-      .rule('eslint')
-        .after('complie')
-        .use('eslint-loader')
-        .loader('eslint-loader')
-        .end()
-      .end()
-      */
     config.resolve.alias.set('@$', resolve('src'))
-
-    const svgRule = config.module.rule('svg')
-    svgRule.uses.clear()
-    svgRule
-      .oneOf('inline')
-      .resourceQuery(/inline/)
-      .use('vue-svg-icon-loader')
-      .loader('vue-svg-icon-loader')
-      .end()
-      .end()
-      .oneOf('external')
-      .use('file-loader')
-      .loader('file-loader')
-      .options({
-        name: 'assets/[name].[hash:8].[ext]'
-      })
-
+    config.module
+      .rule('svg').clear()
+        .test(/\.svg/)
+          .oneOf('inline')
+            .resourceQuery(/inline/)
+            .type('asset/inline')
+            .end()
+            //.end()
+          .oneOf('external')
+            //.test(/\.(png|jpe?g|gif)$/i)
+            .resourceQuery(/external/)
+            .type('asset/resource')
+            .end()
+            //.end()
+            .clear()
+      .rule('vue')
+        //.before('complie')
+        .test(/\.vue$/)
+        .use('vue-loader')
+        .loader('vue-loader')
+        .end()
     // if prod is on
     // assets require on cdn
     if (isProd) {
@@ -104,27 +108,36 @@ const vueConfig = {
 
   css: {
     loaderOptions: {
+      css:{
+        url:true
+      },
       less: {
-        modifyVars: {
-          // less vars，customize ant design theme
-
-          // 'primary-color': '#F5222D',
-          // 'link-color': '#F5222D',
-          'border-radius-base': '2px'
+        lessOptions:{
+          javascriptEnabled: true,
+          modifyVars: {
+            // less vars，customize ant design theme
+  
+            // 'primary-color': '#F5222D',
+            // 'link-color': '#F5222D',
+            'border-radius-base': '2px'
+          }
         },
-        // DO NOT REMOVE THIS LINE
-        javascriptEnabled: true
+
       }
     }
   },
 
   devServer: {
     // development server port 8000
+    hot:true,
+    open:true,
     port: 8000,
-    overlay: {
-      warnings: true,
-      errors: true
-    }
+    client:{
+      overlay:{
+        warnings: true,
+        errors: true
+      }
+    },
     // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
     // proxy: {
     //   '/api': {
@@ -149,4 +162,17 @@ if (process.env.VUE_APP_PREVIEW === 'true') {
   vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin())
 }
 
-module.exports = vueConfig
+//module.exports = vueConfig
+
+
+module.exports = defineConfig({
+  transpileDependencies: true,
+  assetsDir:'assets/[name].[hash:8].[ext]',
+  configureWebpack:vueConfig.configureWebpack,
+  chainWebpack:vueConfig.chainWebpack,
+  css:vueConfig.css,
+  devServer:vueConfig.devServer,
+  productionSourceMap: false,
+  lintOnSave: process.env.NODE_ENV !== 'production',
+  transpileDependencies: []
+})

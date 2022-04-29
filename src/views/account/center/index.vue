@@ -31,14 +31,14 @@
               <template v-for="(tag, index) in tags">
                 <a-tooltip v-if="tag.length > 20" :key="tag" :title="tag">
                   <a-tag
-                    :key="tag"
+                    :key="index"
                     :closable="index !== 0"
                     :close="() => handleTagClose(tag)"
                   >{{ `${tag.slice(0, 20)}...` }}</a-tag>
                 </a-tooltip>
                 <a-tag
                   v-else
-                  :key="tag"
+                  :key="index"
                   :closable="index !== 0"
                   :close="() => handleTagClose(tag)"
                 >{{ tag }}</a-tag>
@@ -233,7 +233,7 @@ export default {
       width: 14px;
       left: 0;
       top: 4px;
-      background: url(https://gw.alipayobjects.com/zos/rmsportal/pBjWzVAHnOOtAUvZmZfy.svg);
+      //background: url(https://gw.alipayobjects.com/zos/rmsportal/pBjWzVAHnOOtAUvZmZfy.svg);
     }
 
     .title {
