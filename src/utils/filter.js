@@ -1,8 +1,8 @@
-import {Vue} from 'vue'
+import {createApp} from 'vue'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
 moment.locale('zh-cn')
-
+var Vue = createApp({});
 Vue.filter('NumberFormat', function (value) {
   if (!value) {
     return '0'

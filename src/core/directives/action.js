@@ -1,5 +1,6 @@
-import {Vue} from 'vue'
+import {createApp} from 'vue'
 import store from '@/store'
+var Vue = createApp({});
 
 /**
  * Action 权限指令

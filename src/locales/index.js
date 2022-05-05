@@ -1,12 +1,12 @@
-import {Vue} from 'vue'
-import VueI18n from 'vue-i18n'
+import {createApp} from 'vue'
+import {createI18n} from 'vue-i18n'
 import storage from 'store'
 import moment from 'moment'
 
 // default lang
 import enUS from './lang/en-US'
+const Vue = createApp({})
 
-Vue.use(VueI18n)
 
 export const defaultLang = 'en-US'
 
@@ -16,7 +16,7 @@ const messages = {
   }
 }
 
-const i18n = new VueI18n({
+const i18n = createI18n({
   silentTranslationWarn: true,
   locale: defaultLang,
   fallbackLocale: defaultLang,
@@ -55,5 +55,5 @@ export function loadLanguageAsync (lang = defaultLang) {
 export function i18nRender (key) {
   return i18n.t(`${key}`)
 }
-
+Vue.use(i18n)
 export default i18n

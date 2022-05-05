@@ -1,4 +1,4 @@
-import {Vue} from 'vue'
+import {createApp} from 'vue'
 
 // base library
 import Antd from 'ant-design-vue'
@@ -13,7 +13,7 @@ import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/core/permission/permission'
 // import '@/components/use'
 import './directives/action'
-
+const Vue = createApp({})
 VueClipboard.config.autoSetContainer = true
 
 Vue.use(Antd)

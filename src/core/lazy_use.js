@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
-import {Vue} from 'vue'
-
+import {createApp} from 'vue'
+const Vue = createApp({});
 // base library
 import {
   ConfigProvider,
@@ -19,7 +19,7 @@ import {
   Modal,
   Table,
   Tabs,
-  Icon,
+  //Icon,
   Badge,
   Popover,
   Dropdown,
@@ -74,7 +74,7 @@ Vue.use(Col)
 Vue.use(Modal)
 Vue.use(Table)
 Vue.use(Tabs)
-Vue.use(Icon)
+//Vue.use(Icon)
 Vue.use(Badge)
 Vue.use(Popover)
 Vue.use(Dropdown)

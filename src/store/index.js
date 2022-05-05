@@ -1,4 +1,4 @@
-import {Vue} from 'vue'
+import {createApp} from 'vue'
 import Vuex from 'vuex'
 
 import app from './modules/app'
@@ -10,7 +10,7 @@ import user from './modules/user'
 // dynamic router permission control (Experimental)
 import permission from './modules/async-router'
 import getters from './getters'
-
+const Vue = createApp({})
 Vue.use(Vuex)
 
 export default new Vuex.Store({
