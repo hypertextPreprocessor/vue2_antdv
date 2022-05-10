@@ -31,7 +31,6 @@ module.exports = {
     },
 */
     root: true,
-    
     env: {
       node: true,
       browser: true,
@@ -40,13 +39,14 @@ module.exports = {
     },
     extends:[
       "eslint:recommended",
-      "plugin:vue/essential"
-    ],
-    plugins:[
-      "vue",
       "plugin:vue/essential",
       'plugin:vue/vue3-essential',
     ],
+    plugins:[
+      "vue",
+      "@babel"
+    ],
+    parser: "@babel/eslint-parser",
     parserOptions: {
       parser: '@babel/eslint-parser',
       ecmaVersion: 2020,
