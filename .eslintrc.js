@@ -46,14 +46,15 @@ module.exports = {
       "vue",
       "@babel"
     ],
-    parser: "@babel/eslint-parser",
+    //parser: "@babel/eslint-parser",
     parserOptions: {
       parser: '@babel/eslint-parser',
       ecmaVersion: 2020,
       sourceType: 'module'
     },
-
+    
     rules: {
+      "vue/no-v-model-argument": "off",
       'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
       'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
     }

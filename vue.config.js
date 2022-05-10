@@ -23,6 +23,7 @@ module.exports = defineConfig({
   chainWebpack:config=>{
     config.entryPoints.get('app').clear().add('./src/index.js').end()
     .resolve.alias.set('@src', resolve('src'));
+    /*
     config.module
       .rule('complie')
       .test(/.jsx?$/)
@@ -31,5 +32,6 @@ module.exports = defineConfig({
         presets:['@babel/preset-env']
       })
     .end()
+    */
   }
 })

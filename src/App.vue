@@ -4,7 +4,9 @@
     </div>
 </template>
 <script>
-    export default{
+    import { defineComponent } from 'vue'
+    const MyApp = defineComponent({
         
-    }
+    });
+    export default MyApp;
 </script>
