@@ -1,7 +1,7 @@
 
 <script>
-  import { defineComponent, onMounted,h,reactive } from 'vue';
-  import {LayoutContent,Form,FormItem,Input,InputPassword,Checkbox,Button} from 'ant-design-vue';
+  import { defineComponent, onMounted,h,reactive,ref } from 'vue';
+  //import {LayoutContent,Form,FormItem,Input,InputPassword,Checkbox,Button} from 'ant-design-vue/es';
   import {useI18n} from 'vue-i18n';
   import { EffectFade,Autoplay } from 'swiper';
   import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -13,11 +13,20 @@
   import 'swiper/less/autoplay';
   export default defineComponent({
     setup(props,{expose}){
+      var dynamicTopVal = ref("20%");
       const formState = reactive({
         username:"",password:"",remember:false
       });
       const {t} = useI18n();
+      function adjustLayOut(){
+        var value = window.document.documentElement.clientHeight/2  - document.querySelector(".login_panel").clientHeight/2
+        dynamicTopVal.value = value+"px";
+      }
       onMounted(()=>{
+        window.onresize=function(){
+          adjustLayOut();
+        }
+        adjustLayOut();
         console.log(props);
       });
       var imgs = [img1,img2,img3];
@@ -30,36 +39,36 @@
           filter:"brightness(0.5)"
         })
       }
-      expose({t,EffectFade,swiperItemStyle,formState});
+      expose({t,EffectFade,swiperItemStyle,formState,dynamicTopVal});
       return ()=>h(
-         <LayoutContent>
+         <a-layout-content>
             <div class="login_container">
-              <div class="login_panel">
+              <div class="login_panel" style={{top:dynamicTopVal.value}}>
                 <div class="formarea">
                   <h3 style={{textAlign:"center"}}>{t("login.panelTitle")}</h3>
-                  <Form
+                  <a-form
                     model={formState}
                     name="login"
                     label-col={{span:6}}
                     wrapper-col={{span:18}}
-                  >
-                      <FormItem label="用户名" name="username">
-                        <Input v-model:value={formState.username}></Input>
-                      </FormItem>
-                      <FormItem label="密码" name="password">
-                        <InputPassword v-model:value={formState.password}></InputPassword>
-                      </FormItem>
-                      <FormItem name="remember" wrapper-col={{offset:6,span:18}}>
-                        <Checkbox v-model:checked={formState.remember}>记住我</Checkbox>
-                      </FormItem>
-                      <FormItem wrapper-col={{offset:6,span:18}}>
-                          <Button type="primary">登录</Button>
-                      </FormItem>
-                  </Form>
+                  >   
+                      <a-form-item label="用户名" name="username">
+                        <a-input v-model:value={formState.username}></a-input>
+                      </a-form-item>
+                      <a-form-item label="密码" name="password">
+                        <a-input-password v-model:value={formState.password}></a-input-password>
+                      </a-form-item>
+                      <a-form-item name="remember" wrapper-col={{offset:6,span:18}} >
+                        <a-checkbox v-model:checked={formState.remember}>记住我</a-checkbox>
+                      </a-form-item>
+                      <a-form-item wrapper-col={{offset:12,span:18}}>
+                        <a-button type="primary" size="large">登录</a-button>
+                      </a-form-item>
+                  </a-form>
                 </div>
               </div>
               <Swiper
-                loop="true"
+                loop={true}
                 modules={[EffectFade,Autoplay]}
                 autoplay={{
                   delay: 2500
@@ -71,7 +80,7 @@
               {swiperItemStyle.map((item)=><SwiperSlide><div style={item}></div></SwiperSlide>)}
               </Swiper>
             </div>
-         </LayoutContent>
+         </a-layout-content>
       );
     }
   });
@@ -98,5 +107,9 @@
   }
   .formarea{
     padding:10px;
+    height:100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-evenly;
   }
 </style>
