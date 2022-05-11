@@ -22,16 +22,20 @@ module.exports = defineConfig({
   },
   chainWebpack:config=>{
     config.entryPoints.get('app').clear().add('./src/index.js').end()
-    .resolve.alias.set('@src', resolve('src'));
-    /*
+    .resolve.alias.set('@src', resolve('src')).set('@img',resolve('src/assets/images'));
     config.module
-      .rule('complie')
-      .test(/.jsx?$/)
-      .use('babel-loader')
-      .options({
-        presets:['@babel/preset-env']
-      })
+      .rule('file-loader')
+      .test(/\.(jpe?g|png|gif)$/i)
+      .type('asset/resource')
     .end()
-    */
+  },
+  css:{
+    loaderOptions:{
+      less:{
+        lessOptions:{
+          javascriptEnabled: true
+        }
+      }
+    }
   }
 })

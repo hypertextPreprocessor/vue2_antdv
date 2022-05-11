@@ -1,12 +1,6 @@
 <template>
-    <div id="app">
-        <router-view/>
-    </div>
+    <router-view/>
 </template>
-<script>
-    import { defineComponent } from 'vue'
-    const MyApp = defineComponent({
-        
-    });
-    export default MyApp;
+<script steup>
+    
 </script>
