@@ -1,9 +1,8 @@
-const Home = {template:'<div>Home</div>'};
 const routes = [
     {
         path:"/",
         name:"home",
-        component:Home,
+        component:()=>import('@src/views/HomePage')
     },{
         path:"/login",
         name:"login",

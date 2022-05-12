@@ -11,8 +11,11 @@
   import 'swiper/less';
   import 'swiper/css/effect-fade';
   import 'swiper/less/autoplay';
+  import { useRouter } from 'vue-router'
   export default defineComponent({
     setup(props,{expose}){
+      const router = useRouter();
+
       var dynamicTopVal = ref("20%");
       const formState = reactive({
         username:"",password:"",remember:false
@@ -61,8 +64,10 @@
                       <a-form-item name="remember" wrapper-col={{offset:6,span:18}} >
                         <a-checkbox v-model:checked={formState.remember}>记住我</a-checkbox>
                       </a-form-item>
-                      <a-form-item wrapper-col={{offset:12,span:18}}>
-                        <a-button type="primary" size="large">登录</a-button>
+                      <a-form-item wrapper-col={{offset:0,span:24}}>
+                        <a-button type="primary" size="large" block onClick={()=>{
+                          router.push({name:"home"});
+                        }}>登录</a-button>
                       </a-form-item>
                   </a-form>
                 </div>
@@ -85,7 +90,7 @@
     }
   });
 </script>
-<style>
+<style scoped>
   body,html{
     padding:0;
     margin:0;

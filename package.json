@@ -11,9 +11,11 @@
   },
   "main": "index.js",
   "dependencies": {
+    "@ant-design/icons-vue": "^6.1.0",
     "@vue/cli": "^5.0.4",
     "ant-design-vue": "^3.2.3",
     "core-js": "^3.8.3",
+    "pinia": "^2.0.14",
     "swiper": "^8.1.4",
     "vue": "^3.2.33",
     "vue-i18n": "^9.1.10",

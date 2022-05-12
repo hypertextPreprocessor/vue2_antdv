@@ -22,7 +22,10 @@ module.exports = defineConfig({
   },
   chainWebpack:config=>{
     config.entryPoints.get('app').clear().add('./src/index.js').end()
-    .resolve.alias.set('@src', resolve('src')).set('@img',resolve('src/assets/images'));
+    .resolve.alias
+      .set('@src', resolve('src'))
+      .set('@img',resolve('src/assets/images'))
+      .set('@store',resolve('src/store'));
     config.module
       .rule('file-loader')
       .test(/\.(jpe?g|png|gif)$/i)
