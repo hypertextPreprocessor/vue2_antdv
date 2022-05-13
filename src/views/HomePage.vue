@@ -1,10 +1,20 @@
 <script setup>
-    import {ref} from 'vue';
+    import {onMounted, ref} from 'vue';
+    import {useRouter} from 'vue-router';
     import  { MenuFoldOutlined,MenuUnfoldOutlined,UserOutlined} from '@ant-design/icons-vue';
     var collapsed = ref(false);
-    var selectedKeys = ref(["1"]);
     var activeTab = ref(["1"]);
     var theme = ref("light");
+    var router = useRouter();
+    function commonNav(){
+         router.push({path:'/main-common'});
+    }
+    function settingNav(){
+        router.push({path:'/main-setting'});
+    }
+    onMounted(()=>{
+        document.querySelector('.ant-layout').style.height = window.document.documentElement.clientHeight+"px";
+    });
 </script>
 <template>
     <a-layout>
@@ -16,10 +26,10 @@
                         v-model:selectedKeys="activeTab"
                         :theme="theme"
                         mode="horizontal"
-                        :style="{ lineHeight: '32px' }"
+                        :style="{ lineHeight: '64px' }"
                     >
-                        <a-menu-item key="1">常规</a-menu-item>
-                        <a-menu-item key="2">设置</a-menu-item>
+                        <a-menu-item key="1" @click="commonNav">常规</a-menu-item>
+                        <a-menu-item key="2" @click="settingNav">设置</a-menu-item>
                     </a-menu>
                 </a-col>
                 <a-col :span="4">
@@ -27,6 +37,7 @@
                         <a-avatar size="large">
                             <template #icon><UserOutlined /></template>
                         </a-avatar>
+                        <div style="width:12px;"></div>
                         <a-dropdown :trigger="['click']">
                             <a class="ant-dropdown-link" @click.prevent>游客用户</a>
                             <template #overlay>
@@ -49,25 +60,8 @@
                     />
                     <MenuFoldOutlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
                 </div>
-                <a-menu 
-                    v-model:selectedKeys="selectedKeys"
-                    :theme="theme" 
-                    mode="inline"
-                >
-                    <a-menu-item-group key="g1" title="Item 2">
-                        <a-menu-item key="g11">Option 1</a-menu-item>
-                        <a-menu-item key="g12">Option 2</a-menu-item>
-                    </a-menu-item-group>
-                    <a-menu-item key="1">
-                        <span>nav 1</span>
-                    </a-menu-item>
-                    <a-menu-item key="2">
-                        <span>nav 2</span>
-                    </a-menu-item>
-                    <a-menu-item key="3">
-                        <span>nav 3</span>
-                    </a-menu-item>
-                </a-menu>
+                <!--侧边栏菜单-->
+                <router-view name="LeftSidebar"></router-view>
             </a-layout-sider>
             <a-layout-content>
                 <a-row style="padding:10px;">
@@ -80,7 +74,7 @@
                         </a-breadcrumb>
                     </a-col>
                 </a-row>
-                
+                <router-view name="RightSidebar"></router-view>
             </a-layout-content>
         </a-layout>
         <a-layout-footer>

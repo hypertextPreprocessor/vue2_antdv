@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path')
 const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { defineConfig } = require('@vue/cli-service')
 const gitRevisionPlugin = new GitRevisionPlugin();
 const buildDate = JSON.stringify(new Date().toLocaleString())
@@ -13,6 +14,13 @@ module.exports = defineConfig({
   configureWebpack:{
     plugins:[
       gitRevisionPlugin,
+      /*
+      new HtmlWebpackPlugin({
+        title:'沃企+管理后台',
+        favicon:'./src/assets/favicon.ico',
+        filename:"default.html"
+      }),
+      */
       new webpack.DefinePlugin({
         APP_VERSION: `"${require('./package.json').version}"`,
         GIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
@@ -31,6 +39,13 @@ module.exports = defineConfig({
       .test(/\.(jpe?g|png|gif)$/i)
       .type('asset/resource')
     .end()
+    config.plugin('html').init((Plugin,args)=>{
+      return new Plugin(Object.assign({},...args,{
+        title:'沃企+管理后台',
+        favicon:resolve('src/assets/favicon.ico')
+      }));
+    }
+    );
   },
   css:{
     loaderOptions:{
