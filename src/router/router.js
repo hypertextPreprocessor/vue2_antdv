@@ -12,6 +12,9 @@ const routes = [
                 },
                 children:[
                     {
+                        path:"",
+                        component:{template:"<h1>欢迎登录本系统</h1>"}
+                    },{
                         path:"sys1",
                         name:"sys1",
                         component:{template:"<h1>角色管理</h1>"}
@@ -20,8 +23,57 @@ const routes = [
                         name:"sys2",
                         component:{template:"<h1>组织管理</h1>"}
                     },{
-                        path:"",
-                        component:{template:"<h1>欢迎登录本系统</h1>"}
+                        path:"sys3",
+                        name:"sys3",
+                        component:{template:"<h1>登录日志</h1>"}
+                    },{
+                        path:"info1",
+                        name:"info1",
+                        component:{template:"<h1>楼宇管家管理</h1>"}
+                    },{
+                        path:"info2",
+                        name:"info2",
+                        component:{template:"<h1>企业管理</h1>"}
+                    },{
+                        path:"info3",
+                        name:"info3",
+                        component:{template:"<h1>楼宇管理</h1>"}
+                    },{
+                        path:"info4",
+                        name:"info4",
+                        component:{template:"<h1>商机管理</h1>"}
+                    },{
+                        path:"info5",
+                        name:"info5",
+                        component:{template:"<h1>产品报价信息</h1>"}
+                    },{
+                        path:"info6",
+                        name:"info6",
+                        component:{template:"<h1>故障解决方案信息</h1>"}
+                    },{
+                        path:"info7",
+                        name:"info7",
+                        component:{template:"<h1>用户管理</h1>"}
+                    },{
+                        path:"info8",
+                        name:"info8",
+                        component:{template:"<h1>企业信息管理</h1>"}
+                    },{
+                        path:"info9",
+                        name:"info9",
+                        component:{template:"<h1>智能助手</h1>"}
+                    },{
+                        path:"product1",
+                        name:"product1",
+                        component:{template:"<h1>省级产品类别</h1>"}
+                    },{
+                        path:"product2",
+                        name:"product2",
+                        component:{template:"<h1>省级产品</h1>"}
+                    },{
+                        path:"product3",
+                        name:"product3",
+                        component:{template:"<h1>产品视频</h1>"}
                     }
                 ]
             },
