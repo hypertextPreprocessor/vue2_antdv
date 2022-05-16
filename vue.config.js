@@ -1,8 +1,9 @@
 const webpack = require('webpack');
 const path = require('path')
 const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { defineConfig } = require('@vue/cli-service')
+//const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { defineConfig } = require('@vue/cli-service');
+const {proxyAddr} = require('./config/config');
 const gitRevisionPlugin = new GitRevisionPlugin();
 const buildDate = JSON.stringify(new Date().toLocaleString())
 function resolve (dir) {
@@ -33,7 +34,12 @@ module.exports = defineConfig({
     .resolve.alias
       .set('@src', resolve('src'))
       .set('@img',resolve('src/assets/images'))
-      .set('@store',resolve('src/store'));
+      .set('@stores',resolve('src/store'))
+      .set('@store',resolve('src/store/store.js'))
+      .set('@apis',resolve('src/api'))
+      .set('@api',resolve('src/api/requests.js'))
+      .set('@con',resolve('config'))
+      .set('@config',resolve('config/config.js'));
     config.module
       .rule('file-loader')
       .test(/\.(jpe?g|png|gif)$/i)
@@ -55,5 +61,15 @@ module.exports = defineConfig({
         }
       }
     }
-  }
+  },
+  devServer:{
+    proxy:{
+        '/api': {
+            enable:false,
+            target:proxyAddr,
+            changeOrigin: false,
+            pathRewrite:{'^/api':'/'}
+        }
+    }
+}
 })

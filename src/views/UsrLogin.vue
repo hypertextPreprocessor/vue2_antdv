@@ -1,21 +1,23 @@
 
 <script>
   import { defineComponent, onMounted,h,reactive,ref } from 'vue';
-  //import {LayoutContent,Form,FormItem,Input,InputPassword,Checkbox,Button} from 'ant-design-vue/es';
   import {useI18n} from 'vue-i18n';
   import { EffectFade,Autoplay } from 'swiper';
   import { Swiper, SwiperSlide } from 'swiper/vue';
+  import {getVercode} from '@api';
+
+  //import VerifyPoints from '@src/widgets/verify/VerifyPoints';
   import img1 from '@img/w1.jpeg';
   import img2 from '@img/w2.jpg';
   import img3 from '@img/w3.jpg';
   import 'swiper/less';
   import 'swiper/css/effect-fade';
   import 'swiper/less/autoplay';
-  import { useRouter } from 'vue-router'
+  //import { useRouter } from 'vue-router'
   export default defineComponent({
     setup(props,{expose}){
-      const router = useRouter();
-
+      //const router = useRouter();
+      //const verify = ref(null)
       var dynamicTopVal = ref("20%");
       const formState = reactive({
         username:"",password:"",remember:false
@@ -49,6 +51,7 @@
               <div class="login_panel" style={{top:dynamicTopVal.value}}>
                 <div class="formarea">
                   <h3 style={{textAlign:"center"}}>{t("login.panelTitle")}</h3>
+                  {/*<VerifyPoints appendTo="body" visible={true}/>*/}
                   <a-form
                     model={formState}
                     name="login"
@@ -66,7 +69,11 @@
                       </a-form-item>
                       <a-form-item wrapper-col={{offset:0,span:24}}>
                         <a-button type="primary" size="large" block onClick={()=>{
-                          router.push({name:"home"});
+                          //Verify.value.show();
+
+                          getVercode().then(res=>{
+                            console.log(res)
+                          });
                         }}>登录</a-button>
                       </a-form-item>
                   </a-form>
@@ -80,9 +87,9 @@
                 }}
                 effect="fade"
                 slides-per-view="1"
-                space-between="50"
+                space-between={50}
               >
-              {swiperItemStyle.map((item)=><SwiperSlide><div style={item}></div></SwiperSlide>)}
+                {swiperItemStyle.map((item)=><SwiperSlide style={item}></SwiperSlide>)}
               </Swiper>
             </div>
          </a-layout-content>

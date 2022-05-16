@@ -6,7 +6,7 @@ import routes from '@src/router/router'
 import TextFields from '@src/local/local'
 import Antd from 'ant-design-vue/es';
 import {createPinia} from 'pinia';
-import { useConfig } from '@store/store.js';
+import { useConfig } from '@store';
 import 'ant-design-vue/dist/antd.css';
 //import { apply } from 'core-js/fn/reflect';
 
