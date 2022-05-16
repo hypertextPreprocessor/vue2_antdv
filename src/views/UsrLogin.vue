@@ -5,19 +5,17 @@
   import { EffectFade,Autoplay } from 'swiper';
   import { Swiper, SwiperSlide } from 'swiper/vue';
   import {getVercode} from '@api';
-
   //import VerifyPoints from '@src/widgets/verify/VerifyPoints';
-  import img1 from '@img/w1.jpeg';
-  import img2 from '@img/w2.jpg';
-  import img3 from '@img/w3.jpg';
+  import img1 from '@img/bg1.jpeg';
+  import img2 from '@img/bg1.jpeg';
+  import img3 from '@img/bg1.jpeg';
   import 'swiper/less';
   import 'swiper/css/effect-fade';
   import 'swiper/less/autoplay';
-  //import { useRouter } from 'vue-router'
+  import { useRouter } from 'vue-router'
   export default defineComponent({
     setup(props,{expose}){
-      //const router = useRouter();
-      //const verify = ref(null)
+      const router = useRouter();
       var dynamicTopVal = ref("20%");
       const formState = reactive({
         username:"",password:"",remember:false
@@ -72,7 +70,8 @@
                           //Verify.value.show();
 
                           getVercode().then(res=>{
-                            console.log(res)
+                            console.log(res);
+                            router.push({path:'/main-common'})
                           });
                         }}>登录</a-button>
                       </a-form-item>
