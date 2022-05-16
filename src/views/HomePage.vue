@@ -12,6 +12,9 @@
     function settingNav(){
         router.push({path:'/main-setting'});
     }
+    function logout(){
+        router.push({name:'login'});
+    }
     onMounted(()=>{
         document.querySelector('.ant-layout').style.height = window.document.documentElement.clientHeight+"px";
     });
@@ -42,7 +45,7 @@
                             <a class="ant-dropdown-link" @click.prevent>游客用户</a>
                             <template #overlay>
                                 <a-menu>
-                                    <a-menu-item key="0">退出登录</a-menu-item>
+                                    <a-menu-item @click="logout" key="logout">退出登录</a-menu-item>
                                 </a-menu>
                             </template>
                         </a-dropdown>
