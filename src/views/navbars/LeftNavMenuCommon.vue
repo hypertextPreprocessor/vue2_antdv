@@ -3,6 +3,7 @@
         v-model:selectedKeys="selectedKeys"
         :theme="theme" 
         :open-keys="openKeys"
+        @select="menuSelect"
         mode="inline"
     >
         <a-sub-menu key="sys">
@@ -67,5 +68,15 @@
 <script setup>
     import {ref} from 'vue';
     import {DesktopOutlined,GiftOutlined,ContainerOutlined,FileOutlined,RocketOutlined,LineChartOutlined,PhoneOutlined} from '@ant-design/icons-vue';
+    import { useRouter } from 'vue-router'
+    const router = useRouter();
     var selectedKeys = ref(["sys"]);
+    var theme = ref("light");
+    var openKeys = ref([]);
+    function menuSelect({item,key,selectedKeys}){
+        console.log(item);
+        console.log(key);
+        console.log(selectedKeys);
+        router.push({name:key})
+    }
 </script>
