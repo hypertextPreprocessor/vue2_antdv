@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 <template>
   <div id="productSort">
     <header>
@@ -29,43 +30,54 @@
       </a-button>
     </header>
     <section>
-      <a-table :columns="columns" :data-source="dataSource" bordered>
-        <template #bodyCell="{ column, text, record }">
-          <template
-            v-if="['name', 'age', 'address'].includes(column.dataIndex)"
-          >
-            <div>
-              <a-input
-                v-if="editableData[record.key]"
-                v-model:value="editableData[record.key][column.dataIndex]"
-                style="margin: -5px 0"
-              />
-              <template v-else>
-                {{ text }}
-              </template>
-            </div>
+      <a-table :columns="columns" :data-source="data" bordered>
+        <template #headerCell="{ column }">
+          <template v-if="column.key === 'name'">
+            <span> 序号 </span>
           </template>
-          <template v-else-if="column.dataIndex === 'operation'">
-            <div class="editable-row-operations">
-              <span>
-                <edit-outlined @click="edit(record.key)" />
-                <!-- <a @click="edit(record.key)">Edit</a> -->
-              </span>
-            </div>
+        </template>
+
+        <template #bodyCell="{ column, record, index }">
+          <template v-if="column.key === 'name'">
+            <a>
+              {{ index + 1 }}
+            </a>
+          </template>
+          <template v-else-if="column.key === 'tags'">
+            <span>
+              <a-tag
+                v-for="tag in record.tags"
+                :key="tag"
+                :color="
+                  tag === 'loser'
+                    ? 'volcano'
+                    : tag.length > 5
+                    ? 'geekblue'
+                    : 'green'
+                "
+              >
+                {{ tag.toUpperCase() }}
+              </a-tag>
+            </span>
+          </template>
+          <template v-else-if="column.key === 'action'">
+            <span>
+              <edit-outlined @click="edit(column.key, column.key)" />
+            </span>
           </template>
         </template>
       </a-table>
+      <a-button class="add" type="primary" @click="edit()">新增</a-button>
     </section>
-    <section class="dialog">
-      <a-button type="primary" @click="showModal">Open Modal</a-button>
-      <a-modal v-model:visible="visible" title="Basic Modal" @ok="handleOk">
-        <p>{{ dialogIndex }}</p>
-      </a-modal>
-    </section>
+
+    <a-modal v-model:visible="visible" title="新增" @ok="handleOk">
+      <p>{{ dialogIndex }}</p>
+    </a-modal>
   </div>
 </template>
 <script setup>
-import { ref, reactive } from "vue";
+import { ref } from "vue";
+// EditOutlined
 import { SearchOutlined, EditOutlined } from "@ant-design/icons-vue";
 // import { cloneDeep } from "lodash-es";
 
@@ -73,49 +85,128 @@ const userName = ref("");
 // 表格
 const columns = [
   {
-    title: "序号",
+    name: "name",
     dataIndex: "name",
-    width: "7%",
+    key: "name",
   },
   {
     title: "名称",
-    dataIndex: "address",
-    width: "25%",
+    dataIndex: "age",
+    key: "age",
   },
   {
     title: "排序号",
     dataIndex: "address",
-    width: "15%",
+    key: "address",
   },
   {
     title: "支持快速下单",
-    dataIndex: "address",
-    width: "35%",
+    key: "tags",
+    dataIndex: "tags",
   },
   {
     title: "状态",
-    dataIndex: "address",
+    key: "tags",
+    dataIndex: "tags",
   },
   {
     title: "操作",
-    dataIndex: "operation",
+    key: "action",
   },
 ];
-const data = [];
-for (let i = 0; i < 100; i++) {
-  data.push({
-    key: i.toString(),
-    name: i + 1,
+const data = [
+  {
+    key: "1",
+    name: "乐迪",
     age: 32,
-    address: `London Park no. ${i}`,
-  });
-}
-const dataSource = ref(data);
-const editableData = reactive({});
+    address: "New York No. 1 Lake Park",
+    tags: ["nice", "developer"],
+  },
+  {
+    key: "2",
+    name: "Jim Green",
+    age: 42,
+    address: "London No. 1 Lake Park",
+    tags: ["loser"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+  {
+    key: "3",
+    name: "Joe Black",
+    age: 32,
+    address: "Sidney No. 1 Lake Park",
+    tags: ["cool", "teacher"],
+  },
+];
 
+// eslint-disable-next-line no-unused-vars
 function edit(key) {
   console.log("当前行索引：", key);
-  this.showModal(key);
+  let title = key == undefined ? "新增" : "编辑";
+  key = key == undefined ? "新增" : "编辑";
+  showModal(title, key);
   //   editableData[key] = cloneDeep(
   //     dataSource.value.filter((item) => key === item.key)[0]
   //   );
@@ -133,12 +224,14 @@ function handleChange(value) {
 
 // dialog
 const visible = ref(false);
-
+const dialogTitle = ref("");
 const dialogIndex = ref("");
-function showModal(index) {
+function showModal(title, index) {
   visible.value = true;
+  dialogTitle.value = ref(title);
   dialogIndex.value = ref(index);
   console.log(index);
+  console.log(title);
   //   return dialogIndex.value;
 }
 
@@ -157,5 +250,14 @@ header {
 }
 .editable-row-operations a {
   margin-right: 8px;
+}
+section {
+  position: relative;
+  .add {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    margin-bottom: 12px;
+  }
 }
 </style>

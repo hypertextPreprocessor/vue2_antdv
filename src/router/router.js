@@ -23,6 +23,10 @@ const routes = [
                         name:"sys2",
                         component:{template:"<h1>组织管理</h1>"}
                     },{
+                        path:"product1",
+                        name:"product1",
+                        component:()=>import('@src/views/product/productSort.vue')
+                    },{
                         path:"",
                         component:()=>import('@src/views/HomeBlank')
                     }
@@ -48,6 +52,6 @@ const routes = [
         path:'/:notMatch(.*)*',
         name:"notFound",
         component:{template:'<div>page not found</div>'}
-    }
+    } 
 ]
 export default routes;
