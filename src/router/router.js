@@ -6,15 +6,13 @@ const routes = [
         children:[
             {
                 path:"main-common",
+                name:"mainCommon",
                 components:{
                     LeftSidebar:()=>import('@src/views/navbars/LeftNavMenuCommon'),
                     RightSidebar:{template:"<router-view></router-view>"}
                 },
                 children:[
                     {
-                        path:"",
-                        component:{template:"<h1>欢迎登录本系统</h1>"}
-                    },{
                         path:"sys1",
                         name:"sys1",
                         component:()=>import('@src/views/RoleManagement')
@@ -28,12 +26,14 @@ const routes = [
                         component:()=>import('@src/views/product/productSort.vue')
                     },{
                         path:"",
+                        name:"blank",
                         component:()=>import('@src/views/HomeBlank')
                     }
                 ]
             },
             {
                 path:"main-setting",
+                name:"mainSetting",
                 components:{
                     LeftSidebar:()=>import('@src/views/navbars/LeftNavMenuSetting'),
                     RightSidebar:{template:"<h1>欢迎访问</h1>"}

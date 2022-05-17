@@ -1,12 +1,13 @@
 <script setup>
-    import {onMounted, ref} from 'vue';
-    import {useRouter} from 'vue-router';
+    import {onMounted, ref,watch} from 'vue';
+    import {useRouter,useRoute} from 'vue-router';
     import {useConfig} from '@store';
     import  { MenuFoldOutlined,MenuUnfoldOutlined,UserOutlined} from '@ant-design/icons-vue';
     var collapsed = ref(false);
     var activeTab = ref(["1"]);
     var theme = ref("light");
     var router = useRouter();
+    var route = useRoute();
     var store = useConfig();
     function commonNav(){
          router.push({path:'/main-common'});
@@ -19,6 +20,13 @@
         store.userToken=null;
         router.push({name:'login'});
     }
+    watch(()=>route.path,(now,pre)=>{
+        console.log("现在:");
+        console.log(now);
+        console.log("之前:");
+        console.log(pre);
+        console.log(router.currentRoute);
+    })
     onMounted(()=>{
         document.querySelector('.ant-layout').style.height = window.document.documentElement.clientHeight+"px";
     });
@@ -71,6 +79,10 @@
                 <router-view name="LeftSidebar"></router-view>
             </a-layout-sider>
             <a-layout-content>
+                <a-breadcrumb>
+                    <a-breadcrumb-item>常规</a-breadcrumb-item>
+                    <a-breadcrumb-item>{{route.path}}</a-breadcrumb-item>
+                </a-breadcrumb>
                 <router-view name="RightSidebar"></router-view>
             </a-layout-content>
         </a-layout>
