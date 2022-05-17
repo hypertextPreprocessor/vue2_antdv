@@ -4,22 +4,52 @@
   import {useI18n} from 'vue-i18n';
   import { EffectFade,Autoplay } from 'swiper';
   import { Swiper, SwiperSlide } from 'swiper/vue';
-  import {getVercode} from '@api';
+  import {login} from '@api';
   //import VerifyPoints from '@src/widgets/verify/VerifyPoints';
   import img1 from '@img/bg1.jpeg';
-  import img2 from '@img/bg1.jpeg';
-  import img3 from '@img/bg1.jpeg';
+  import img2 from '@img/w2.jpg';
+  import img3 from '@img/w3.jpg';
   import 'swiper/less';
   import 'swiper/css/effect-fade';
   import 'swiper/less/autoplay';
+  import { Form } from 'ant-design-vue';
   import { useRouter } from 'vue-router'
   export default defineComponent({
     setup(props,{expose}){
-      const router = useRouter();
-      var dynamicTopVal = ref("20%");
+      const formRef = ref();
+      const useForm = Form.useForm;
       const formState = reactive({
-        username:"",password:"",remember:false
+        username:"",
+        password:"",
+        remember:false
       });
+      const rules = reactive({
+        username:[{
+          required:true,
+          message:"请输入登录账号"
+        }],
+        password:[{
+          required:true,
+          message:"请输入密码"
+        }]
+      });
+      const {validate,validateInfos} = useForm(formState,rules);
+      const router = useRouter();
+      function submitForm(){
+        validate().then(()=>{
+          console.log(validateInfos);
+          login({username:formState.username,password:formState.password}).then(res=>{
+            if(res.data){
+              router.push({path:'/main-common'})
+            }
+          })
+        }).catch(err=>{
+          console.log(err);
+          //validated = toRefs(validateInfos);
+          console.log(validateInfos.username);
+        })
+      }
+      var dynamicTopVal = ref("20%");
       const {t} = useI18n();
       function adjustLayOut(){
         var value = window.document.documentElement.clientHeight/2  - document.querySelector(".login_panel").clientHeight/2
@@ -51,29 +81,25 @@
                   <h3 style={{textAlign:"center"}}>{t("login.panelTitle")}</h3>
                   {/*<VerifyPoints appendTo="body" visible={true}/>*/}
                   <a-form
+                    ref={formRef}
                     model={formState}
                     name="login"
                     label-col={{span:6}}
                     wrapper-col={{span:18}}
-                  >   
-                      <a-form-item label="用户名" name="username">
+                    label-align="right"
+                    rule={rules}
+                  >
+                      <a-form-item label="用户名" name="username" {...validateInfos.username}>
                         <a-input v-model:value={formState.username}></a-input>
                       </a-form-item>
-                      <a-form-item label="密码" name="password">
+                      <a-form-item label="密码" name="password" {...validateInfos.password}>
                         <a-input-password v-model:value={formState.password}></a-input-password>
                       </a-form-item>
-                      <a-form-item name="remember" wrapper-col={{offset:6,span:18}} >
+                      <a-form-item wrapper-col={{offset:6,span:18}} name="remember" >
                         <a-checkbox v-model:checked={formState.remember}>记住我</a-checkbox>
                       </a-form-item>
                       <a-form-item wrapper-col={{offset:0,span:24}}>
-                        <a-button type="primary" size="large" block onClick={()=>{
-                          //Verify.value.show();
-
-                          getVercode().then(res=>{
-                            console.log(res);
-                            router.push({path:'/main-common'})
-                          });
-                        }}>登录</a-button>
+                        <a-button type="primary" size="large" block onClick={submitForm}>登录</a-button>
                       </a-form-item>
                   </a-form>
                 </div>

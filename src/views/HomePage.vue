@@ -1,11 +1,13 @@
 <script setup>
     import {onMounted, ref} from 'vue';
     import {useRouter} from 'vue-router';
+    import {useConfig} from '@store';
     import  { MenuFoldOutlined,MenuUnfoldOutlined,UserOutlined} from '@ant-design/icons-vue';
     var collapsed = ref(false);
     var activeTab = ref(["1"]);
     var theme = ref("light");
     var router = useRouter();
+    var store = useConfig();
     function commonNav(){
          router.push({path:'/main-common'});
     }
@@ -13,6 +15,8 @@
         router.push({path:'/main-setting'});
     }
     function logout(){
+        sessionStorage.removeItem('userToken');
+        store.userToken=null;
         router.push({name:'login'});
     }
     onMounted(()=>{
@@ -67,16 +71,6 @@
                 <router-view name="LeftSidebar"></router-view>
             </a-layout-sider>
             <a-layout-content>
-                <a-row style="padding:10px;">
-                    <a-col :offset="1" :span="23">
-                        <a-breadcrumb>
-                            <a-breadcrumb-item>常规</a-breadcrumb-item>
-                            <a-breadcrumb-item><a href="">菜单一</a></a-breadcrumb-item>
-                            <a-breadcrumb-item><a href="">菜单一</a></a-breadcrumb-item>
-                            <a-breadcrumb-item>菜单一</a-breadcrumb-item>
-                        </a-breadcrumb>
-                    </a-col>
-                </a-row>
                 <router-view name="RightSidebar"></router-view>
             </a-layout-content>
         </a-layout>
