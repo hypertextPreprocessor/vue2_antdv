@@ -14,14 +14,14 @@ const routes = [
                     {
                         path:"sys1",
                         name:"sys1",
-                        component:{template:"<h1>角色管理</h1>"}
+                        component:()=>import('@src/views/RoleManagement')
                     },{
                         path:"sys2",
                         name:"sys2",
                         component:{template:"<h1>组织管理</h1>"}
                     },{
                         path:"",
-                        component:{template:"<h1>欢迎登录本系统</h1>"}
+                        component:()=>import('@src/views/HomeBlank')
                     }
                 ]
             },

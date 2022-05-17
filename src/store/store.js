@@ -1,10 +1,11 @@
 import {defineStore} from 'pinia';
+var userToken = sessionStorage.getItem("userToken");
 const useConfig = defineStore("config",{
     state:()=>({
-        apiHost:"https://duerdedaner.com",
-        environment:"dev",
+        apiHost:"http://192.168.11.127:8080/api",
+        environment:"dev",  //生产环境改成 production
         local:"Chinese",
-        userToken:'sadkjvielksdjiv2136s5d1351sv6s351v5adv15e3sw25v13s5',
+        userToken:userToken,
         role:'admin'
     })
 });
