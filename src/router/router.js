@@ -65,7 +65,7 @@ const routes = [
                     },{
                         path:"product1",
                         name:"product1",
-                        component:{template:"<h1>省级产品类别</h1>"}
+                        component:()=>import ('@src/views/product/productSort.vue')
                     },{
                         path:"product2",
                         name:"product2",
