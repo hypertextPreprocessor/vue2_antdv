@@ -12,6 +12,9 @@ const routes = [
                 },
                 children:[
                     {
+                        path:"",
+                        component:{template:"<h1>欢迎登录本系统</h1>"}
+                    },{
                         path:"sys1",
                         name:"sys1",
                         component:()=>import('@src/views/RoleManagement')
