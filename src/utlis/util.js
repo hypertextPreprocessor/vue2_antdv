@@ -1,6 +1,6 @@
 //同时传入name跟path优先选取name作为索引 '/main-common/sys2'
-export function findRoute({name="",path=""}={}){
-    var count = 0;
+export function findRoute(routes,{name="",path=""}={}){
+
     var breadArr = [];
     function findByname(n,r){
         for(var i=0;i<r.length;i++){
@@ -9,7 +9,7 @@ export function findRoute({name="",path=""}={}){
                 return false;
             }else{
                 if(r[i].children){
-                    count++;
+
                     breadArr.push(r[i]);
                     findByname(n,r[i].children)
                 }
@@ -24,7 +24,6 @@ export function findRoute({name="",path=""}={}){
                 return breadArr;
             }else{
                 if(r[j].children){
-                    count++;
                     breadArr.push(r[j]);
                     findByPath(p,r[j].children);
                 }
@@ -44,4 +43,21 @@ export function findRoute({name="",path=""}={}){
             return [];
         }
     }
+}
+export function breadFactory(fullPath){
+    var breadArr = [];
+    switch(fullPath){
+        case '/main-common/sys1':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"sys1",breadName:"角色管理"}]
+            break;
+        case '/main-common/sys2':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"sys2",breadName:"组织管理"}]
+            break;
+        case '/main-common/sys3':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"sys3",breadName:"登录日志列表"}]
+            break;
+        default:
+            breadArr=[];
+    }
+    return breadArr;
 }

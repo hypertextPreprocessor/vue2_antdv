@@ -15,17 +15,14 @@ const router = createRouter({
     routes,
     strict: true
 });
-router.beforeEach((to,from)=>{
+router.beforeEach((to)=>{
     var store = useConfig();
+    console.log(to.name);
     if(store.userToken==null){  //用户未登录
         if(to.name != "login"){
             return {name:"login"}
-        }else{//本身就在登录界面;
-            if(from.name==undefined){   //首次登录
-                return true;
-            }else{ //未登录情况下不允许任何跳转;
-                return false;
-            }
+        }else{  //去登录
+            return true;
         }
     }else{
         return true;

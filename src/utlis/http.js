@@ -2,6 +2,7 @@ const axios = require('axios');
 //var {apiHost} = require('@config');
 import {useConfig} from '@store';
 import { message } from 'ant-design-vue';
+//const controller = new AbortController();
 //axios.defaults.baseURL = apiHost;
 //单单对登录有不同的请求方式
 function atLoginApi(config){
@@ -15,7 +16,7 @@ httpReq.interceptors.request.use(function(config){
     var store = useConfig();
     config.baseURL = store.apiHost;
     if(store.userToken){
-        config.headers['Authorization'] = 'bearer '+store.userToken;
+        config.headers['Authorization'] = 'basic '+store.userToken;
     }
     return config;
 },function(error){
@@ -40,12 +41,12 @@ httpReq.interceptors.response.use(function(response){
     return response;
 },function(error){
     console.log(error);
-    if(error.response!=undefined){
-    //if(error.response.data!==undefined){
+    if(error.response!=undefined && error.response.data!=undefined){
         message.error(error.response.data.msg);
     }else{
         message.error(error.message);
     }
-    return Promise.resolve(error);
+    //controller.abort();
+    return Promise.reject(error);
 });
 export default httpReq;
