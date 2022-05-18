@@ -3,12 +3,15 @@
     import {useRouter,useRoute} from 'vue-router';
     import {useConfig} from '@store';
     import  { MenuFoldOutlined,MenuUnfoldOutlined,UserOutlined} from '@ant-design/icons-vue';
+    //import routes from '@src/router/router.js';
+    import {breadFactory} from '@src/utlis/util.js';
     var collapsed = ref(false);
     var activeTab = ref(["1"]);
     var theme = ref("light");
     var router = useRouter();
     var route = useRoute();
     var store = useConfig();
+    var breads = ref([]);
     function commonNav(){
          router.push({path:'/main-common'});
     }
@@ -25,9 +28,14 @@
         console.log(now);
         console.log("之前:");
         console.log(pre);
-        console.log(router.currentRoute);
+        console.log(route.matched);
+        var arr = breadFactory(router.currentRoute.value.fullPath);
+        //var arr = findRoute(routes,{name:route.name});
+        //breads.value = Array.prototype.filter.call(arr,(x)=>(x.name!="home"&&x.name!="blank"));
+        breads.value = arr;
     })
     onMounted(()=>{
+        
         document.querySelector('.ant-layout').style.height = window.document.documentElement.clientHeight+"px";
     });
 </script>
@@ -79,9 +87,10 @@
                 <router-view name="LeftSidebar"></router-view>
             </a-layout-sider>
             <a-layout-content>
-                <a-breadcrumb>
-                    <a-breadcrumb-item>常规</a-breadcrumb-item>
-                    <a-breadcrumb-item>{{route.path}}</a-breadcrumb-item>
+                <a-breadcrumb v-if="breads.length" style="padding:10px;background:#ffffff;">
+                    <template v-for="item in breads" :key="item.routeName">
+                        <a-breadcrumb-item>{{item.breadName}}</a-breadcrumb-item>
+                    </template>
                 </a-breadcrumb>
                 <router-view name="RightSidebar"></router-view>
             </a-layout-content>

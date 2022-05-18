@@ -16,4 +16,6 @@
 <script setup>
     import {ref} from 'vue';
     var selectedKeys = ref(["1"]);
+    var openKeys = ref(["1"]);
+    var theme = ref("light");
 </script>

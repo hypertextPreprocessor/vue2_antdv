@@ -19,14 +19,14 @@ const routes = [
                     },{
                         path:"sys2",
                         name:"sys2",
-                        component:{template:"<h1>组织管理</h1>"}
+                        component:()=>import('@src/views/OrgManagement')
                     },{
                         path:"product1",
                         name:"product1",
                         component:()=>import('@src/views/product/productSort.vue')
                     },{
                         path:"",
-                        name:"blank",
+                        name:"blank1",
                         component:()=>import('@src/views/HomeBlank')
                     }
                 ]
@@ -36,8 +36,19 @@ const routes = [
                 name:"mainSetting",
                 components:{
                     LeftSidebar:()=>import('@src/views/navbars/LeftNavMenuSetting'),
-                    RightSidebar:{template:"<h1>欢迎访问</h1>"}
-                }
+                    RightSidebar:{template:"<router-view></router-view>"}
+                },
+                children:[
+                    {
+                        path:"alter-pass",
+                        name:"alterPass",
+                        component:{template:"<h1>修改密码</h1>"}
+                    },{
+                        path:"",
+                        name:"blank2",
+                        component:()=>import('@src/views/HomeBlank')
+                    }
+                ]
             }
         ]
     },{
