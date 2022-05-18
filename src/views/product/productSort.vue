@@ -30,35 +30,20 @@
       </a-button>
     </header>
     <section>
-      <a-table :columns="columns" :data-source="data" bordered>
+      <a-table :columns="columns" :data-source="productInfo.list" bordered>
         <template #headerCell="{ column }">
-          <template v-if="column.key === 'name'">
+          <template v-if="column.key === 'dataIndex'">
             <span> 序号 </span>
           </template>
         </template>
 
-        <template #bodyCell="{ column, record, index }">
-          <template v-if="column.key === 'name'">
-            <a>
-              {{ index + 1 }}
-            </a>
+        <template #bodyCell="{ column, index }">
+          <template v-if="column.key === 'dataIndex'">
+            {{ index + 1 }}
           </template>
-          <template v-else-if="column.key === 'tags'">
-            <span>
-              <a-tag
-                v-for="tag in record.tags"
-                :key="tag"
-                :color="
-                  tag === 'loser'
-                    ? 'volcano'
-                    : tag.length > 5
-                    ? 'geekblue'
-                    : 'green'
-                "
-              >
-                {{ tag.toUpperCase() }}
-              </a-tag>
-            </span>
+          <template v-else-if="column.key === 'isToOrder'">
+            <!-- <span> {{ record }} </span> -->
+            <!-- <span>嘻嘻</span> -->
           </template>
           <template v-else-if="column.key === 'action'">
             <span>
@@ -71,136 +56,106 @@
     </section>
 
     <a-modal v-model:visible="visible" title="新增" @ok="handleOk">
+      <a-form
+        :model="formState"
+        name="basic"
+        :label-col="{ span: 8 }"
+        :wrapper-col="{ span: 16 }"
+        autocomplete="off"
+        @finish="onFinish"
+        @finishFailed="onFinishFailed"
+      >
+        <a-form-item
+          label="名称"
+          name="username"
+          :rules="[{ required: true, message: '这里输入名称' }]"
+        >
+          <a-input v-model:value="formState.username" />
+        </a-form-item>
+        <a-form-item>图片上传</a-form-item>
+        <a-form-item>图片</a-form-item>
+        <a-form-item>图标上传</a-form-item>
+        <a-form-item>图标</a-form-item>
+        <a-form-item
+          label="排序号"
+          name="sortNum"
+          :rules="[{ required: true, message: '这里输入排序号' }]"
+        >
+          <a-input v-model:value="formState.sortNum" />
+        </a-form-item>
+        <a-form-item label="是否支持快速下单" name="checked">
+          <a-checkbox
+            v-model:checked="formState.checked"
+            @change.prevent="handleCheckbox"
+          ></a-checkbox>
+        </a-form-item>
+        <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+          <a-button type="primary" html-type="submit">Submit</a-button>
+        </a-form-item>
+      </a-form>
       <p>{{ dialogIndex }}</p>
     </a-modal>
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 // EditOutlined
 import { SearchOutlined, EditOutlined } from "@ant-design/icons-vue";
 // import { cloneDeep } from "lodash-es";
+import { getProductInfo } from "@src/api/requests.js";
 
 const userName = ref("");
 // 表格
 const columns = [
   {
+    dataIndex: "name",
     name: "name",
+    key: "dataIndex",
+  },
+  {
+    title: "名称",
     dataIndex: "name",
     key: "name",
   },
   {
-    title: "名称",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
     title: "排序号",
-    dataIndex: "address",
-    key: "address",
+    dataIndex: "orderNo",
+    key: "orderNo",
   },
   {
     title: "支持快速下单",
-    key: "tags",
-    dataIndex: "tags",
+    key: "isToOrder",
+    dataIndex: "isToOrder",
   },
   {
     title: "状态",
-    key: "tags",
-    dataIndex: "tags",
+    key: "status",
+    dataIndex: "status",
   },
   {
     title: "操作",
     key: "action",
   },
 ];
-const data = [
-  {
-    key: "1",
-    name: "乐迪",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-    tags: ["nice", "developer"],
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-    tags: ["loser"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-    tags: ["cool", "teacher"],
-  },
-];
 
+let productInfo = ref("");
+onMounted(() => {
+  let current = 1;
+  let pages = 1;
+  let size = 10;
+  getProductInfo({ current, pages, size }).then((res) => {
+    let temp = res.data.data;
+    if (temp.list.length > 0) {
+      temp.list.map((item) => {
+        item.isToOrder = item.isToOrder == 1 ? "是" : "否";
+        item.status = item.status == 1 ? "有效" : "失效";
+      });
+    }
+    productInfo.value = temp;
+  });
+  //   console.log(productInfo.value);
+  //   console.log("Component is mounted!");
+});
 // eslint-disable-next-line no-unused-vars
 function edit(key) {
   console.log("当前行索引：", key);
@@ -226,6 +181,29 @@ function handleChange(value) {
 const visible = ref(false);
 const dialogTitle = ref("");
 const dialogIndex = ref("");
+
+const formState = {
+  username: "",
+  sortNum: "",
+  checked: false,
+};
+
+function handleCheckbox(e) {
+  console.log(e.target.checked);
+  let temp = e.target.checked;
+  temp = !temp;
+  console.log(temp);
+  formState.checked = temp;
+  console.log(formState.checked);
+}
+const onFinish = (values) => {
+  console.log("Success:", values);
+};
+
+const onFinishFailed = (errorInfo) => {
+  console.log("Failed:", errorInfo);
+};
+
 function showModal(title, index) {
   visible.value = true;
   dialogTitle.value = ref(title);
@@ -241,10 +219,6 @@ function handleOk(e) {
 }
 </script>
 <style lang="less" scoped>
-#productSort {
-  background-color: yellowgreen;
-  padding: 12px 12px 12px 54px;
-}
 header {
   display: flex;
 }
@@ -253,6 +227,7 @@ header {
 }
 section {
   position: relative;
+  margin-top: 12px;
   .add {
     position: absolute;
     left: 0;

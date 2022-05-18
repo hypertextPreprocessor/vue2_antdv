@@ -8,14 +8,14 @@ function atLoginApi(config){
     return config.url === "/auth/oauth/token";
 }
 const httpReq = axios.create({
-    timeout: 1000,
+    timeout: 5000,
     headers:{'content-type':'application/json'}
 });
 httpReq.interceptors.request.use(function(config){
     var store = useConfig();
     config.baseURL = store.apiHost;
     if(store.userToken){
-        config.headers['Authorization'] = 'Basic '+store.userToken;
+        config.headers['Authorization'] = 'bearer '+store.userToken;
     }
     return config;
 },function(error){
@@ -24,7 +24,7 @@ httpReq.interceptors.request.use(function(config){
 httpReq.interceptors.request.use(function(config){
     var store = useConfig();
     config.baseURL = store.apiHost;
-    config.headers = {'content-type':'application/x-www-form-urlencoded','Authorization':'Basic dGVzdDp0ZXN0'}
+    config.headers = {'content-type':'application/x-www-form-urlencoded','Authorization':'Basic bWluaS10ZXN0Om1pbmktdGVzdA=='}
     return config;
 },function(error){
     return Promise.reject(error);
@@ -39,11 +39,13 @@ httpReq.interceptors.response.use(function(response){
     }
     return response;
 },function(error){
-    if(error.response.data){
+    console.log(error);
+    if(error.response!=undefined){
+    //if(error.response.data!==undefined){
         message.error(error.response.data.msg);
     }else{
         message.error(error.message);
     }
-    return Promise.reject(error);
+    return Promise.resolve(error);
 });
 export default httpReq;

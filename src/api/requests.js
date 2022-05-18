@@ -13,4 +13,8 @@ async function login({username,password,grantType="password"}){
     store.userToken = access_token;
     return response;
 }
-export {getVercode,login};
+ async function getProductInfo(params){
+    var response = await httpReq.get('/mini/product/page',params);
+    return response;
+}
+export {getVercode,login,getProductInfo};
