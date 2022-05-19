@@ -21,6 +21,50 @@ const routes = [
                         name:"sys2",
                         component:()=>import('@src/views/OrgManagement')
                     },{
+                        path:"sys3",
+                        name:"sys3",
+                        component:()=>import('@src/views/LoginLogList')
+                    },{
+                        path:"sys4",
+                        name:"sys4",
+                        component:()=>import('@src/views/OperatingLogList')
+                    },{
+                        path:"info1",
+                        name:"info1",
+                        component:()=>import('@src/views/BdgeManager')
+                    },{
+                        path:"info2",
+                        name:"info2",
+                        component:()=>import('@src/views/EnterpriseManagement')
+                    },{
+                        path:"info3",
+                        name:"info3",
+                        component:()=>import('@src/views/BdgeManagement')
+                    },{
+                        path:"info4",
+                        name:"info4",
+                        component:()=>import('@src/views/BusinessMgmt')
+                    },{
+                        path:"info5",
+                        name:"info5",
+                        component:()=>import('@src/views/QuoteInfo')
+                    },{
+                        path:"info6",
+                        name:"info6",
+                        component:()=>import('@src/views/FlawsReslovtion')
+                    },{
+                        path:"info7",
+                        name:"info7",
+                        component:()=>import('@src/views/UserMgmt')
+                    },{
+                        path:"info8",
+                        name:"info8",
+                        component:()=>import('@src/views/CompanyInfoMgmt')
+                    },{
+                        path:"info9",
+                        name:"info9",
+                        component:()=>import('@src/views/IntelligenceUsage')
+                    },{
                         path:"product1",
                         name:"product1",
                         component:()=>import('@src/views/product/productSort.vue')

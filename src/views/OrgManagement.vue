@@ -72,7 +72,7 @@
         </a-layout-content>
         <a-modal
             v-model:visible="visible"
-            title="Title"
+            title="编辑"
             :confirm-loading="confirmLoading"
             @ok="handleOk"
         >
@@ -116,13 +116,18 @@
     </a-layout>
 </template>
 <script setup>
-    import {ref,onMounted} from 'vue';
+    import {ref,onMounted,reactive} from 'vue';
     import {EditOutlined,DeleteOutlined} from '@ant-design/icons-vue';
-    import {loadOrgzTree,addNewOrgz} from "@api";
+    import {loadOrgzTree,addNewOrgz,editAOrgz} from "@api";
     import { Empty } from 'ant-design-vue';
     const drawerSending = ref(false);
     const insertAorgValue = ref('');
     const drawerAddvalue = ref();
+    const editingItem = reactive({
+        name:"",
+        parentId:0,
+        id:0
+    });
     const drawerSearchValue = ref('');
     var treeData = ref(null);
     var treeDataSample = ref(null);
@@ -139,7 +144,10 @@
         key:'id'
     }
     var simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
-    function onSearch(){}
+    function onSearch(){
+        console.log(serchValue.value);
+        loadTree(serchValue.value);
+    }
     /*
     function onSelect(key,event){
         console.log(key);
@@ -156,7 +164,7 @@
        }else{
            drawerSending.value = true;
            if(drawerAddvalue.value=='' || drawerAddvalue.value == undefined){
-               addNewOrgz({name:insertAorgValue.value,sortOrder:0,parentId:0}).then(res=>{
+               addNewOrgz({name:insertAorgValue.value,sortOrder:1,parentId:0}).then(res=>{
                    var {code} = res.data;
                    if(code === 1){
                        loadTree();
@@ -165,7 +173,7 @@
                    drawerSending.value = false;
                });
            }else{
-               addNewOrgz({name:insertAorgValue.value,parentId:drawerAddvalue.value,sortOrder:0}).then(res=>{
+               addNewOrgz({name:insertAorgValue.value,parentId:drawerAddvalue.value,sortOrder:1}).then(res=>{
                    var {code} = res.data;
                    if(code === 1){
                        loadTree();
@@ -178,23 +186,34 @@
        }
        
    };
-    const showModal = (name,id,parentId) => {
+    const showModal = () => {
       visible.value = true;
-      confirmLoading.value = true;
-      console.log(name,id,parentId);
+      addAorgzValue.value = editingItem.name.value;   
     };
     function addNewItem(){
         console.log(treeData.value);
         visible1.value=true;
     }
     const handleOk = ()=>{
-
+        confirmLoading.value = true;
+        var params = {
+          deptId:editingItem.id.value,
+          parentId:editingItem.parentId.value,
+          name:addAorgzValue.value
+        }
+        editAOrgz(params).then(res=>{
+            confirmLoading.value = false;
+            console.log(res);
+        });
     }
     function editItem(name,id,parentId){
-        showModal(name,id,parentId);
+        editingItem.name.value = name;
+        editingItem.id.value = id;
+        editingItem.parentId.value = parentId;
+        showModal();
     }
-    function loadTree(){
-        loadOrgzTree().then(res=>{
+    function loadTree(name=""){
+        loadOrgzTree(name).then(res=>{
             var {code,data} = res.data; 
             console.log(code);
             console.log(data);
@@ -205,7 +224,7 @@
                 treeDataSample.value.unshift({
                     name:"新增一个顶级组织",
                     parentId:0,
-                    id:null
+                    id:0
                 });
             }else{
                 treeData.value = [];
