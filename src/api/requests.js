@@ -1,16 +1,12 @@
 import httpReq from '@src/utlis/http.js';
 import {useConfig} from '@store';
-var AES = require('aes')
 async function getVercode(){
     var response = await httpReq.post('/code/check');
     return response;
 }
 //登录接口
 async function login({username,password,grantType="password"}){
-    var key = "pigxpigxpigxpigx";
-    var aes = new AES(key);
-    var encryptedPassword = aes.encrypt(password);
-    const params = new URLSearchParams({username,password:encryptedPassword,grant_type:grantType});
+    const params = new URLSearchParams({username,password,grant_type:grantType});
     var response = await httpReq.post('/auth/oauth/token',params);
     var {access_token} = response.data;
     sessionStorage.setItem('userToken',access_token);

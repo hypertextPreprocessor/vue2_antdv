@@ -30,7 +30,12 @@
       </a-button>
     </header>
     <section>
-      <a-table :columns="columns" :data-source="productInfo.list" bordered>
+      <a-table
+        :columns="columns"
+        :data-source="productInfo.list"
+        bordered
+        :locale="{ emptyText: '暂无数据' }"
+      >
         <template #headerCell="{ column }">
           <template v-if="column.key === 'dataIndex'">
             <span> 序号 </span>
@@ -84,10 +89,7 @@
           <a-input v-model:value="formState.sortNum" />
         </a-form-item>
         <a-form-item label="是否支持快速下单" name="checked">
-          <a-checkbox
-            v-model:checked="formState.checked"
-            @change.prevent="handleCheckbox"
-          ></a-checkbox>
+          <a-checkbox v-model:checked="formState.checked"></a-checkbox>
         </a-form-item>
         <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
           <a-button type="primary" html-type="submit">Submit</a-button>
@@ -98,7 +100,7 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, reactive } from "vue";
 // EditOutlined
 import { SearchOutlined, EditOutlined } from "@ant-design/icons-vue";
 // import { cloneDeep } from "lodash-es";
@@ -153,8 +155,8 @@ onMounted(() => {
     }
     productInfo.value = temp;
   });
-  //   console.log(productInfo.value);
-  //   console.log("Component is mounted!");
+
+  //   dialog
 });
 // eslint-disable-next-line no-unused-vars
 function edit(key) {
@@ -182,20 +184,20 @@ const visible = ref(false);
 const dialogTitle = ref("");
 const dialogIndex = ref("");
 
-const formState = {
+let formState = reactive({
   username: "",
   sortNum: "",
   checked: false,
-};
+});
 
-function handleCheckbox(e) {
-  console.log(e.target.checked);
-  let temp = e.target.checked;
-  temp = !temp;
-  console.log(temp);
-  formState.checked = temp;
-  console.log(formState.checked);
-}
+// function handleCheckbox(e) {
+//   console.log(e.target.checked);
+//   let temp = e.target.checked;
+//   temp = !temp;
+//   console.log(temp);
+//   formState.checked = temp;
+//   console.log(formState.checked);
+// }
 const onFinish = (values) => {
   console.log("Success:", values);
 };
