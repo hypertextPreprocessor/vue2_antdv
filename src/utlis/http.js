@@ -22,6 +22,7 @@ httpReq.interceptors.request.use(function(config){
 },function(error){
     return Promise.reject(error);
 });
+// bWluaS10ZXN0Om1pbmktdGVzdA==
 httpReq.interceptors.request.use(function(config){
     var store = useConfig();
     config.baseURL = store.apiHost;
