@@ -1,16 +1,22 @@
 import httpReq from '@src/utlis/http.js';
 import {useConfig} from '@store';
-var AES = require('aes')
+import { message } from 'ant-design-vue';
+//var CryptoJS = require("crypto-js");
 async function getVercode(){
     var response = await httpReq.post('/code/check');
     return response;
 }
 //登录接口
 async function login({username,password,grantType="password"}){
-    var key = "pigxpigxpigxpigx";
-    var aes = new AES(key);
-    var encryptedPassword = aes.encrypt(password);
-    const params = new URLSearchParams({username,password:encryptedPassword,grant_type:grantType});
+    /*
+    var key = "thanks,pig4cloud";//"pigxpigxpigxpigx";
+    var encrypted = CryptoJS.AES.encrypt(password,key,{
+        iv:CryptoJS.enc.Latin1.parse(key),
+        mode: CryptoJS.mode.CFB,
+        padding: CryptoJS.pad.NoPadding
+    });
+    */
+    const params = new URLSearchParams({username,password,grant_type:grantType});
     var response = await httpReq.post('/auth/oauth/token',params);
     var {access_token} = response.data;
     sessionStorage.setItem('userToken',access_token);
@@ -28,6 +34,14 @@ async function loadOrgzTree(deptName=""){
     var response = await httpReq.get('/admin/dept/tree',params,{
         headers:{"content-type":"application/x-www-form-urlencoded"}
     })
+    handleErrPop(response);
     return response;
+}
+//统一规范错误抛出弹窗
+function handleErrPop(res){
+    var {code,msg} = res.data;
+    if(code!==1){
+        message.error(msg);
+    }
 }
 export {getVercode,login,loadOrgzTree,getProductInfo};

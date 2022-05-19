@@ -16,7 +16,7 @@ httpReq.interceptors.request.use(function(config){
     var store = useConfig();
     config.baseURL = store.apiHost;
     if(store.userToken){
-        config.headers['Authorization'] = 'basic '+store.userToken;
+        config.headers['Authorization'] = 'bearer '+store.userToken;
     }
     return config;
 },function(error){
@@ -25,7 +25,7 @@ httpReq.interceptors.request.use(function(config){
 httpReq.interceptors.request.use(function(config){
     var store = useConfig();
     config.baseURL = store.apiHost;
-    config.headers = {'content-type':'application/x-www-form-urlencoded','Authorization':'Basic bWluaS10ZXN0Om1pbmktdGVzdA=='}
+    config.headers = {'content-type':'application/x-www-form-urlencoded','Authorization':'Basic dGVzdDp0ZXN0'}
     return config;
 },function(error){
     return Promise.reject(error);
@@ -40,7 +40,6 @@ httpReq.interceptors.response.use(function(response){
     }
     return response;
 },function(error){
-    console.log(error);
     if(error.response!=undefined && error.response.data!=undefined){
         message.error(error.response.data.msg);
     }else{
