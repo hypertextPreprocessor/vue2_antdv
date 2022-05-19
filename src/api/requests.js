@@ -25,7 +25,8 @@ async function login({username,password,grantType="password"}){
     return response;
 }
  async function getProductInfo(params){
-    var response = await httpReq.get('/mini/product/page',params);
+    var response = await httpReq.get('/miniCjj/product/page',params);
+    handleErrPop(response);
     return response;
 }
 //系统管理-组织管理：组织树形结构模块
