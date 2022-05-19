@@ -37,6 +37,12 @@ async function loadOrgzTree(deptName=""){
     handleErrPop(response);
     return response;
 }
+//系统管理-组织管理：新增一个组织
+async function addNewOrgz(params){
+    var response = await httpReq.post('/admin/dept',params);
+    handleErrPop(response);
+    return response;
+}
 //统一规范错误抛出弹窗
 function handleErrPop(res){
     var {code,msg} = res.data;
@@ -44,4 +50,4 @@ function handleErrPop(res){
         message.error(msg);
     }
 }
-export {getVercode,login,loadOrgzTree,getProductInfo};
+export {getVercode,login,loadOrgzTree,getProductInfo,addNewOrgz};
