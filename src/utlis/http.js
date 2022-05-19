@@ -43,10 +43,17 @@ httpReq.interceptors.response.use(function(response){
 },function(error){
     if(error.response!=undefined && error.response.data!=undefined){
         message.error(error.response.data.msg);
+        return error.response;
     }else{
         message.error(error.message);
+        return {
+            data:{
+                code:error.code,
+                data:false,
+                msg:error.message
+            }
+        }
     }
-    //controller.abort();
-    return Promise.reject(error);
+    //return Promise.reject(error);
 });
 export default httpReq;

@@ -31,10 +31,24 @@ async function login({username,password,grantType="password"}){
 }
 //系统管理-组织管理：组织树形结构模块
 async function loadOrgzTree(deptName=""){
-    const params = new URLSearchParams({deptName});
-    var response = await httpReq.get('/admin/dept/tree',params,{
-        headers:{"content-type":"application/x-www-form-urlencoded"}
-    })
+    //const params = new URLSearchParams({deptName:deptName});
+    var response = await httpReq.get('/admin/dept/tree',{params:{
+        deptName:deptName
+    }},{headers: {'content-type': 'application/x-www-form-urlencoded'}})
+    handleErrPop(response);
+    return response;
+}
+//系统管理-组织管理：新增一个组织
+async function addNewOrgz(params){
+    var response = await httpReq.post('/admin/dept',params);
+    handleErrPop(response);
+    return response;
+}
+//系统管理-组织管理：编辑一个组织
+async function editAOrgz(params){
+    var response = await httpReq.put('/admin/dept',{
+        ...params
+    });
     handleErrPop(response);
     return response;
 }
@@ -45,4 +59,4 @@ function handleErrPop(res){
         message.error(msg);
     }
 }
-export {getVercode,login,loadOrgzTree,getProductInfo};
+export {getVercode,login,loadOrgzTree,getProductInfo,addNewOrgz,editAOrgz};
