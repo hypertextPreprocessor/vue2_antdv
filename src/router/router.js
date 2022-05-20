@@ -41,6 +41,10 @@ const routes = [
                         name:"info3",
                         component:()=>import('@src/views/BdgeManagement')
                     },{
+                        path:"info3/white-paper",
+                        name:"whitePaper",
+                        component:()=>import('@src/views/WhitePaper'),
+                    },{
                         path:"info4",
                         name:"info4",
                         component:()=>import('@src/views/BusinessMgmt')
