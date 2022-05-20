@@ -25,7 +25,7 @@ async function login({username,password,grantType="password"}){
     return response;
 }
  async function getProductInfo(params){
-    var response = await httpReq.get('/miniCjj/product/page',params);
+    var response = await httpReq.get('/mini/product/page',params);
     handleErrPop(response);
     return response;
 }
