@@ -58,7 +58,32 @@
                     </a-space>
                 </a-form>
                 <a-divider />
-                <a-table :dataSource="dataSource" :columns="columns" />
+                <a-table :dataSource="dataSource" :columns="columns" >
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'action'">
+                           <a-space>
+                               <a-button type="primary" size="small" @click="()=>{editThisItem(column, record)}">
+                                   <template #icon>
+                                        <EditOutlined />
+                                    </template>
+                                    编辑
+                               </a-button>
+                               <a-button size="small" @click="()=>{navigateToWitePaper(column, record)}">
+                                   <template #icon>
+                                        <BookOutlined />
+                                    </template>
+                                    白皮书
+                               </a-button>
+                               <a-button type="primary" danger size="small" @click="()=>{editThisItem(column, record)}">
+                                   <template #icon>
+                                        <DeleteOutlined />
+                                    </template>
+                                    删除
+                               </a-button>
+                           </a-space>
+                        </template>
+                    </template>
+                </a-table>
                 <a-divider/>
                 <a-space>
                     <a-button type="primary" shape="default" size="large" @click="addNewItem">新增</a-button>
@@ -140,11 +165,21 @@
     </a-layout>
 </template>
 <script setup>
-import {SearchOutlined,DownloadOutlined,FileExcelFilled} from '@ant-design/icons-vue';
+import {SearchOutlined,DownloadOutlined,FileExcelFilled,EditOutlined,DeleteOutlined,BookOutlined} from '@ant-design/icons-vue';
 import {reactive,ref} from 'vue';
+import {useRouter} from 'vue-router';
 const filterState = reactive({});
 const bldgAddState = reactive({});
 const bldgAddVisiblity = ref(false);
+var router = useRouter();
+function navigateToWitePaper(c,r){
+    console.log(c);
+    console.log(r);
+    router.push({name:"whitePaper"});
+}
+function editThisItem(c,r){
+    console.log(c,r);
+}
 const onConfrimAdd =()=>{
         bldgAddVisiblity.value=false;
     }
@@ -184,6 +219,10 @@ const filterOption = (input, option) => {
             title: 'IP地址',
             dataIndex: 'ipAddress',
             key: 'ipAddress',
+        },{
+            title:"操作",
+            dataIndex: 'action',
+            key: 'action',
         }
     ]
     const dataSource = ref([{
