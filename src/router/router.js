@@ -69,6 +69,14 @@ const routes = [
                         name:"product1",
                         component:()=>import('@src/views/product/productSort.vue')
                     },{
+                        path:"product2",
+                        name:"product2",
+                        component:()=>import('@src/views/product/productProvince.vue')
+                    },{
+                        path:"product3",
+                        name:"product3",
+                        component:()=>import('@src/views/product/productVideo.vue')
+                    },{
                         path:"",
                         name:"blank1",
                         component:()=>import('@src/views/HomeBlank')

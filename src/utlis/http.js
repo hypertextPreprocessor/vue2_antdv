@@ -26,7 +26,7 @@ httpReq.interceptors.request.use(function(config){
 httpReq.interceptors.request.use(function(config){
     var store = useConfig();
     config.baseURL = store.apiHost;
-    config.headers = {'content-type':'application/x-www-form-urlencoded','Authorization':'Basic JFat0Zdc'}
+    config.headers = {'content-type':'application/x-www-form-urlencoded','Authorization':'Basic bWluaS10ZXN0Om1pbmktdGVzdA=='}
     return config;
 },function(error){
     return Promise.reject(error);
