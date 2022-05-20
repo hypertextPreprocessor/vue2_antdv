@@ -4,6 +4,7 @@
         :theme="theme" 
         :open-keys="openKeys"
         @select="menuSelect"
+        @openChange="onOpenChange"
         mode="inline"
     >
         <a-sub-menu key="sys">
@@ -66,13 +67,25 @@
     </a-menu>
 </template>
 <script setup>
-    import {ref} from 'vue';
+    import {ref,reactive,toRefs} from 'vue';
     import {DesktopOutlined,GiftOutlined,ContainerOutlined,FileOutlined,RocketOutlined,LineChartOutlined,PhoneOutlined} from '@ant-design/icons-vue';
     import { useRouter } from 'vue-router'
     const router = useRouter();
-    var selectedKeys = ref(["sys"]);
+    const state = reactive({
+      rootSubmenuKeys: ['sys', 'info', 'product','page','promotion','excel','contact'],
+      openKeys: [],
+      selectedKeys: [],
+    });
+    const onOpenChange = openKeys => {
+      const latestOpenKey = openKeys.find(key => state.openKeys.indexOf(key) === -1);
+      if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+        state.openKeys = openKeys;
+      } else {
+        state.openKeys = latestOpenKey ? [latestOpenKey] : [];
+      }
+    };
+    var {openKeys,selectedKeys} = toRefs(state);
     var theme = ref("light");
-    var openKeys = ref([]);
     function menuSelect({item,key,selectedKeys}){
         console.log(item);
         console.log(key);
