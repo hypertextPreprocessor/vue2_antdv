@@ -1,168 +1,202 @@
 /* eslint-disable no-unused-vars */
 <template>
   <div id="productSort">
-    <header>
-      <a-input
-        v-model:value="userName"
-        style="width: 200px"
-        placeholder="Basic usage"
-        @search="onSearch"
-      >
-        <template #prefix>
-          <search-outlined />
-        </template>
-      </a-input>
+    <a-layout>
+      <a-layout-content style="display: flex; flex-flow: column nowrap">
+        <a-card style="flex-grow: 1">
+          <header>
+            <a-input
+              v-model:value="userName"
+              style="width: 200px"
+              placeholder="这里输入名称"
+              @search="onSearch"
+            >
+              <template #prefix>
+                <search-outlined />
+              </template>
+            </a-input>
 
-      <a-select
-        ref="select"
-        style="margin: 0 2px"
-        placeholder="请选择状态"
-        @focus="focus"
-        @change="handleChange"
-      >
-        <a-select-option value="jack">Jack</a-select-option>
-        <a-select-option value="lucy">Lucy</a-select-option>
-        <a-select-option value="disabled" disabled>Disabled</a-select-option>
-        <a-select-option value="Yiminghe">yiminghe</a-select-option>
-      </a-select>
-      <a-button type="primary">
-        <template #icon><SearchOutlined /></template>
-      </a-button>
-    </header>
-    <section>
-      <a-table
-        :columns="columns"
-        :data-source="productInfo.list"
-        bordered
-        :locale="{ emptyText: '暂无数据' }"
-      >
-        <template #headerCell="{ column }">
-          <template v-if="column.key === 'dataIndex'">
-            <span> 序号 </span>
-          </template>
-        </template>
+            <a-select
+              ref="select"
+              style="margin: 0 2px"
+              placeholder="请选择状态"
+              @focus="focus"
+              @change="handleChange"
+            >
+              <a-select-option value="jack">Jack</a-select-option>
+              <a-select-option value="lucy">Lucy</a-select-option>
+              <a-select-option value="disabled" disabled
+                >Disabled</a-select-option
+              >
+              <a-select-option value="Yiminghe">yiminghe</a-select-option>
+            </a-select>
+            <a-button type="primary">
+              <template #icon><SearchOutlined /></template>
+            </a-button>
+          </header>
+          <section>
+            <a-table
+              :columns="columns"
+              :data-source="productInfo.list"
+              bordered
+              :locale="{ emptyText: '暂无数据' }"
+            >
+              <template #headerCell="{ column }">
+                <template v-if="column.key === 'dataIndex'">
+                  <span> 序号 </span>
+                </template>
+              </template>
 
-        <template #bodyCell="{ column, index }">
-          <template v-if="column.key === 'dataIndex'">
-            {{ index + 1 }}
-          </template>
-          <template v-else-if="column.key === 'isToOrder'">
-            <!-- <span> {{ record }} </span> -->
-            <!-- <span>嘻嘻</span> -->
-          </template>
-          <template v-else-if="column.key === 'action'">
-            <span>
-              <edit-outlined @click="edit(column.key, column.key)" />
-            </span>
-          </template>
-        </template>
-      </a-table>
-      <a-button class="add" type="primary" @click="edit()">新增</a-button>
-    </section>
+              <template #bodyCell="{ column, index }">
+                <template v-if="column.key === 'dataIndex'">
+                  {{ index + 1 }}
+                </template>
+                <template v-else-if="column.key === 'isToOrder'">
+                  <!-- <span> {{ record }} </span> -->
+                  <!-- <span>嘻嘻</span> -->
+                </template>
+                <template v-else-if="column.key === 'action'">
+                  <span>
+                    <edit-outlined @click="edit(column.key, column.key)" />
+                  </span>
+                </template>
+              </template>
+            </a-table>
+            <a-button class="add" type="primary" @click="edit()">新增</a-button>
+          </section>
 
-    <a-modal v-model:visible="visible" title="新增" @ok="handleOk">
-      <a-form
-        :model="formState"
-        name="basic"
-        :label-col="{ span: 8 }"
-        :wrapper-col="{ span: 16 }"
-        autocomplete="off"
-        @finish="onFinish"
-        @finishFailed="onFinishFailed"
-      >
-        <a-form-item
-          label="名称"
-          name="username"
-          :rules="[{ required: true, message: '这里输入名称' }]"
-        >
-          <a-input v-model:value="formState.username" />
-        </a-form-item>
-        <a-form-item label="图片" name="productPic">
-          <div class="clearfix">
-            <span style="color: red; font-size: 12px"
-              >建议图片比例是750x375，大小不超过300K</span
-            >
-            <a-upload
-              v-model:file-list="fileList"
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              list-type="picture-card"
-              @preview="handlePreview"
-            >
-              <div v-if="fileList.length < 1">
-                <plus-outlined />
-                <div style="margin-top: 8px; font-size: 13px">产品类别图</div>
-              </div>
-            </a-upload>
-            <a-modal
-              :visible="previewVisible"
-              :title="previewTitle"
-              :footer="null"
-              @cancel="handleCancel"
-            >
-              <img alt="example" style="width: 100%" :src="previewImage" />
-            </a-modal>
-          </div>
-        </a-form-item>
-        <a-form-item label="图标上传" name="iconPic">
-          <div class="clearfix">
-            <span style="color: red; font-size: 12px"
-              >建议图片比例65x65，大小不超过10k的透明底色png格式图片</span
-            >
-            <a-upload
-              v-model:file-list="iconList"
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              list-type="picture-card"
-              @preview="handlePreviewIcon"
-            >
-              <div v-if="iconList.length < 1">
-                <plus-outlined />
-                <div style="margin-top: 8px; font-size: 13px">图标</div>
-              </div>
-            </a-upload>
-            <a-modal
-              :visible="previewVisible"
-              :title="previewTitle"
-              :footer="null"
-              @cancel="handleCancel"
-            >
-              <img alt="example" style="width: 100%" :src="previewImage" />
-            </a-modal>
-          </div>
-        </a-form-item>
-        <a-form-item
-          label="排序号"
-          name="sortNum"
-          :rules="[{ required: true, message: '这里输入排序号' }]"
-        >
-          <a-input v-model:value="formState.sortNum" />
-        </a-form-item>
-        <a-form-item label="是否支持快速下单" name="checked">
-          <a-checkbox v-model:checked="formState.checked"></a-checkbox>
-        </a-form-item>
-        <a-from-item label="状态" name="checked">
-          <a-select
-            ref="select"
-            style="margin: 0 2px"
-            placeholder="请选择状态"
-            @focus="focusStatus"
-            @change="handleChangeStauts"
+          <a-modal
+            v-model:visible="visible"
+            title="新增"
+            @ok="handleOk"
+            :footer="null"
           >
-            <a-select-option value="jack">Jack</a-select-option>
-            <a-select-option value="lucy">Lucy</a-select-option>
-            <a-select-option value="disabled" disabled
-              >Disabled</a-select-option
+            <a-form
+              :model="formState"
+              name="basic"
+              :label-col="{ span: 6 }"
+              :wrapper-col="{ span: 12 }"
+              autocomplete="off"
+              @finish="onFinish"
+              @finishFailed="onFinishFailed"
             >
-            <a-select-option value="Yiminghe">yiminghe</a-select-option>
-          </a-select>
-        </a-from-item>
+              <a-form-item
+                label="名称"
+                name="username"
+                :rules="[{ required: true, message: '这里输入名称' }]"
+              >
+                <a-input v-model:value="formState.username" />
+              </a-form-item>
+              <a-form-item label="图片" name="productPic">
+                <div class="clearfix">
+                  <span style="color: red; font-size: 12px"
+                    >建议图片比例是750x375，大小不超过300K</span
+                  >
+                  <a-upload
+                    v-model:file-list="fileList"
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    list-type="picture-card"
+                    @preview="handlePreview"
+                  >
+                    <div v-if="fileList.length < 1">
+                      <plus-outlined />
+                      <div style="margin-top: 8px; font-size: 13px">
+                        产品类别图
+                      </div>
+                    </div>
+                  </a-upload>
+                  <a-modal
+                    :visible="previewVisible"
+                    :title="previewTitle"
+                    :footer="null"
+                    @cancel="handleCancel"
+                  >
+                    <img
+                      alt="example"
+                      style="width: 100%"
+                      :src="previewImage"
+                    />
+                  </a-modal>
+                </div>
+              </a-form-item>
+              <a-form-item label="图标" name="iconPic">
+                <div class="clearfix">
+                  <span style="color: red; font-size: 12px"
+                    >建议图片比例65x65，大小不超过10k的透明底色png格式图片</span
+                  >
+                  <a-upload
+                    v-model:file-list="iconList"
+                    action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    list-type="picture-card"
+                    @preview="handlePreviewIcon"
+                  >
+                    <div v-if="iconList.length < 1">
+                      <plus-outlined />
+                      <div style="margin-top: 8px; font-size: 13px">图标</div>
+                    </div>
+                  </a-upload>
+                  <a-modal
+                    :visible="previewVisible"
+                    :title="previewTitle"
+                    :footer="null"
+                    @cancel="handleCancel"
+                  >
+                    <img
+                      alt="example"
+                      style="width: 100%"
+                      :src="previewImage"
+                    />
+                  </a-modal>
+                </div>
+              </a-form-item>
+              <a-form-item
+                label="排序号"
+                name="sortNum"
+                :rules="[{ required: true, message: '这里输入排序号' }]"
+              >
+                <a-input v-model:value="formState.sortNum" />
+              </a-form-item>
+              <a-form-item label="是否支持快速下单" name="checked">
+                <a-checkbox v-model:checked="formState.checked"></a-checkbox>
+              </a-form-item>
+              <a-from-item label="状态" name="productStatus">
+                <span style="margin-left: 74px">状态：</span>
+                <a-select
+                  ref="select"
+                  style="margin: 0 2px"
+                  placeholder="请选择状态"
+                  @focus="focusStatus"
+                  @change="handleChangeStauts"
+                >
+                  <a-select-option value="jack">Jack</a-select-option>
+                  <a-select-option value="lucy">Lucy</a-select-option>
+                  <a-select-option value="disabled" disabled
+                    >Disabled</a-select-option
+                  >
+                  <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                </a-select>
+              </a-from-item>
+              <a-form-item
+                style="margin-top: 20px"
+                :wrapper-col="{ span: 14, offset: 8 }"
+              >
+                <a-button type="primary" @click.prevent="handleOk"
+                  >保存</a-button
+                >
+                <a-button style="margin-left: 10px" @click="hiddenModal"
+                  >取消</a-button
+                >
+              </a-form-item>
 
-        <!-- <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+              <!-- <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
           <a-button>取消</a-button>
           <a-button type="primary" html-type="submit">保存</a-button>
         </a-form-item> -->
-      </a-form>
-      <p>{{ dialogIndex }}</p>
-    </a-modal>
+            </a-form>
+          </a-modal>
+        </a-card>
+      </a-layout-content>
+    </a-layout>
   </div>
 </template>
 <script setup>
@@ -251,10 +285,13 @@ function handleChange(value) {
   console.log(`selected ${value}`);
 }
 
-// dialog
+// modal
 const visible = ref(false);
 const dialogTitle = ref("");
 const dialogIndex = ref("");
+function hiddenModal() {
+  visible.value = false;
+}
 
 let formState = reactive({
   username: "",
