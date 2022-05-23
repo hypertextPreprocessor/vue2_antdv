@@ -13,7 +13,7 @@
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
     "@vue/cli": "^5.0.4",
-    "@vueup/vue-quill": "^1.0.0-alpha.40",
+    "@vueup/vue-quill": "^1.0.0-beta.8",
     "ant-design-vue": "^3.2.3",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",

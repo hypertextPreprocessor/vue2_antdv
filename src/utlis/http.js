@@ -14,7 +14,7 @@ const httpReq = axios.create({
 });
 httpReq.interceptors.request.use(function(config){
     var store = useConfig();
-    // config.baseURL = store.apiHost;
+    config.baseURL = store.apiHost;
     if(store.userToken){
         config.headers['Authorization'] = 'bearer '+store.userToken;
     }
@@ -24,8 +24,8 @@ httpReq.interceptors.request.use(function(config){
 });
 // bWluaS10ZXN0Om1pbmktdGVzdA==
 httpReq.interceptors.request.use(function(config){
-    // var store = useConfig();
-    // config.baseURL = store.apiHost;
+    var store = useConfig();
+    config.baseURL = store.apiHost;
     config.headers = {'content-type':'application/x-www-form-urlencoded','Authorization':'Basic bWluaS10ZXN0Om1pbmktdGVzdA=='}
     return config;
 },function(error){
