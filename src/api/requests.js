@@ -2,6 +2,7 @@ import httpReq from '@src/utlis/http.js';
 import {useConfig} from '@store';
 import { message } from 'ant-design-vue';
 import qs from 'qs';
+import axios from 'axios';
 //var CryptoJS = require("crypto-js");
 async function getVercode(){
     var response = await httpReq.post('/code/check');
@@ -18,7 +19,12 @@ async function login({username,password,grantType="password"}){
     });
     */
     // const params = new URLSearchParams({username,password,grant_type:grantType});
-    var response = await httpReq.post('/auth/oauth/token?'+qs.stringify({grant_type:grantType}),qs.stringify({username:username,password:password}));
+  var response = await axios.post('/auth/oauth/token?'+qs.stringify({grant_type:grantType}),qs.stringify({username:username,password:password}),{
+    headers: {
+      Authorization: "Basic bWluaS10ZXN0Om1pbmktdGVzdA==",
+      'Content-Type': "application/x-www-form-urlencoded"
+    }
+  });
     var {access_token} = response.data;
     sessionStorage.setItem('userToken',access_token);
     var store = useConfig();
