@@ -70,12 +70,25 @@
               name="username"
               :rules="[{ required: true, message: '这里输入名称' }]"
             >
-              <a-input v-model:value="formState.username" />
+              <a-input
+                placeholder="这里输入视频名称"
+                v-model:value="formState.username"
+              />
             </a-form-item>
-            <a-form-item label="图片" name="productPic">
+            <a-form-item
+              label="简述"
+              name="username"
+              :rules="[{ required: true, message: '这里输入简述' }]"
+            >
+              <a-input
+                placeholder="这里输入简述"
+                v-model:value="formState.username"
+              />
+            </a-form-item>
+            <a-form-item label="视频" name="productPic">
               <div class="clearfix">
                 <span style="color: red; font-size: 12px"
-                  >建议图片比例是750x375，大小不超过300K</span
+                  >建议视频是大小不超过50M</span
                 >
                 <a-upload
                   v-model:file-list="fileList"
@@ -85,35 +98,7 @@
                 >
                   <div v-if="fileList.length < 1">
                     <plus-outlined />
-                    <div style="margin-top: 8px; font-size: 13px">
-                      产品类别图
-                    </div>
-                  </div>
-                </a-upload>
-                <a-modal
-                  :visible="previewVisible"
-                  :title="previewTitle"
-                  :footer="null"
-                  @cancel="handleCancel"
-                >
-                  <img alt="example" style="width: 100%" :src="previewImage" />
-                </a-modal>
-              </div>
-            </a-form-item>
-            <a-form-item label="图标" name="iconPic">
-              <div class="clearfix">
-                <span style="color: red; font-size: 12px"
-                  >建议图片比例65x65，大小不超过10k的透明底色png格式图片</span
-                >
-                <a-upload
-                  v-model:file-list="iconList"
-                  action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                  list-type="picture-card"
-                  @preview="handlePreviewIcon"
-                >
-                  <div v-if="iconList.length < 1">
-                    <plus-outlined />
-                    <div style="margin-top: 8px; font-size: 13px">图标</div>
+                    <div style="margin-top: 8px; font-size: 13px">视频</div>
                   </div>
                 </a-upload>
                 <a-modal
@@ -129,19 +114,19 @@
             <a-form-item
               label="排序号"
               name="sortNum"
-              :rules="[{ required: true, message: '这里输入排序号' }]"
+              :rules="[{ required: true, message: '这里输入序号' }]"
             >
-              <a-input v-model:value="formState.sortNum" />
+              <a-input
+                placeholder="这里输入序号"
+                v-model:value="formState.sortNum"
+              />
             </a-form-item>
-            <a-form-item label="是否支持快速下单" name="checked">
-              <a-checkbox v-model:checked="formState.checked"></a-checkbox>
-            </a-form-item>
-            <a-from-item label="状态" name="productStatus">
-              <span style="margin-left: 74px">状态：</span>
+            <a-from-item label="产品" name="productStatus">
+              <span style="margin-left: 74px">产品：</span>
               <a-select
                 ref="select"
-                style="margin: 0 2px"
-                placeholder="请选择状态"
+                style="margin: 0 2px 28px"
+                placeholder="请选择产品状态"
                 @focus="focusStatus"
                 @change="handleChangeStauts"
               >
@@ -153,6 +138,25 @@
                 <a-select-option value="Yiminghe">yiminghe</a-select-option>
               </a-select>
             </a-from-item>
+            <a-from-item label="状态" name="productStatus">
+              <div style="margin-left: 74px">
+                <span>状态：</span>
+                <a-select
+                  ref="select"
+                  style="margin: 0 2px"
+                  placeholder="请选择状态"
+                  @focus="focusStatus"
+                  @change="handleChangeStauts"
+                >
+                  <a-select-option value="jack">Jack</a-select-option>
+                  <a-select-option value="lucy">Lucy</a-select-option>
+                  <a-select-option value="disabled" disabled
+                    >Disabled</a-select-option
+                  >
+                  <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                </a-select>
+              </div>
+            </a-from-item>
             <a-form-item
               style="margin-top: 20px"
               :wrapper-col="{ span: 14, offset: 8 }"
@@ -162,11 +166,6 @@
                 >取消</a-button
               >
             </a-form-item>
-
-            <!-- <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-          <a-button>取消</a-button>
-          <a-button type="primary" html-type="submit">保存</a-button>
-        </a-form-item> -->
           </a-form>
         </a-modal>
       </a-card>
@@ -181,12 +180,9 @@ import {
   EditOutlined,
   PlusOutlined,
 } from "@ant-design/icons-vue";
-// import { cloneDeep } from "lodash-es";
 import { getProductInfo } from "@src/api/requests.js";
 
 const userName = ref("");
-// const status = ref("");
-
 // 表格
 const columns = [
   {
@@ -248,26 +244,16 @@ onMounted(() => {
 
   //   dialog
 });
-// eslint-disable-next-line no-unused-vars
 function edit(key) {
   console.log("当前行索引：", key);
   let title = key == undefined ? "新增" : "编辑";
   key = key == undefined ? "新增" : "编辑";
   showModal(title, key);
-  //   editableData[key] = cloneDeep(
-  //     dataSource.value.filter((item) => key === item.key)[0]
-  //   );
 }
 
 function onSearch() {
   console.log("onSearch");
 }
-// function focus() {
-//   console.log("focus");
-// }
-// function handleChange(value) {
-//   console.log(`selected ${value}`);
-// }
 
 // modal
 const visible = ref(false);
@@ -286,14 +272,6 @@ let formState = reactive({
   status: "",
 });
 
-// function handleCheckbox(e) {
-//   console.log(e.target.checked);
-//   let temp = e.target.checked;
-//   temp = !temp;
-//   console.log(temp);
-//   formState.checked = temp;
-//   console.log(formState.checked);
-// }
 const onFinish = (values) => {
   console.log("Success:", values);
 };
@@ -316,62 +294,11 @@ function handleOk(e) {
   visible.value = false;
 }
 
-// product-img
-// function getBase64(file) {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.readAsDataURL(file);
-
-//     reader.onload = () => resolve(reader.result);
-
-//     reader.onerror = (error) => reject(error);
-//   });
-// }
-
 const previewVisible = ref(false);
 const previewImage = ref("");
 const previewTitle = ref("");
-// const fileList = ref([
-//   {
-//     uid: "-1",
-//     name: "image.png",
-//     status: "done",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-2",
-//     name: "image.png",
-//     status: "done",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-3",
-//     name: "image.png",
-//     status: "done",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-4",
-//     name: "image.png",
-//     status: "done",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-xxx",
-//     percent: 50,
-//     name: "image.png",
-//     status: "uploading",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-5",
-//     name: "image.png",
-//     status: "error",
-//   },
-// ]);
 
 const fileList = ref([]);
-const iconList = ref([]);
 
 const handleCancel = () => {
   previewVisible.value = false;
@@ -385,18 +312,6 @@ const handlePreview = async (file) => {
   }
   previewImage.value = file.url || file.preview;
   console.log(previewImage.value.name);
-  previewVisible.value = true;
-  previewTitle.value =
-    file.name || file.url.substring(file.url.lastIndexOf("/") + 1);
-};
-const iconPic = ref("");
-const handlePreviewIcon = async (file) => {
-  if (!file.url && !file.preview) {
-    // file.preview = await getBase64(file.originFileObj);
-    file.preview = file.originFileObj;
-  }
-  iconPic.value = file.url || file.preview;
-  console.log(iconPic.value.name);
   previewVisible.value = true;
   previewTitle.value =
     file.name || file.url.substring(file.url.lastIndexOf("/") + 1);

@@ -6,10 +6,10 @@
         <a-card style="flex-grow: 1">
           <header>
             <a-input
-              v-model:value="userName"
+              v-model:value="productName"
               style="width: 200px"
               placeholder="这里输入名称"
-              @search="onSearch"
+              @change="getProductName"
             >
               <template #prefix>
                 <search-outlined />
@@ -23,14 +23,11 @@
               @focus="focus"
               @change="handleChange"
             >
-              <a-select-option value="jack">Jack</a-select-option>
-              <a-select-option value="lucy">Lucy</a-select-option>
-              <a-select-option value="disabled" disabled
-                >Disabled</a-select-option
-              >
-              <a-select-option value="Yiminghe">yiminghe</a-select-option>
+              <a-select-option value="all">全部</a-select-option>
+              <a-select-option value="vaild">有效</a-select-option>
+              <a-select-option value="invaild">失效</a-select-option>
             </a-select>
-            <a-button type="primary">
+            <a-button type="primary" @click="onSearch">
               <template #icon><SearchOutlined /></template>
             </a-button>
           </header>
@@ -67,25 +64,30 @@
 
           <a-modal
             v-model:visible="visible"
-            title="新增"
+            :title="modalTitle"
             @ok="handleOk"
             :footer="null"
           >
             <a-form
               :model="formState"
+              ref="formRef"
               name="basic"
               :label-col="{ span: 6 }"
               :wrapper-col="{ span: 12 }"
               autocomplete="off"
+              @validate="handleValidate"
               @finish="onFinish"
               @finishFailed="onFinishFailed"
             >
               <a-form-item
                 label="名称"
                 name="username"
-                :rules="[{ required: true, message: '这里输入名称' }]"
+                :rules="rules.productName"
               >
-                <a-input v-model:value="formState.username" />
+                <a-input
+                  placeholder="这里输入名称"
+                  v-model:value="formState.username"
+                />
               </a-form-item>
               <a-form-item label="图片" name="productPic">
                 <div class="clearfix">
@@ -93,12 +95,13 @@
                     >建议图片比例是750x375，大小不超过300K</span
                   >
                   <a-upload
-                    v-model:file-list="fileList"
+                    v-model:file-list="formState.productPic"
                     action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     list-type="picture-card"
+                    @change="handleChangePic"
                     @preview="handlePreview"
                   >
-                    <div v-if="fileList.length < 1">
+                    <div v-if="formState.productPic.length < 1">
                       <plus-outlined />
                       <div style="margin-top: 8px; font-size: 13px">
                         产品类别图
@@ -125,12 +128,12 @@
                     >建议图片比例65x65，大小不超过10k的透明底色png格式图片</span
                   >
                   <a-upload
-                    v-model:file-list="iconList"
+                    v-model:file-list="formState.iconList"
                     action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     list-type="picture-card"
                     @preview="handlePreviewIcon"
                   >
-                    <div v-if="iconList.length < 1">
+                    <div v-if="formState.iconList.length < 1">
                       <plus-outlined />
                       <div style="margin-top: 8px; font-size: 13px">图标</div>
                     </div>
@@ -154,44 +157,37 @@
                 name="sortNum"
                 :rules="[{ required: true, message: '这里输入排序号' }]"
               >
-                <a-input v-model:value="formState.sortNum" />
+                <a-input
+                  placeholder="这里输入序号"
+                  v-model:value="formState.sortNum"
+                />
               </a-form-item>
-              <a-form-item label="是否支持快速下单" name="checked">
-                <a-checkbox v-model:checked="formState.checked"></a-checkbox>
+              <a-form-item label="是否支持快速下单" name="hasSupport">
+                <a-checkbox v-model:checked="formState.hasSupport"></a-checkbox>
               </a-form-item>
-              <a-from-item label="状态" name="productStatus">
+              <a-from-item label="状态" name="status">
                 <span style="margin-left: 74px">状态：</span>
                 <a-select
                   ref="select"
                   style="margin: 0 2px"
                   placeholder="请选择状态"
+                  :value="formState.status"
                   @focus="focusStatus"
                   @change="handleChangeStauts"
                 >
-                  <a-select-option value="jack">Jack</a-select-option>
-                  <a-select-option value="lucy">Lucy</a-select-option>
-                  <a-select-option value="disabled" disabled
-                    >Disabled</a-select-option
-                  >
-                  <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                  <a-select-option value="vaild">有效</a-select-option>
+                  <a-select-option value="invaild">失效</a-select-option>
                 </a-select>
               </a-from-item>
               <a-form-item
                 style="margin-top: 20px"
                 :wrapper-col="{ span: 14, offset: 8 }"
               >
-                <a-button type="primary" @click.prevent="handleOk"
-                  >保存</a-button
-                >
+                <a-button type="primary" @click="handleOk">保存</a-button>
                 <a-button style="margin-left: 10px" @click="hiddenModal"
                   >取消</a-button
                 >
               </a-form-item>
-
-              <!-- <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
-          <a-button>取消</a-button>
-          <a-button type="primary" html-type="submit">保存</a-button>
-        </a-form-item> -->
             </a-form>
           </a-modal>
         </a-card>
@@ -200,18 +196,54 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref, reactive } from "vue";
-// EditOutlined
+import { onMounted, ref, reactive, toRaw } from "vue";
 import {
   SearchOutlined,
   EditOutlined,
   PlusOutlined,
 } from "@ant-design/icons-vue";
-// import { cloneDeep } from "lodash-es";
+import { message } from "ant-design-vue";
+
 import { getProductInfo } from "@src/api/requests.js";
 
-const userName = ref("");
-// const status = ref("");
+const productName = ref("");
+let productInfo = ref("");
+let productStatus = ref("");
+let modalTitle = ref("新增");
+const visible = ref(false);
+
+const previewVisible = ref(false);
+const previewImage = ref("");
+const previewTitle = ref("");
+const formRef = ref("");
+
+let formState = reactive({
+  username: "",
+  productPic: [],
+  iconList: [],
+  sortNum: "",
+  hasSupport: false,
+  status: "vaild",
+});
+
+const rules = reactive({
+  productName: {
+    required: true,
+    validator: validatePass,
+    message: "这里输入名称",
+  },
+});
+let validatePass = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("Please input the password");
+  } else {
+    if (formState.checkPass !== "") {
+      formRef.value.validateFields("checkPass");
+    }
+
+    return Promise.resolve();
+  }
+};
 
 // 表格
 const columns = [
@@ -246,7 +278,6 @@ const columns = [
   },
 ];
 
-let productInfo = ref("");
 onMounted(() => {
   let current = 1;
   let pages = 1;
@@ -264,11 +295,11 @@ onMounted(() => {
 
   //   dialog
 });
-// eslint-disable-next-line no-unused-vars
+
 function edit(key) {
   console.log("当前行索引：", key);
-  let title = key == undefined ? "新增" : "编辑";
   key = key == undefined ? "新增" : "编辑";
+  let title = modalTitle.value;
   showModal(title, key);
   //   editableData[key] = cloneDeep(
   //     dataSource.value.filter((item) => key === item.key)[0]
@@ -276,40 +307,37 @@ function edit(key) {
 }
 
 function onSearch() {
-  console.log("onSearch");
+  visible.value = true;
+  modalTitle.value = "编辑";
+  console.log(
+    "onSearch",
+    "名称：",
+    productName.value,
+    "状态：",
+    productStatus.value,
+    "新增：",
+    modalTitle.value
+  );
+}
+function getProductName() {
+  console.log("名称：", productName.value);
 }
 function focus() {
-  console.log("focus");
+  // console.log("focus");
 }
 function handleChange(value) {
+  productStatus.value = value;
   console.log(`selected ${value}`);
 }
 
 // modal
-const visible = ref(false);
-const dialogTitle = ref("");
-const dialogIndex = ref("");
+function handleValidate(...args) {
+  console.log(args);
+}
+
 function hiddenModal() {
   visible.value = false;
 }
-
-let formState = reactive({
-  username: "",
-  sortNum: "",
-  productPic: "",
-  iconPic: "",
-  checked: false,
-  status: "",
-});
-
-// function handleCheckbox(e) {
-//   console.log(e.target.checked);
-//   let temp = e.target.checked;
-//   temp = !temp;
-//   console.log(temp);
-//   formState.checked = temp;
-//   console.log(formState.checked);
-// }
 const onFinish = (values) => {
   console.log("Success:", values);
 };
@@ -320,74 +348,29 @@ const onFinishFailed = (errorInfo) => {
 
 function showModal(title, index) {
   visible.value = true;
-  dialogTitle.value = ref(title);
-  dialogIndex.value = ref(index);
   console.log(index);
   console.log(title);
-  //   return dialogIndex.value;
 }
 
-function handleOk(e) {
-  console.log(e);
+function handleOk() {
   visible.value = false;
+  console.log("submit!", toRaw(formState));
+  formRef.value.resetFields();
 }
 
-// product-img
-// function getBase64(file) {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.readAsDataURL(file);
+// productPic
+function handleChangePic(info) {
+  console.log(info.fileList[0].name);
+  if (info.file.status !== "uploading") {
+    console.log(info.file, info.fileList);
+  }
 
-//     reader.onload = () => resolve(reader.result);
-
-//     reader.onerror = (error) => reject(error);
-//   });
-// }
-
-const previewVisible = ref(false);
-const previewImage = ref("");
-const previewTitle = ref("");
-// const fileList = ref([
-//   {
-//     uid: "-1",
-//     name: "image.png",
-//     status: "done",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-2",
-//     name: "image.png",
-//     status: "done",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-3",
-//     name: "image.png",
-//     status: "done",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-4",
-//     name: "image.png",
-//     status: "done",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-xxx",
-//     percent: 50,
-//     name: "image.png",
-//     status: "uploading",
-//     url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-//   },
-//   {
-//     uid: "-5",
-//     name: "image.png",
-//     status: "error",
-//   },
-// ]);
-
-const fileList = ref([]);
-const iconList = ref([]);
+  if (info.file.status === "done") {
+    message.success(`${info.file.name} file uploaded successfully`);
+  } else if (info.file.status === "error") {
+    message.error(`${info.file.name} file upload failed.`);
+  }
+}
 
 const handleCancel = () => {
   previewVisible.value = false;
@@ -405,14 +388,11 @@ const handlePreview = async (file) => {
   previewTitle.value =
     file.name || file.url.substring(file.url.lastIndexOf("/") + 1);
 };
-const iconPic = ref("");
 const handlePreviewIcon = async (file) => {
   if (!file.url && !file.preview) {
     // file.preview = await getBase64(file.originFileObj);
     file.preview = file.originFileObj;
   }
-  iconPic.value = file.url || file.preview;
-  console.log(iconPic.value.name);
   previewVisible.value = true;
   previewTitle.value =
     file.name || file.url.substring(file.url.lastIndexOf("/") + 1);
@@ -423,6 +403,7 @@ function focusStatus() {
   console.log("focusStatus");
 }
 function handleChangeStauts(value) {
+  formState.status = value;
   console.log(`selected-Stauts ${value}`);
 }
 </script>
