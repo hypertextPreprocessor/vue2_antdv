@@ -59,7 +59,7 @@
                 </template>
               </template>
             </a-table>
-            <a-button class="add" type="primary" @click="edit()">新增</a-button>
+            <a-button class="add" type="primary" @click="edit">新增</a-button>
           </section>
 
           <a-modal
@@ -128,12 +128,12 @@
                     >建议图片比例65x65，大小不超过10k的透明底色png格式图片</span
                   >
                   <a-upload
-                    v-model:file-list="formState.iconList"
+                    v-model:file-list="formState.iconPic"
                     action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                     list-type="picture-card"
                     @preview="handlePreviewIcon"
                   >
-                    <div v-if="formState.iconList.length < 1">
+                    <div v-if="formState.iconPic.length < 1">
                       <plus-outlined />
                       <div style="margin-top: 8px; font-size: 13px">图标</div>
                     </div>
@@ -220,7 +220,7 @@ const formRef = ref("");
 let formState = reactive({
   username: "",
   productPic: [],
-  iconList: [],
+  iconPic: [],
   sortNum: "",
   hasSupport: false,
   status: "vaild",
@@ -240,7 +240,6 @@ let validatePass = async (_rule, value) => {
     if (formState.checkPass !== "") {
       formRef.value.validateFields("checkPass");
     }
-
     return Promise.resolve();
   }
 };
@@ -301,9 +300,6 @@ function edit(key) {
   key = key == undefined ? "新增" : "编辑";
   let title = modalTitle.value;
   showModal(title, key);
-  //   editableData[key] = cloneDeep(
-  //     dataSource.value.filter((item) => key === item.key)[0]
-  //   );
 }
 
 function onSearch() {

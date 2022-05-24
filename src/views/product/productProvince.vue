@@ -5,45 +5,38 @@
       <a-card style="flex-grow: 1">
         <header>
           <a-input
-            v-model:value="userName"
+            v-model:value="productName"
             style="width: 200px"
             placeholder="这里输入名称"
-            @search="onSearch"
+            @change="getProductName"
           >
             <template #prefix>
               <search-outlined />
             </template>
           </a-input>
-
           <a-select
             ref="select"
             style="margin: 0 2px"
             placeholder="请选择产品类别"
             @focus="focus"
-            @change="handleChange"
+            @change="handleChangeClissify"
           >
-            <a-select-option value="jack">Jack</a-select-option>
-            <a-select-option value="lucy">Lucy</a-select-option>
-            <a-select-option value="disabled" disabled
-              >Disabled</a-select-option
-            >
-            <a-select-option value="Yiminghe">yiminghe</a-select-option>
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="company">公司业务</a-select-option>
+            <a-select-option value="enterprise">企业业务</a-select-option>
           </a-select>
           <a-select
             ref="select"
             style="margin: 0 2px"
             placeholder="请选择状态"
             @focus="focus"
-            @change="handleChange"
+            @change="handleChangeStauts"
           >
-            <a-select-option value="jack">Jack</a-select-option>
-            <a-select-option value="lucy">Lucy</a-select-option>
-            <a-select-option value="disabled" disabled
-              >Disabled</a-select-option
-            >
-            <a-select-option value="Yiminghe">yiminghe</a-select-option>
+            <a-select-option value="all">全部</a-select-option>
+            <a-select-option value="vaild">有效</a-select-option>
+            <a-select-option value="invaild">失效</a-select-option>
           </a-select>
-          <a-button type="primary">
+          <a-button type="primary" @click="onSearch">
             <template #icon><SearchOutlined /></template>
           </a-button>
         </header>
@@ -75,12 +68,14 @@
               </template>
             </template>
           </a-table>
-          <a-button class="add" type="primary" @click="edit()">新增</a-button>
+          <a-button class="add" type="primary" @click="edit">新增</a-button>
         </section>
 
         <a-modal
+          :model="formState"
+          ref="formRef"
           v-model:visible="visible"
-          title="新增"
+          :title="modalTitle"
           @ok="handleOk"
           :footer="null"
         >
@@ -90,41 +85,37 @@
             :label-col="{ span: 6 }"
             :wrapper-col="{ span: 12 }"
             autocomplete="off"
+            @validate="handleValidate"
             @finish="onFinish"
             @finishFailed="onFinishFailed"
           >
             <a-from-item label="产品类别" name="productStatus">
-              <span style="margin-left: 47px">产品类别：</span>
-              <a-select
-                ref="select"
-                style="margin: 0 2px 28px"
-                placeholder="请选择产品类别"
-                @focus="focus"
-                @change="handleChange"
-              >
-                <a-select-option value="jack">Jack</a-select-option>
-                <a-select-option value="lucy">Lucy</a-select-option>
-                <a-select-option value="disabled" disabled
-                  >Disabled</a-select-option
+              <div style="margin-left: 47px">
+                <span>产品类别：</span>
+                <a-select
+                  ref="select"
+                  style="margin: 0 2px 28px"
+                  placeholder="请选择产品类别"
+                  @focus="focus"
+                  @change="handleChangeClissify"
                 >
-                <a-select-option value="Yiminghe">yiminghe</a-select-option>
-              </a-select>
+                  <a-select-option value="all">全部</a-select-option>
+                  <a-select-option value="company">公司业务</a-select-option>
+                  <a-select-option value="enterprise">企业业务</a-select-option>
+                </a-select>
+              </div>
             </a-from-item>
             <a-form-item
               label="名称"
-              name="username"
-              :rules="[{ required: true, message: '这里输入名称' }]"
+              name="productName"
+              :rules="rules.productName"
             >
               <a-input
                 placeholder="这里输入名称"
-                v-model:value="formState.username"
+                v-model:value="formState.productName"
               />
             </a-form-item>
-            <a-form-item
-              label="简述"
-              name="info"
-              :rules="[{ required: true, message: '这里输入简述' }]"
-            >
+            <a-form-item label="简述" name="info" :rules="rules.info">
               <a-input
                 placeholder="这里输入简述"
                 v-model:value="formState.info"
@@ -136,12 +127,12 @@
                   >建议图片比例是750x375，大小不超过300K</span
                 >
                 <a-upload
-                  v-model:file-list="fileList"
+                  v-model:file-list="formState.productPic"
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                   list-type="picture-card"
                   @preview="handlePreview"
                 >
-                  <div v-if="fileList.length < 1">
+                  <div v-if="formState.productPic.length < 1">
                     <plus-outlined />
                     <div style="margin-top: 8px; font-size: 13px">封面图</div>
                   </div>
@@ -177,7 +168,10 @@
               />
             </a-form-item>
             <a-form-item label="是否支持快速下单" name="checked">
-              <a-checkbox-group v-model:value="value" style="width: 100%">
+              <a-checkbox-group
+                v-model:value="formState.hasOrder"
+                style="width: 100%"
+              >
                 <a-checkbox value="是否新品">是否新品</a-checkbox>
                 <a-checkbox value="是否热门">是否热门</a-checkbox>
                 <a-checkbox value="云网/saas">云网/saas</a-checkbox>
@@ -209,14 +203,11 @@
                 ref="select"
                 style="margin: 0 2px 24px"
                 placeholder="请选择客户经理"
-                @focus="focusStatus"
-                @change="handleChangeStauts"
+                @focus="focusStatusManager"
+                @change="handleChangeManager"
               >
                 <a-select-option value="jack">Jack</a-select-option>
                 <a-select-option value="lucy">Lucy</a-select-option>
-                <a-select-option value="disabled" disabled
-                  >Disabled</a-select-option
-                >
                 <a-select-option value="Yiminghe">yiminghe</a-select-option>
               </a-select>
             </a-from-item>
@@ -228,14 +219,11 @@
                   style="margin: 0 2px 24px"
                   placeholder="请选择状态"
                   @focus="focusStatus"
-                  @change="handleChangeStauts"
+                  @change="handleChangeStautsModal"
                 >
-                  <a-select-option value="jack">Jack</a-select-option>
-                  <a-select-option value="lucy">Lucy</a-select-option>
-                  <a-select-option value="disabled" disabled
-                    >Disabled</a-select-option
-                  >
-                  <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                  <a-select-option value="all">全部</a-select-option>
+                  <a-select-option value="vaild">有效</a-select-option>
+                  <a-select-option value="invaild">失效</a-select-option>
                 </a-select>
               </div>
             </a-from-item>
@@ -246,7 +234,7 @@
               style="margin-top: 20px"
               :wrapper-col="{ span: 14, offset: 8 }"
             >
-              <a-button type="primary" @click.prevent="handleOk">保存</a-button>
+              <a-button type="primary" @click="handleOk">保存</a-button>
               <a-button style="margin-left: 10px" @click="hiddenModal"
                 >取消</a-button
               >
@@ -258,7 +246,7 @@
   </a-layout>
 </template>
 <script setup>
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive, toRaw } from "vue";
 import {
   SearchOutlined,
   EditOutlined,
@@ -269,7 +257,65 @@ import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
 import { getProductInfo } from "@src/api/requests.js";
 
-const userName = ref("");
+const productName = ref("");
+const productClissify = ref("");
+let productStatus = ref("");
+
+let productInfo = ref("");
+let modalTitle = ref("新增");
+const visible = ref(false);
+
+const previewVisible = ref(false);
+const previewImage = ref("");
+const previewTitle = ref("");
+const formRef = ref("");
+
+let formState = reactive({
+  productName: "",
+  info: "",
+  productPic: [],
+  grade: "",
+  rank: "",
+  sortNum: "",
+  hasOrder: [],
+  Manager: "",
+  status: "",
+  detailContent: "", // 富文本内容
+});
+const rules = reactive({
+  productName: {
+    required: true,
+    validator: validateName,
+    message: "这里输入名称",
+  },
+  info: {
+    required: true,
+    validator: validateInfo,
+    message: "这里输入简述",
+  },
+});
+
+let validateName = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("请输入名称");
+  } else {
+    if (formState.checkPass !== "") {
+      formRef.value.validateFields("请检查名称");
+    }
+    return Promise.resolve();
+  }
+};
+let validateInfo = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("请输入简述");
+  } else {
+    if (formState.checkPass !== "") {
+      formRef.value.validateFields("请检查简述");
+    }
+    return Promise.resolve();
+  }
+};
+
 // 表格
 const columns = [
   {
@@ -338,7 +384,6 @@ const columns = [
   },
 ];
 
-let productInfo = ref("");
 onMounted(() => {
   let current = 1;
   let pages = 1;
@@ -356,45 +401,53 @@ onMounted(() => {
 
   //   dialog
 });
+
 function edit(key) {
   console.log("当前行索引：", key);
-  let title = key == undefined ? "新增" : "编辑";
   key = key == undefined ? "新增" : "编辑";
+  let title = modalTitle.value;
   showModal(title, key);
-  //   editableData[key] = cloneDeep(
-  //     dataSource.value.filter((item) => key === item.key)[0]
-  //   );
+}
+
+function getProductName() {
+  console.log("名称：", productName.value);
+}
+
+function handleChangeClissify(value) {
+  productClissify.value = value;
+  console.log(`selected ${value}`);
 }
 
 function onSearch() {
-  console.log("onSearch");
+  visible.value = true;
+  modalTitle.value = "编辑";
+  console.log(
+    "onSearch",
+    "名称：",
+    productName.value,
+    "类别：",
+    productClissify.value,
+    "状态：",
+    productStatus.value,
+    "弹窗标题：",
+    modalTitle.value
+  );
 }
 function focus() {
   console.log("focus");
 }
-function handleChange(value) {
-  console.log(`selected ${value}`);
-}
 
 // modal
-const value = ref([]);
-const visible = ref(false);
+function handleValidate(...args) {
+  console.log(args);
+}
+
+// const value = ref([]);
 const dialogTitle = ref("");
 const dialogIndex = ref("");
 function hiddenModal() {
   visible.value = false;
 }
-
-let formState = reactive({
-  info: "",
-  username: "",
-  sortNum: "",
-  productPic: "",
-  grade: "",
-  rank: "",
-  detailContent: "", // 富文本内容
-  status: "",
-});
 
 const onFinish = (values) => {
   console.log("Success:", values);
@@ -413,16 +466,13 @@ function showModal(title, index) {
   //   return dialogIndex.value;
 }
 
-function handleOk(e) {
-  console.log(e);
+function handleOk() {
   visible.value = false;
+  console.log("submit!", toRaw(formState));
+  formRef.value.resetFields();
 }
 
-const previewVisible = ref(false);
-const previewImage = ref("");
-const previewTitle = ref("");
-
-const fileList = ref([]);
+// const fileList = ref([]);
 
 const handleCancel = () => {
   previewVisible.value = false;
@@ -442,11 +492,24 @@ const handlePreview = async (file) => {
 };
 
 // status
-function focusStatus() {
-  console.log("focusStatus");
+function focusStatusManager(value) {
+  console.log("focusStatusManager", value);
+}
+function focusStatus(value) {
+  console.log("focusStatus", value);
 }
 function handleChangeStauts(value) {
-  console.log(`selected-Stauts ${value}`);
+  productStatus.value = value;
+  console.log(`selected ${value}`);
+}
+function handleChangeManager(value) {
+  formState.Manager.value = value;
+  console.log(`selected ${value}`);
+}
+function handleChangeStautsModal(value) {
+  console.log(value);
+  formState.status = value;
+  console.log(`selected ${value}`);
 }
 </script>
 
