@@ -92,6 +92,27 @@ export function breadFactory(fullPath){
         case '/main-common/product1':
             breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"product1",breadName:"省级产品类别"}]
             break;
+        case '/main-common/product2':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"product2",breadName:"省级产品"}]
+            break;
+        case '/main-common/product3':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"product3",breadName:"产品视频"}]
+            break;
+        case '/main-common/page1':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"page1",breadName:"轮播图管理"}]
+            break;
+        case '/main-common/page2':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"page2",breadName:"宣传图册管理"}]
+            break;
+        case '/main-common/page3':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"page3",breadName:"公告管理"}]
+            break;
+        case '/main-common/page4':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"page4",breadName:"促销管理"}]
+            break;
+        case '/main-common/page5':
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"page5",breadName:"地市促销管理"}]
+            break;
         default:
             breadArr=[];
     }

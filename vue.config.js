@@ -35,6 +35,7 @@ module.exports = defineConfig({
     config.entryPoints.get('app').clear().add('./src/index.js').end()
       .resolve.alias
       .set('@src', resolve('src'))
+      .set('@coms',resolve('src/components'))
       .set('@img', resolve('src/assets/images'))
       .set('@stores', resolve('src/store'))
       .set('@store', resolve('src/store/store.js'))
