@@ -81,6 +81,26 @@ const routes = [
                         name:"product3",
                         component:()=>import('@src/views/product/productVideo.vue')
                     },{
+                        path:"page1",
+                        name:"page1",
+                        component:()=>import('@src/views/PageSlideMgmt')
+                    },{
+                        path:"page2",
+                        name:"page2",
+                        component:()=>import('@src/views/product/productVideo.vue')
+                    },{
+                        path:"page3",
+                        name:"page3",
+                        component:()=>import('@src/views/PublicAnnounce')
+                    },{
+                        path:"page4",
+                        name:"page4",
+                        component:()=>import('@src/views/product/productVideo.vue')
+                    },{
+                        path:"page5",
+                        name:"page5",
+                        component:()=>import('@src/views/product/productVideo.vue')
+                    },{
                         path:"",
                         name:"blank1",
                         component:()=>import('@src/views/HomeBlank')
