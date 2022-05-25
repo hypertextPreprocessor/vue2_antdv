@@ -87,7 +87,7 @@ const routes = [
                     },{
                         path:"page2",
                         name:"page2",
-                        component:()=>import('@src/views/product/productVideo.vue')
+                        component:()=>import('@src/views/pages/posterManage.vue')
                     },{
                         path:"page3",
                         name:"page3",

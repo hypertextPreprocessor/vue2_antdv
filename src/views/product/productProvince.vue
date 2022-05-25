@@ -70,41 +70,35 @@
           </a-table>
           <a-button class="add" type="primary" @click="edit">新增</a-button>
         </section>
-
         <a-modal
-          :model="formState"
-          ref="formRef"
           v-model:visible="visible"
           :title="modalTitle"
-          @ok="handleOk"
           :footer="null"
+          width="700px"
         >
           <a-form
             :model="formState"
+            ref="formRef"
             name="basic"
             :label-col="{ span: 6 }"
             :wrapper-col="{ span: 12 }"
             autocomplete="off"
             @validate="handleValidate"
-            @finish="onFinish"
             @finishFailed="onFinishFailed"
           >
-            <a-from-item label="产品类别" name="productStatus">
-              <div style="margin-left: 47px">
-                <span>产品类别：</span>
-                <a-select
-                  ref="select"
-                  style="margin: 0 2px 28px"
-                  placeholder="请选择产品类别"
-                  @focus="focus"
-                  @change="handleChangeClissify"
-                >
-                  <a-select-option value="all">全部</a-select-option>
-                  <a-select-option value="company">公司业务</a-select-option>
-                  <a-select-option value="enterprise">企业业务</a-select-option>
-                </a-select>
-              </div>
-            </a-from-item>
+            <a-form-item label="产品类别" name="productStatus">
+              <a-select
+                ref="select"
+                placeholder="请选择产品类别"
+                v-model:value="formState.productClissify"
+                @focus="focus"
+                @change="handleChangeClissify"
+              >
+                <a-select-option value="ticket">芬兰船票</a-select-option>
+                <a-select-option value="company">公司业务</a-select-option>
+                <a-select-option value="enterprise">企业业务</a-select-option>
+              </a-select>
+            </a-form-item>
             <a-form-item
               label="名称"
               name="productName"
@@ -130,6 +124,7 @@
                   v-model:file-list="formState.productPic"
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                   list-type="picture-card"
+                  @change="handleChangePic"
                   @preview="handlePreview"
                 >
                   <div v-if="formState.productPic.length < 1">
@@ -147,11 +142,7 @@
                 </a-modal>
               </div>
             </a-form-item>
-            <a-form-item
-              label="积分"
-              name="grade"
-              :rules="[{ required: true, message: '这里输入积分' }]"
-            >
+            <a-form-item label="积分" name="grade" :rules="rules.grade">
               <a-input
                 placeholder="这里输入积分"
                 v-model:value="formState.grade"
@@ -175,10 +166,6 @@
                 <a-checkbox value="是否新品">是否新品</a-checkbox>
                 <a-checkbox value="是否热门">是否热门</a-checkbox>
                 <a-checkbox value="云网/saas">云网/saas</a-checkbox>
-                <a-checkbox value="云网/saas">云网/saas</a-checkbox>
-                <a-checkbox value="是否支持快速下单"
-                  >是否支持快速下单</a-checkbox
-                >
                 <a-checkbox value="是否支持快速下单"
                   >是否支持快速下单</a-checkbox
                 >
@@ -197,12 +184,11 @@
                 v-model:value="formState.sortNum"
               />
             </a-form-item>
-            <a-from-item label="客户经理" name="productStatus">
-              <span style="margin-left: 48px">客户经理：</span>
+            <a-form-item label="客户经理" name="productStatus">
               <a-select
                 ref="select"
-                style="margin: 0 2px 24px"
                 placeholder="请选择客户经理"
+                :value="formState.Manager"
                 @focus="focusStatusManager"
                 @change="handleChangeManager"
               >
@@ -210,25 +196,21 @@
                 <a-select-option value="lucy">Lucy</a-select-option>
                 <a-select-option value="Yiminghe">yiminghe</a-select-option>
               </a-select>
-            </a-from-item>
-            <a-from-item label="状态" name="productStatus">
-              <div style="margin-left: 76px">
-                <span>状态：</span>
-                <a-select
-                  ref="select"
-                  style="margin: 0 2px 24px"
-                  placeholder="请选择状态"
-                  @focus="focusStatus"
-                  @change="handleChangeStautsModal"
-                >
-                  <a-select-option value="all">全部</a-select-option>
-                  <a-select-option value="vaild">有效</a-select-option>
-                  <a-select-option value="invaild">失效</a-select-option>
-                </a-select>
-              </div>
-            </a-from-item>
-            <a-form-item label="详情" name="username">
-              <QuillEditor theme="snow" />
+            </a-form-item>
+            <a-form-item label="状态" name="productStatus">
+              <a-select
+                ref="select"
+                placeholder="请选择状态"
+                :value="formState.status"
+                @focus="focusStatus"
+                @change="handleChangeStautsModal"
+              >
+                <a-select-option value="vaild">有效</a-select-option>
+                <a-select-option value="invaild">失效</a-select-option>
+              </a-select>
+            </a-form-item>
+            <a-form-item label="详情" name="content">
+              <QuillEditor v-model:value="formState.content" theme="snow" />
             </a-form-item>
             <a-form-item
               style="margin-top: 20px"
@@ -247,6 +229,7 @@
 </template>
 <script setup>
 import { onMounted, ref, reactive, toRaw } from "vue";
+import { message } from "ant-design-vue";
 import {
   SearchOutlined,
   EditOutlined,
@@ -260,61 +243,6 @@ import { getProductInfo } from "@src/api/requests.js";
 const productName = ref("");
 const productClissify = ref("");
 let productStatus = ref("");
-
-let productInfo = ref("");
-let modalTitle = ref("新增");
-const visible = ref(false);
-
-const previewVisible = ref(false);
-const previewImage = ref("");
-const previewTitle = ref("");
-const formRef = ref("");
-
-let formState = reactive({
-  productName: "",
-  info: "",
-  productPic: [],
-  grade: "",
-  rank: "",
-  sortNum: "",
-  hasOrder: [],
-  Manager: "",
-  status: "",
-  detailContent: "", // 富文本内容
-});
-const rules = reactive({
-  productName: {
-    required: true,
-    validator: validateName,
-    message: "这里输入名称",
-  },
-  info: {
-    required: true,
-    validator: validateInfo,
-    message: "这里输入简述",
-  },
-});
-
-let validateName = async (_rule, value) => {
-  if (value === "") {
-    return Promise.reject("请输入名称");
-  } else {
-    if (formState.checkPass !== "") {
-      formRef.value.validateFields("请检查名称");
-    }
-    return Promise.resolve();
-  }
-};
-let validateInfo = async (_rule, value) => {
-  if (value === "") {
-    return Promise.reject("请输入简述");
-  } else {
-    if (formState.checkPass !== "") {
-      formRef.value.validateFields("请检查简述");
-    }
-    return Promise.resolve();
-  }
-};
 
 // 表格
 const columns = [
@@ -383,6 +311,76 @@ const columns = [
     key: "action",
   },
 ];
+let productInfo = ref("");
+
+const formRef = ref("");
+let modalTitle = ref("新增");
+const visible = ref(false);
+const previewVisible = ref(false);
+const previewImage = ref("");
+const previewTitle = ref("");
+
+const formState = reactive({
+  productClissify: "ticket",
+  productName: "",
+  info: "",
+  productPic: [],
+  grade: "",
+  rank: "",
+  sortNum: "",
+  hasOrder: [],
+  Manager: "jack",
+  status: "vaild",
+  content: "", // 富文本内容
+});
+const rules = reactive({
+  productName: {
+    required: true,
+    validator: validateName,
+    message: "这里输入名称",
+  },
+  info: {
+    required: true,
+    validator: validateInfo,
+    message: "这里输入简述",
+  },
+  grade: {
+    required: true,
+    validator: validateGrade,
+    message: "这里输入积分",
+  },
+});
+
+let validateName = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("请输入名称");
+  } else {
+    if (formState.productName !== "") {
+      formRef.value.validateFields("请检查名称");
+    }
+    return Promise.resolve();
+  }
+};
+let validateInfo = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("请输入简述");
+  } else {
+    if (formState.info !== "") {
+      formRef.value.validateFields("请检查简述");
+    }
+    return Promise.resolve();
+  }
+};
+let validateGrade = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("请输入积分");
+  } else {
+    if (formState.grade !== "") {
+      formRef.value.validateFields("请检查简述");
+    }
+    return Promise.resolve();
+  }
+};
 
 onMounted(() => {
   let current = 1;
@@ -415,6 +413,7 @@ function getProductName() {
 
 function handleChangeClissify(value) {
   productClissify.value = value;
+  formState.productClissify = value;
   console.log(`selected ${value}`);
 }
 
@@ -442,16 +441,15 @@ function handleValidate(...args) {
   console.log(args);
 }
 
-// const value = ref([]);
 const dialogTitle = ref("");
 const dialogIndex = ref("");
 function hiddenModal() {
   visible.value = false;
 }
 
-const onFinish = (values) => {
-  console.log("Success:", values);
-};
+// const onFinish = (values) => {
+//   console.log("Success:", values);
+// };
 
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
@@ -469,15 +467,28 @@ function showModal(title, index) {
 function handleOk() {
   visible.value = false;
   console.log("submit!", toRaw(formState));
-  formRef.value.resetFields();
+  // formState.hasOrder = [];
+  // formState.content = "";
+  // formRef.value.resetFields();
 }
-
-// const fileList = ref([]);
 
 const handleCancel = () => {
   previewVisible.value = false;
   previewTitle.value = "";
 };
+
+function handleChangePic(info) {
+  console.log(info.fileList[0].name);
+  if (info.file.status !== "uploading") {
+    console.log(info.file, info.fileList);
+  }
+
+  if (info.file.status === "done") {
+    message.success(`${info.file.name} file uploaded successfully`);
+  } else if (info.file.status === "error") {
+    message.error(`${info.file.name} file upload failed.`);
+  }
+}
 
 const handlePreview = async (file) => {
   if (!file.url && !file.preview) {
@@ -492,22 +503,21 @@ const handlePreview = async (file) => {
 };
 
 // status
-function focusStatusManager(value) {
-  console.log("focusStatusManager", value);
+function focusStatusManager() {
+  console.log("manager");
 }
-function focusStatus(value) {
-  console.log("focusStatus", value);
+function focusStatus() {
+  console.log("fromStatus");
 }
 function handleChangeStauts(value) {
   productStatus.value = value;
   console.log(`selected ${value}`);
 }
 function handleChangeManager(value) {
-  formState.Manager.value = value;
+  formState.Manager = value;
   console.log(`selected ${value}`);
 }
 function handleChangeStautsModal(value) {
-  console.log(value);
   formState.status = value;
   console.log(`selected ${value}`);
 }

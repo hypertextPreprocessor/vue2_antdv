@@ -5,7 +5,7 @@
       <a-card style="flex-grow: 1">
         <header>
           <a-input
-            v-model:value="userName"
+            v-model:value="videoName"
             style="width: 200px"
             placeholder="这里输入视频名称"
             @search="onSearch"
@@ -14,7 +14,6 @@
               <search-outlined />
             </template>
           </a-input>
-
           <a-button style="margin: 0 2px" type="primary">
             <template #icon><SearchOutlined /></template>
           </a-button>
@@ -49,40 +48,27 @@
           </a-table>
           <a-button class="add" type="primary" @click="edit()">新增</a-button>
         </section>
-
-        <a-modal
-          v-model:visible="visible"
-          title="新增"
-          @ok="handleOk"
-          :footer="null"
-        >
+        <a-modal v-model:visible="visible" :title="modalTitle" :footer="null">
           <a-form
             :model="formState"
+            ref="formRef"
             name="basic"
             :label-col="{ span: 6 }"
             :wrapper-col="{ span: 12 }"
             autocomplete="off"
-            @finish="onFinish"
+            @validate="handleValidate"
             @finishFailed="onFinishFailed"
           >
-            <a-form-item
-              label="名称"
-              name="username"
-              :rules="[{ required: true, message: '这里输入名称' }]"
-            >
+            <a-form-item label="名称" name="videoName" :rules="rules.videoName">
               <a-input
                 placeholder="这里输入视频名称"
-                v-model:value="formState.username"
+                v-model:value="formState.videoName"
               />
             </a-form-item>
-            <a-form-item
-              label="简述"
-              name="username"
-              :rules="[{ required: true, message: '这里输入简述' }]"
-            >
+            <a-form-item label="简述" name="info" :rules="rules.info">
               <a-input
                 placeholder="这里输入简述"
-                v-model:value="formState.username"
+                v-model:value="formState.info"
               />
             </a-form-item>
             <a-form-item label="视频" name="productPic">
@@ -91,12 +77,13 @@
                   >建议视频是大小不超过50M</span
                 >
                 <a-upload
-                  v-model:file-list="fileList"
+                  v-model:file-list="formState.productPic"
                   action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                   list-type="picture-card"
+                  @change="handleChangePic"
                   @preview="handlePreview"
                 >
-                  <div v-if="fileList.length < 1">
+                  <div v-if="formState.productPic.length < 1">
                     <plus-outlined />
                     <div style="margin-top: 8px; font-size: 13px">视频</div>
                   </div>
@@ -111,52 +98,37 @@
                 </a-modal>
               </div>
             </a-form-item>
-            <a-form-item
-              label="排序号"
-              name="sortNum"
-              :rules="[{ required: true, message: '这里输入序号' }]"
-            >
+            <a-form-item label="排序号" name="sortNum" :rules="rules.sort">
               <a-input
                 placeholder="这里输入序号"
                 v-model:value="formState.sortNum"
               />
             </a-form-item>
-            <a-from-item label="产品" name="productStatus">
-              <span style="margin-left: 74px">产品：</span>
+            <a-form-item label="产品" name="productStatus">
               <a-select
                 ref="select"
-                style="margin: 0 2px 28px"
-                placeholder="请选择产品状态"
+                placeholder="请选择产品"
+                v-model:value="formState.product"
                 @focus="focusStatus"
                 @change="handleChangeStauts"
               >
                 <a-select-option value="jack">Jack</a-select-option>
                 <a-select-option value="lucy">Lucy</a-select-option>
-                <a-select-option value="disabled" disabled
-                  >Disabled</a-select-option
-                >
                 <a-select-option value="Yiminghe">yiminghe</a-select-option>
               </a-select>
-            </a-from-item>
-            <a-from-item label="状态" name="productStatus">
-              <div style="margin-left: 74px">
-                <span>状态：</span>
-                <a-select
-                  ref="select"
-                  style="margin: 0 2px"
-                  placeholder="请选择状态"
-                  @focus="focusStatus"
-                  @change="handleChangeStauts"
-                >
-                  <a-select-option value="jack">Jack</a-select-option>
-                  <a-select-option value="lucy">Lucy</a-select-option>
-                  <a-select-option value="disabled" disabled
-                    >Disabled</a-select-option
-                  >
-                  <a-select-option value="Yiminghe">yiminghe</a-select-option>
-                </a-select>
-              </div>
-            </a-from-item>
+            </a-form-item>
+            <a-form-item label="状态" name="productStatus">
+              <a-select
+                ref="select"
+                placeholder="请选择状态"
+                v-model:value="formState.status"
+                @focus="focusStatus"
+                @change="handleChangeStauts"
+              >
+                <a-select-option value="open">启用</a-select-option>
+                <a-select-option value="ban">禁用</a-select-option>
+              </a-select>
+            </a-form-item>
             <a-form-item
               style="margin-top: 20px"
               :wrapper-col="{ span: 14, offset: 8 }"
@@ -173,16 +145,88 @@
   </a-layout>
 </template>
 <script setup>
-import { onMounted, ref, reactive } from "vue";
-// EditOutlined
+import { onMounted, ref, reactive, toRaw } from "vue";
+import { message } from "ant-design-vue";
 import {
   SearchOutlined,
   EditOutlined,
   PlusOutlined,
 } from "@ant-design/icons-vue";
+
 import { getProductInfo } from "@src/api/requests.js";
 
-const userName = ref("");
+const videoName = ref("");
+
+const visible = ref(false);
+const dialogTitle = ref("");
+const dialogIndex = ref("");
+const previewVisible = ref(false);
+const previewImage = ref("");
+const previewTitle = ref("");
+
+// const fileList = ref([]);
+
+let productInfo = ref("");
+let modalTitle = ref("新增");
+const formRef = ref("");
+
+let formState = reactive({
+  videoName: "",
+  info: "",
+  productPic: [],
+  sortNum: "",
+  product: "jack",
+  status: "open",
+});
+
+const rules = reactive({
+  videoName: {
+    required: true,
+    validator: validateName,
+    message: "这里输入视频名称",
+  },
+  info: {
+    required: true,
+    validator: validateInfo,
+    message: "这里输入简述",
+  },
+  sort: {
+    required: true,
+    validator: validateSort,
+    message: "这里输入序号",
+  },
+});
+
+let validateName = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("请输入视频名称");
+  } else {
+    if (formState.videoName !== "") {
+      formRef.value.validateFields("请检查视频名称");
+    }
+    return Promise.resolve();
+  }
+};
+let validateInfo = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("请输入简述");
+  } else {
+    if (formState.info !== "") {
+      formRef.value.validateFields("请检查简述");
+    }
+    return Promise.resolve();
+  }
+};
+let validateSort = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("请输入序号");
+  } else {
+    if (formState.info !== "") {
+      formRef.value.validateFields("请输入序号");
+    }
+    return Promise.resolve();
+  }
+};
 // 表格
 const columns = [
   {
@@ -226,7 +270,6 @@ const columns = [
   },
 ];
 
-let productInfo = ref("");
 onMounted(() => {
   let current = 1;
   let pages = 1;
@@ -241,40 +284,36 @@ onMounted(() => {
     }
     productInfo.value = temp;
   });
-
   //   dialog
 });
+
 function edit(key) {
   console.log("当前行索引：", key);
-  let title = key == undefined ? "新增" : "编辑";
   key = key == undefined ? "新增" : "编辑";
+  let title = modalTitle.value;
   showModal(title, key);
 }
 
 function onSearch() {
-  console.log("onSearch");
+  visible.value = true;
+  modalTitle.value = "编辑";
+  console.log(
+    "onSearch",
+    "视频名称：",
+    videoName.value,
+    "弹窗标题：",
+    modalTitle.value
+  );
 }
 
 // modal
-const visible = ref(false);
-const dialogTitle = ref("");
-const dialogIndex = ref("");
+function handleValidate(...args) {
+  console.log(args);
+}
+
 function hiddenModal() {
   visible.value = false;
 }
-
-let formState = reactive({
-  username: "",
-  sortNum: "",
-  productPic: "",
-  iconPic: "",
-  checked: false,
-  status: "",
-});
-
-const onFinish = (values) => {
-  console.log("Success:", values);
-};
 
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
@@ -292,18 +331,26 @@ function showModal(title, index) {
 function handleOk(e) {
   console.log(e);
   visible.value = false;
+  console.log("submit!", toRaw(formState));
 }
-
-const previewVisible = ref(false);
-const previewImage = ref("");
-const previewTitle = ref("");
-
-const fileList = ref([]);
 
 const handleCancel = () => {
   previewVisible.value = false;
   previewTitle.value = "";
 };
+
+function handleChangePic(info) {
+  console.log(info.fileList[0].name);
+  if (info.file.status !== "uploading") {
+    console.log(info.file, info.fileList);
+  }
+
+  if (info.file.status === "done") {
+    message.success(`${info.file.name} file uploaded successfully`);
+  } else if (info.file.status === "error") {
+    message.error(`${info.file.name} file upload failed.`);
+  }
+}
 
 const handlePreview = async (file) => {
   if (!file.url && !file.preview) {

@@ -62,12 +62,7 @@
             <a-button class="add" type="primary" @click="edit">新增</a-button>
           </section>
 
-          <a-modal
-            v-model:visible="visible"
-            :title="modalTitle"
-            @ok="handleOk"
-            :footer="null"
-          >
+          <a-modal v-model:visible="visible" :title="modalTitle" :footer="null">
             <a-form
               :model="formState"
               ref="formRef"
@@ -86,7 +81,7 @@
               >
                 <a-input
                   placeholder="这里输入名称"
-                  v-model:value="formState.username"
+                  v-model:value="formState.productName"
                 />
               </a-form-item>
               <a-form-item label="图片" name="productPic">
@@ -165,8 +160,7 @@
               <a-form-item label="是否支持快速下单" name="hasSupport">
                 <a-checkbox v-model:checked="formState.hasSupport"></a-checkbox>
               </a-form-item>
-              <a-from-item label="状态" name="status">
-                <span style="margin-left: 74px">状态：</span>
+              <a-form-item label="状态" name="status">
                 <a-select
                   ref="select"
                   style="margin: 0 2px"
@@ -178,7 +172,7 @@
                   <a-select-option value="vaild">有效</a-select-option>
                   <a-select-option value="invaild">失效</a-select-option>
                 </a-select>
-              </a-from-item>
+              </a-form-item>
               <a-form-item
                 style="margin-top: 20px"
                 :wrapper-col="{ span: 14, offset: 8 }"
@@ -217,8 +211,8 @@ const previewImage = ref("");
 const previewTitle = ref("");
 const formRef = ref("");
 
-let formState = reactive({
-  username: "",
+const formState = reactive({
+  productName: "",
   productPic: [],
   iconPic: [],
   sortNum: "",
@@ -229,15 +223,15 @@ let formState = reactive({
 const rules = reactive({
   productName: {
     required: true,
-    validator: validatePass,
+    validator: validateName,
     message: "这里输入名称",
   },
 });
-let validatePass = async (_rule, value) => {
+let validateName = async (_rule, value) => {
   if (value === "") {
     return Promise.reject("Please input the password");
   } else {
-    if (formState.checkPass !== "") {
+    if (formState.productName !== "") {
       formRef.value.validateFields("checkPass");
     }
     return Promise.resolve();
@@ -351,7 +345,7 @@ function showModal(title, index) {
 function handleOk() {
   visible.value = false;
   console.log("submit!", toRaw(formState));
-  formRef.value.resetFields();
+  // formRef.value.resetFields();
 }
 
 // productPic

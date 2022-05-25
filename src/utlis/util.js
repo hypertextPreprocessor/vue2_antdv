@@ -102,7 +102,7 @@ export function breadFactory(fullPath){
             breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"page1",breadName:"轮播图管理"}]
             break;
         case '/main-common/page2':
-            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"page2",breadName:"宣传图册管理"}]
+            breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"page2",breadName:"宣传图管理"}]
             break;
         case '/main-common/page3':
             breadArr=[{routeName:"mainCommon",breadName:"常规"},{routeName:"page3",breadName:"公告管理"}]
