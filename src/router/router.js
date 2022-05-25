@@ -101,6 +101,18 @@ const routes = [
                         name:"page5",
                         component:()=>import('@src/views/product/productVideo.vue')
                     },{
+                        path:"promotion1",
+                        name:"promotion1",
+                        component:()=>import('@src/views/FaqList')
+                    },{
+                        path:"promotion2",
+                        name:"promotion2",
+                        component:()=>import('@src/views/FaqList')
+                    },{
+                        path:"promotion3",
+                        name:"promotion3",
+                        component:()=>import('@src/views/FaqList')
+                    },{
                         path:"",
                         name:"blank1",
                         component:()=>import('@src/views/HomeBlank')

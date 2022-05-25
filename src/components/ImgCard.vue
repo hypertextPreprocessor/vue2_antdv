@@ -23,9 +23,14 @@
   </a-card>
 </template>
 <script setup>
+<<<<<<< HEAD
 import { defineProps } from "vue";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import errorImg from "@img/default.jpg";
+=======
+import {EditOutlined,DeleteOutlined} from '@ant-design/icons-vue';
+import errorImg from '@img/default.jpg';
+>>>>>>> ffcbd9ee2bf38e5d73e712bf0d94ea6fbc1f903c
 defineProps({
   src: {
     type: String,

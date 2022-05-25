@@ -2,11 +2,20 @@ import httpReq from '@src/utlis/http.js';
 import {useConfig} from '@store';
 import { message } from 'ant-design-vue';
 import qs from 'qs';
-import axios from 'axios';
 //var CryptoJS = require("crypto-js");
 async function getVercode(){
     var response = await httpReq.post('/code/check');
     return response;
+}
+//获取验证图片  以及token
+export function reqGet(data) {
+    return httpReq.post('/code',data);
+}
+
+//滑动或者点选验证
+export function reqCheck(data) {
+    return httpReq.post('/captcha/check',data);
+
 }
 //登录接口
 async function login({username,password,grantType="password"}){
@@ -19,7 +28,7 @@ async function login({username,password,grantType="password"}){
     });
     */
     // const params = new URLSearchParams({username,password,grant_type:grantType});
-  var response = await axios.post('/auth/oauth/token?'+qs.stringify({grant_type:grantType}),qs.stringify({username:username,password:password}),{
+  var response = await httpReq.post('/auth/oauth/token?'+qs.stringify({grant_type:grantType}),qs.stringify({username:username,password:password}),{
     headers: {
       Authorization: "Basic bWluaS10ZXN0Om1pbmktdGVzdA==",
       'Content-Type': "application/x-www-form-urlencoded"

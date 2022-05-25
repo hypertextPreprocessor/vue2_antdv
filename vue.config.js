@@ -72,27 +72,6 @@ module.exports = defineConfig({
         target: proxyAddr,
         changeOrigin: false,
         pathRewrite: {'^/api': '/'}
-      },
-      '/auth': {
-        enable: false,
-        ws: true,
-        target: proxyAddr,
-        changeOrigin: true,
-        pathRewrite: {'^/': '/'}
-      },
-      '/admin': {
-        enable: false,
-        ws: true,
-        target: proxyAddr,
-        changeOrigin: true,
-        pathRewrite: {'^/': '/'}
-      },
-      '/mini': {
-        enable: false,
-        ws: true,
-        target: proxyAddr,
-        changeOrigin: true,
-        pathRewrite: {'^/': '/'}
       }
     }
   }

@@ -6,7 +6,7 @@
     </teleport>
 </template>
 <script setup>
-    import {defineProps,toRefs,onMounted} from 'vue';
+    import {toRefs,onMounted} from 'vue';
     const props = defineProps({
         appendTo:String,
         visible:Boolean
