@@ -4,8 +4,7 @@
   import {useI18n} from 'vue-i18n';
   import { EffectFade,Autoplay } from 'swiper';
   import { Swiper, SwiperSlide } from 'swiper/vue';
-  import {login} from '@api';
-  //import VerifyPoints from '@src/widgets/verify/VerifyPoints';
+  //import {login} from '@api';
   import img1 from '@img/bg1.jpeg';
   import img2 from '@img/w2.jpg';
   import img3 from '@img/w3.jpg';
@@ -13,10 +12,13 @@
   import 'swiper/css/effect-fade';
   import 'swiper/less/autoplay';
   import { Form } from 'ant-design-vue';
-  import { useRouter } from 'vue-router'
+  //import { useRouter } from 'vue-router'
+  import verifyPoints from '@coms/verify/verifyPoints';
   export default defineComponent({
     setup(props,{expose}){
       const formRef = ref();
+      const verifyModal = ref(false);
+      const renew = ref(null);
       const useForm = Form.useForm;
       const formState = reactive({
         username:"",
@@ -34,18 +36,19 @@
         }]
       });
       const {validate,validateInfos} = useForm(formState,rules);
-      const router = useRouter();
+      //const router = useRouter();
       function submitForm(){
         validate().then(()=>{
-          console.log(validateInfos);
+          verifyModal.value = true;
+          /*
           login({username:formState.username,password:formState.password}).then(res=>{
             if(res.data){
               router.push({path:'/main-common'})
             }
           })
+          */
         }).catch(err=>{
           console.log(err);
-          //validated = toRefs(validateInfos);
           console.log(validateInfos.username);
         })
       }
@@ -79,7 +82,6 @@
               <div class="login_panel" style={{top:dynamicTopVal.value}}>
                 <div class="formarea">
                   <h3 style={{textAlign:"center"}}>{t("login.panelTitle")}</h3>
-                  {/*<VerifyPoints appendTo="body" visible={true}/>*/}
                   <a-form
                     ref={formRef}
                     model={formState}
@@ -117,6 +119,20 @@
                 {swiperItemStyle.map((item)=><SwiperSlide style={item}></SwiperSlide>)}
               </Swiper>
             </div>
+            <a-modal 
+              v-model:visible={verifyModal.value} 
+              title="验证码"
+              okText="确定"
+              cancelText="取消"
+              onOk={()=>{
+                console.log('a');
+              }}
+            >
+                <a-button type="primary" ghost onClick={()=>{
+                  console.log(renew.value);
+                }}>刷新</a-button>
+                <verifyPoints captcha-type="clickWord" img-size={{width:"362px",height:"162px"}} ref={renew}/>
+            </a-modal>
          </a-layout-content>
       );
     }
@@ -148,5 +164,12 @@
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-evenly;
+  }
+
+</style>
+<style>
+  .verify-img-out{
+      display: flex;
+      justify-content: center;
   }
 </style>

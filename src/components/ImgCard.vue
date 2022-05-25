@@ -29,7 +29,6 @@
     </a-card>
 </template>
 <script setup>
-import {defineProps} from 'vue';
 import {EditOutlined,DeleteOutlined} from '@ant-design/icons-vue';
 import errorImg from '@img/default.jpg';
 defineProps({
