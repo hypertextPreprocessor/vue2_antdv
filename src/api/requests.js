@@ -1,7 +1,6 @@
 import httpReq from '@src/utlis/http.js';
 import {useConfig} from '@store';
 import { message } from 'ant-design-vue';
-import qs from 'qs';
 //var CryptoJS = require("crypto-js");
 async function getVercode(){
     var response = await httpReq.post('/code/check');
@@ -14,11 +13,16 @@ export function reqGet(data) {
 
 //滑动或者点选验证
 export function reqCheck(data) {
-    return httpReq.post('/captcha/check',data);
-
+    var uri = encodeURIComponent(`captchaType=${data.captchaType}&pointJson=${data.pointJson}&token=${data.token}`);
+    return httpReq.post(`/code/check?${uri}`);
+    //return httpReq.post(`/code/check?captchaType=${data.captchaType}&pointJson=${data.pointJson}&token=${data.token}`);
+    //const params = new URLSearchParams({...data});
+    //{headers:{'content-type':'application/x-www-form-urlencoded'}}
+    //return httpReq.post('/code/check',data);
+    
 }
 //登录接口
-async function login({username,password,grantType="password"}){
+async function login({username,password,grantType="password",randomStr="clickWord",code}){
     /*
     var key = "thanks,pig4cloud";//"pigxpigxpigxpigx";
     var encrypted = CryptoJS.AES.encrypt(password,key,{
@@ -27,10 +31,11 @@ async function login({username,password,grantType="password"}){
         padding: CryptoJS.pad.NoPadding
     });
     */
-    // const params = new URLSearchParams({username,password,grant_type:grantType});
-  var response = await httpReq.post('/auth/oauth/token?'+qs.stringify({grant_type:grantType}),qs.stringify({username:username,password:password}),{
+  const params = new URLSearchParams({username,password,grant_type:grantType,randomStr,code});
+  var uri = encodeURIComponent(params.toString());
+  var response = await httpReq.post(`/auth/oauth/token?${uri}`,{
     headers: {
-      Authorization: "Basic bWluaS10ZXN0Om1pbmktdGVzdA==",
+      Authorization: "Basic cGlnOnBpZw==",
       'Content-Type': "application/x-www-form-urlencoded"
     }
   });

@@ -54,6 +54,7 @@
     import { onMounted, reactive, ref,nextTick,toRefs,getCurrentInstance} from 'vue';
     export default {
         name: 'VerifyPoints',
+        emits:['error','success'],
         props: {
             //弹出式pop，固定fixed
             mode: {
@@ -87,8 +88,7 @@
                 }
             }
         },
-        emits:['refresh'],
-        setup(props){
+        setup(props,{expose}){
             const renew = ref(null);
             const {mode,captchaType} = toRefs(props)
             const { proxy } = getCurrentInstance();
@@ -158,26 +158,31 @@
                                 "token":backToken.value
                             }
                             reqCheck(data).then(res=>{
-                                if (res.repCode == "0000") {
-                                    barAreaColor.value = '#4cae4c'
-                                    barAreaBorderColor.value = '#5cb85c'
-                                    text.value = '验证成功'
-                                    bindingClick.value = false
-                                    if (mode.value=='pop') {
-                                        setTimeout(()=>{
-                                            proxy.$parent.clickShow = false;
+                                console.log(res);
+                                if(res.data.code==1){
+                                    if (res.data.data.repCode == "0000") {
+                                        barAreaColor.value = '#4cae4c'
+                                        barAreaBorderColor.value = '#5cb85c'
+                                        text.value = '验证成功'
+                                        bindingClick.value = false
+                                        if (mode.value=='pop') {
+                                            setTimeout(()=>{
+                                                proxy.$parent.clickShow = false;
+                                                refresh();
+                                            },1500)
+                                        }
+                                        proxy.$parent.$emit('success', {captchaVerification})
+                                        proxy.$emit('success',captchaVerification);
+                                    }else{
+                                        proxy.$parent.$emit('error', proxy)
+                                        proxy.$emit('error',proxy);
+                                        barAreaColor.value = '#d9534f'
+                                        barAreaBorderColor.value = '#d9534f'
+                                        text.value = '验证失败'
+                                        setTimeout(() => {
                                             refresh();
-                                        },1500)
+                                        }, 700);
                                     }
-                                    proxy.$parent.$emit('success', {captchaVerification})
-                                }else{
-                                    proxy.$parent.$emit('error', proxy)
-                                    barAreaColor.value = '#d9534f'
-                                    barAreaBorderColor.value = '#d9534f'
-                                    text.value = '验证失败'
-                                    setTimeout(() => {
-                                        refresh();
-                                    }, 700);
                                 }
                             })
                         }, 400);
@@ -217,10 +222,10 @@
                     }
                     reqGet(data).then(res=>{
                         if (res.data.code == "1") {
-                            var {secretKey,originalImageBase64,token,wordList} = res.data.data.repData;
+                            var {secretKey:secretKeyx,originalImageBase64,token,wordList} = res.data.data.repData;
                             pointBackImgBase.value = originalImageBase64
                             backToken.value = token
-                            secretKey.value = secretKey
+                            secretKey.value = secretKeyx
                             poinTextList.value = wordList
                             text.value = '请依次点击【' + poinTextList.value.join(",") + '】'
                         }else{
@@ -237,6 +242,7 @@
                     })
                     return newPointArr
                 }
+                expose({poinTextList,refresh});
                 return {
                     secretKey,
                     checkNum,

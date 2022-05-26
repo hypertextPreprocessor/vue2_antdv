@@ -4,7 +4,7 @@
   import {useI18n} from 'vue-i18n';
   import { EffectFade,Autoplay } from 'swiper';
   import { Swiper, SwiperSlide } from 'swiper/vue';
-  //import {login} from '@api';
+  import {login} from '@api';
   import img1 from '@img/bg1.jpeg';
   import img2 from '@img/w2.jpg';
   import img3 from '@img/w3.jpg';
@@ -12,7 +12,7 @@
   import 'swiper/css/effect-fade';
   import 'swiper/less/autoplay';
   import { Form } from 'ant-design-vue';
-  //import { useRouter } from 'vue-router'
+  import { useRouter } from 'vue-router'
   import verifyPoints from '@coms/verify/verifyPoints';
   export default defineComponent({
     setup(props,{expose}){
@@ -36,17 +36,10 @@
         }]
       });
       const {validate,validateInfos} = useForm(formState,rules);
-      //const router = useRouter();
+      const router = useRouter();
       function submitForm(){
         validate().then(()=>{
           verifyModal.value = true;
-          /*
-          login({username:formState.username,password:formState.password}).then(res=>{
-            if(res.data){
-              router.push({path:'/main-common'})
-            }
-          })
-          */
         }).catch(err=>{
           console.log(err);
           console.log(validateInfos.username);
@@ -121,17 +114,31 @@
             </div>
             <a-modal 
               v-model:visible={verifyModal.value} 
-              title="验证码"
-              okText="确定"
+              width={410}
+              title="请完成安全验证"
+              okText="刷新"
               cancelText="取消"
               onOk={()=>{
-                console.log('a');
+                renew.value.refresh();
               }}
             >
-                <a-button type="primary" ghost onClick={()=>{
-                  console.log(renew.value);
-                }}>刷新</a-button>
-                <verifyPoints captcha-type="clickWord" img-size={{width:"362px",height:"162px"}} ref={renew}/>
+                <verifyPoints 
+                  captcha-type="clickWord" 
+                  img-size={{width:"362px",height:"162px"}} 
+                  ref={renew} 
+                  onError={(r)=>{
+                    console.log(r);
+                  }}
+                  onSuccess={(res)=>{
+                    verifyModal.value = false;
+                    login({username:formState.username,password:formState.password,code:res}).then(res=>{
+                      if(res.data){
+                        router.push({path:'/main-common'})
+                      }
+                    });
+                    console.log(res);
+                  }}
+                />
             </a-modal>
          </a-layout-content>
       );
@@ -166,10 +173,4 @@
     justify-content: space-evenly;
   }
 
-</style>
-<style>
-  .verify-img-out{
-      display: flex;
-      justify-content: center;
-  }
 </style>
