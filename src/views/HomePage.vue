@@ -5,6 +5,7 @@
     import  { MenuFoldOutlined,MenuUnfoldOutlined,UserOutlined} from '@ant-design/icons-vue';
     //import routes from '@src/router/router.js';
     import {breadFactory} from '@src/utlis/util.js';
+    import {usrLogout} from '@api';
     var collapsed = ref(false);
     var activeTab = ref(["1"]);
     var theme = ref("light");
@@ -19,9 +20,15 @@
         router.push({path:'/main-setting'});
     }
     function logout(){
-        sessionStorage.removeItem('userToken');
-        store.userToken=null;
-        router.push({name:'login'});
+        usrLogout().then(res=>{
+            var {code} = res.data;
+            if(code==1){
+                sessionStorage.removeItem('userToken');
+                store.userToken=null;
+                router.push({name:'login'});
+            }
+        });
+        
     }
     watch(()=>route.path,(now,pre)=>{
         console.log("现在:");

@@ -34,6 +34,9 @@ httpReq.interceptors.response.use(function(response){
     if(store.environment==="dev"){
         console.log(response);
     }
+    if(response.data.code!=1){
+        message.error(response.data.msg);
+    }
     return response;
 },function(error){
     if(error.response!=undefined && error.response.data!=undefined){

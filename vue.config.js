@@ -50,8 +50,12 @@ module.exports = defineConfig({
     /*
     config.plugin('html').init((Plugin, args) => {
         return new Plugin(Object.assign({}, ...args, {
+          templateParameters:{
+            'BASE_URL':resolve('src/assets/')
+          },
           title: '沃企+管理后台',
-          favicon: resolve('src/assets/favicon.ico')
+          favicon: resolve('src/assets/favicon.ico'),
+          template:'!!ejs-loader?variable=data&esModule=false!html-loader!public/index.ejs'
         }));
       }
     );
@@ -59,9 +63,11 @@ module.exports = defineConfig({
     config.plugin('html').tap(args=>{
       args[0].title = '沃企+管理后台';
       args[0].favicon = resolve('src/assets/favicon.ico');
-      args[0].template = resolve('!!ejs-loader!public/index.ejs');
+      //args[0].templateParameters = {'BASE_URL':resolve('src/assets/')};
+      args[0].template = resolve('public/index.ejs');
       return args;
     })
+    
   },
   css: {
     loaderOptions: {

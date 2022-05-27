@@ -132,7 +132,7 @@
                   onSuccess={(res)=>{
                     verifyModal.value = false;
                     login({username:formState.username,password:formState.password,code:res}).then(res=>{
-                      if(res.data){
+                      if(res.data.code==1){
                         router.push({path:'/main-common'})
                       }
                     });
