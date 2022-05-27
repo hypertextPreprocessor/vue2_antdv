@@ -26,17 +26,18 @@ export function reqCheck(data) {
 //登录接口
 async function login({username,password,grantType="password",randomStr="clickWord",code}){
     var key = "pigxpigxpigxpigx";
-    var encrypted = CryptoJS.AES.encrypt(password,key,{
-        iv:CryptoJS.enc.Latin1.parse(key),
+    let iv = CryptoJS.enc.Latin1.parse(key);
+    var encrypted = CryptoJS.AES.encrypt(password,iv,{
+        iv:iv,
         mode: CryptoJS.mode.CFB,
         padding: CryptoJS.pad.NoPadding
     });
-  const params = new URLSearchParams({username,password:encrypted});
+  const params = new URLSearchParams({username,password:encrypted.toString()});
   var uri_params = new URLSearchParams({grant_type:grantType,randomStr,code})
   var uri = uri_params.toString();
   var response = await httpReq.post(`/auth/oauth/token?${uri}`,params,{
     headers: {
-      "Authorization": "Basic cGlnOnBpZw==",
+      "Authorization": "Basic bWluaS1wcm9kOm1pbmktcHJvZA==",
       'content-type': "application/x-www-form-urlencoded"
     }
   });
@@ -44,10 +45,10 @@ async function login({username,password,grantType="password",randomStr="clickWor
     sessionStorage.setItem('userToken',access_token);
     var store = useConfig();
     store.userToken = access_token;
-    if(response.data.code){
+    if(!response.data.code){
         var rex = {
             code:1,
-            data:response,
+            data:response.data,
             msg:"登录成功"
         }
         return rex;

@@ -132,11 +132,10 @@
                   onSuccess={(res)=>{
                     verifyModal.value = false;
                     login({username:formState.username,password:formState.password,code:res}).then(res=>{
-                      if(res.data.code==1){
+                      if(res.code==1){
                         router.push({path:'/main-common'})
                       }
                     });
-                    console.log(res);
                   }}
                 />
             </a-modal>
