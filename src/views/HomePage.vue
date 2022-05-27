@@ -26,6 +26,10 @@
                 sessionStorage.removeItem('userToken');
                 store.userToken=null;
                 router.push({name:'login'});
+            }else{
+                sessionStorage.removeItem('userToken');
+                store.userToken=null;
+                router.push({name:'login'});
             }
         });
         
