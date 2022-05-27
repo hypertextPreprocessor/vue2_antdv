@@ -1,8 +1,7 @@
 import httpReq from '@src/utlis/http.js';
 import {useConfig} from '@store';
 import { message } from 'ant-design-vue';
-import qs from 'qs';
-//var CryptoJS = require("crypto-js");
+var CryptoJS = require("crypto-js");
 async function getVercode(){
     var response = await httpReq.post('/code/check');
     return response;
@@ -14,31 +13,52 @@ export function reqGet(data) {
 
 //滑动或者点选验证
 export function reqCheck(data) {
-    return httpReq.post('/captcha/check',data);
-
+    var uri = encodeURIComponent(`captchaType=${data.captchaType}&pointJson=${data.pointJson}&token=${data.token}`);
+    return httpReq.post(`/code/check?${uri}`);
+    /*
+    const params = new URLSearchParams({...data});
+    console.log(params.toString());
+    return httpReq.post('/code/check',params,{
+        headers:{'content-type':'application/x-www-form-urlencoded'}
+    });
+    */
 }
 //登录接口
-async function login({username,password,grantType="password"}){
-    /*
-    var key = "thanks,pig4cloud";//"pigxpigxpigxpigx";
-    var encrypted = CryptoJS.AES.encrypt(password,key,{
-        iv:CryptoJS.enc.Latin1.parse(key),
+async function login({username,password,grantType="password",randomStr="clickWord",code}){
+    var key = "pigxpigxpigxpigx";
+    let iv = CryptoJS.enc.Latin1.parse(key);
+    var encrypted = CryptoJS.AES.encrypt(password,iv,{
+        iv:iv,
         mode: CryptoJS.mode.CFB,
         padding: CryptoJS.pad.NoPadding
     });
-    */
-    // const params = new URLSearchParams({username,password,grant_type:grantType});
-  var response = await httpReq.post('/auth/oauth/token?'+qs.stringify({grant_type:grantType}),qs.stringify({username:username,password:password}),{
+  const params = new URLSearchParams({username,password:encrypted.toString()});
+  var uri_params = new URLSearchParams({grant_type:grantType,randomStr,code})
+  var uri = uri_params.toString();
+  var response = await httpReq.post(`/auth/oauth/token?${uri}`,params,{
     headers: {
-      Authorization: "Basic bWluaS10ZXN0Om1pbmktdGVzdA==",
-      'Content-Type': "application/x-www-form-urlencoded"
+      "Authorization": "Basic bWluaS1wcm9kOm1pbmktcHJvZA==",
+      'content-type': "application/x-www-form-urlencoded"
     }
   });
     var {access_token} = response.data;
     sessionStorage.setItem('userToken',access_token);
     var store = useConfig();
     store.userToken = access_token;
-    return response;
+    if(!response.data.code){
+        var rex = {
+            code:1,
+            data:response.data,
+            msg:"登录成功"
+        }
+        return rex;
+    }else{
+        return response.data;
+    }
+}
+//退出登录
+function usrLogout(){
+    return httpReq.delete('/auth/token/logout');
 }
  async function getProductInfo(params){
     var response = await httpReq.get('/mini/product/page',params);
@@ -85,4 +105,4 @@ function handleErrPop(res){
         message.error(msg);
     }
 }
-export {getVercode,login,loadOrgzTree,getProductInfo,addNewOrgz,editAOrgz};
+export {getVercode,login,loadOrgzTree,getProductInfo,addNewOrgz,editAOrgz,usrLogout};

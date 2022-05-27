@@ -4,10 +4,7 @@ import {useConfig} from '@store';
 import { message } from 'ant-design-vue';
 //const controller = new AbortController();
 //axios.defaults.baseURL = apiHost;
-//单单对登录有不同的请求方式
-function atLoginApi(config){
-    return config.url === "/auth/oauth/token";
-}
+
 const httpReq = axios.create({
     timeout: 5000,
     headers:{'content-type':'application/json'}
@@ -22,7 +19,7 @@ httpReq.interceptors.request.use(function(config){
 },function(error){
     return Promise.reject(error);
 });
-// bWluaS10ZXN0Om1pbmktdGVzdA==
+/*
 httpReq.interceptors.request.use(function(config){
     var store = useConfig();
     config.baseURL = store.apiHost;
@@ -31,13 +28,14 @@ httpReq.interceptors.request.use(function(config){
 },function(error){
     return Promise.reject(error);
 },{runWhen:atLoginApi});
+*/
 httpReq.interceptors.response.use(function(response){
     var store = useConfig();
     if(store.environment==="dev"){
         console.log(response);
     }
-    if(response.config.url==="/auth/oauth/token"){
-        return response
+    if(response.data.code!=1){
+        message.error(response.data.msg);
     }
     return response;
 },function(error){
