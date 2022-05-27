@@ -45,6 +45,16 @@ async function login({username,password,grantType="password"}){
     handleErrPop(response);
     return response;
 }
+export async function searchProductInfo(query){
+    var response = await httpReq.get('/mini/productCategory/list',query);
+    handleErrPop(response);
+    return response;
+}
+export async function handleProductSort(params){
+    var response = await httpReq.post('/mini/productCategory/save',params);
+    handleErrPop(response);
+    return response;
+}
 //系统管理-组织管理：组织树形结构模块
 async function loadOrgzTree(deptName=""){
     //const params = new URLSearchParams({deptName:deptName});

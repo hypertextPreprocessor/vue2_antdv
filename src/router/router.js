@@ -71,15 +71,15 @@ const routes = [
                     },{
                         path:"product1",
                         name:"product1",
-                        component:()=>import('@src/views/product/productSort.vue')
+                        component:()=>import('@src/views/product/productSort')
                     },{
                         path:"product2",
                         name:"product2",
-                        component:()=>import('@src/views/product/productProvince.vue')
+                        component:()=>import('@src/views/product/productProvince')
                     },{
                         path:"product3",
                         name:"product3",
-                        component:()=>import('@src/views/product/productVideo.vue')
+                        component:()=>import('@src/views/product/productVideo')
                     },{
                         path:"page1",
                         name:"page1",
@@ -87,7 +87,7 @@ const routes = [
                     },{
                         path:"page2",
                         name:"page2",
-                        component:()=>import('@src/views/pages/posterManage.vue')
+                        component:()=>import('@src/views/pages/posterManage')
                     },{
                         path:"page3",
                         name:"page3",
@@ -95,11 +95,11 @@ const routes = [
                     },{
                         path:"page4",
                         name:"page4",
-                        component:()=>import('@src/views/product/productVideo.vue')
+                        component:()=>import('@src/views/pages/saleManage.vue')
                     },{
                         path:"page5",
                         name:"page5",
-                        component:()=>import('@src/views/product/productVideo.vue')
+                        component:()=>import('@src/views/pages/citySaleManage')
                     },{
                         path:"promotion1",
                         name:"promotion1",
@@ -107,11 +107,27 @@ const routes = [
                     },{
                         path:"promotion2",
                         name:"promotion2",
-                        component:()=>import('@src/views/FaqList')
+                        component:()=>import('@src/views/recommand/prodAttribution')
                     },{
                         path:"promotion3",
                         name:"promotion3",
-                        component:()=>import('@src/views/FaqList')
+                        component:()=>import('@src/views/recommand/prodDeploy')
+                    },{
+                        path:"excel1",
+                        name:"excel1",
+                        component:()=>import('@src/views/report/commercialAndLoft')
+                    },{
+                        path:"excel2",
+                        name:"excel2",
+                        component:()=>import('@src/views/report/loftInfo')
+                    },{
+                        path:"excel3",
+                        name:"excel3",
+                        component:()=>import('@src/views/report/clientInfo')
+                    },{
+                        path:"excel4",
+                        name:"excel4",
+                        component:()=>import('@src/views/report/productInfo')
                     },{
                         path:"",
                         name:"blank1",

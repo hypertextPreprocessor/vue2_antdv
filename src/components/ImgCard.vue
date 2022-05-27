@@ -17,24 +17,28 @@
       </a-button>
     </template>
     <a-card-meta>
-      <template #title>产品</template>
-      <template #description>产品描述</template>
+      <template #title v-if="title">{{ titleInfo }}</template>
+      <template #description v-if="desc">{{ descInfo }}</template>
     </a-card-meta>
   </a-card>
 </template>
 <script setup>
-<<<<<<< HEAD
-import { defineProps } from "vue";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
 import errorImg from "@img/default.jpg";
-=======
-import {EditOutlined,DeleteOutlined} from '@ant-design/icons-vue';
-import errorImg from '@img/default.jpg';
->>>>>>> ffcbd9ee2bf38e5d73e712bf0d94ea6fbc1f903c
 defineProps({
   src: {
     type: String,
     required: true,
+  },
+  titleInfo: {
+    type: String,
+    required: false,
+    default: "产品",
+  },
+  descInfo: {
+    type: String,
+    required: false,
+    default: "产品描述",
   },
   edit: {
     type: Boolean,
@@ -42,6 +46,16 @@ defineProps({
     default: true,
   },
   del: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  title: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
+  desc: {
     type: Boolean,
     required: false,
     default: false,

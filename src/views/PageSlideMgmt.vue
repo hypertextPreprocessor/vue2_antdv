@@ -14,12 +14,36 @@
         ></template
       >
       <div class="cardGrid">
-        <ImgCard :del="true" src="https://192.168.0.202/img/sample.png" />
-        <ImgCard :del="true" src="https://192.168.0.202/img/sample.png" />
-        <ImgCard :del="true" src="https://192.168.0.202/img/sample.png" />
-        <ImgCard :del="true" src="https://192.168.0.202/img/sample.png" />
-        <ImgCard :del="true" src="https://192.168.0.202/img/sample.png" />
-        <ImgCard :del="true" src="https://192.168.0.202/img/sample.png" />
+        <ImgCard
+          :del="true"
+          :desc="true"
+          src="https://192.168.0.202/img/sample.png"
+        />
+        <ImgCard
+          :del="true"
+          :desc="true"
+          src="https://192.168.0.202/img/sample.png"
+        />
+        <ImgCard
+          :del="true"
+          :desc="true"
+          src="https://192.168.0.202/img/sample.png"
+        />
+        <ImgCard
+          :del="true"
+          :desc="true"
+          src="https://192.168.0.202/img/sample.png"
+        />
+        <ImgCard
+          :del="true"
+          :desc="true"
+          src="https://192.168.0.202/img/sample.png"
+        />
+        <ImgCard
+          :del="true"
+          :desc="true"
+          src="https://192.168.0.202/img/sample.png"
+        />
       </div>
     </a-card>
     <a-drawer

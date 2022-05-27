@@ -9,7 +9,6 @@
               v-model:value="productName"
               style="width: 200px"
               placeholder="这里输入名称"
-              @change="getProductName"
             >
               <template #prefix>
                 <search-outlined />
@@ -20,12 +19,11 @@
               ref="select"
               style="margin: 0 2px"
               placeholder="请选择状态"
-              @focus="focus"
+              v-model:value="productStatus"
               @change="handleChange"
             >
-              <a-select-option value="all">全部</a-select-option>
-              <a-select-option value="vaild">有效</a-select-option>
-              <a-select-option value="invaild">失效</a-select-option>
+              <a-select-option value="1">有效</a-select-option>
+              <a-select-option value="2">失效</a-select-option>
             </a-select>
             <a-button type="primary" @click="onSearch">
               <template #icon><SearchOutlined /></template>
@@ -166,7 +164,6 @@
                   style="margin: 0 2px"
                   placeholder="请选择状态"
                   :value="formState.status"
-                  @focus="focusStatus"
                   @change="handleChangeStauts"
                 >
                   <a-select-option value="vaild">有效</a-select-option>
@@ -198,11 +195,11 @@ import {
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 
-import { getProductInfo } from "@src/api/requests.js";
-
+import { getProductInfo, searchProductInfo } from "@src/api/requests.js";
+// handleProductSort
 const productName = ref("");
 let productInfo = ref("");
-let productStatus = ref("");
+let productStatus = ref();
 let modalTitle = ref("新增");
 const visible = ref(false);
 
@@ -231,6 +228,7 @@ let validateName = async (_rule, value) => {
   if (value === "") {
     return Promise.reject("Please input the password");
   } else {
+    console.log(formState.productName);
     if (formState.productName !== "") {
       formRef.value.validateFields("checkPass");
     }
@@ -297,27 +295,49 @@ function edit(key) {
 }
 
 function onSearch() {
-  visible.value = true;
   modalTitle.value = "编辑";
   console.log(
     "onSearch",
     "名称：",
     productName.value,
     "状态：",
-    productStatus.value,
-    "新增：",
-    modalTitle.value
+    productStatus.value
   );
+  searchProductInfo({
+    name: productName.value,
+    status: productStatus.value,
+  })
+    .then((res) => {
+      let temp = res.data.data;
+      if (temp.list.length > 0) {
+        temp.list.map((item) => {
+          item.isToOrder = item.isToOrder == 1 ? "是" : "否";
+          item.status = item.status == 1 ? "有效" : "失效";
+        });
+      }
+      productInfo.value = temp;
+      console.log(res.data);
+      // reset
+      productName.value = "";
+      productStatus.value = "";
+    })
+    .catch((err) => {
+      console.log(err);
+      productName.value = "";
+      productStatus.value = null;
+      console.log(
+        "onSearch",
+        "名称：",
+        productName.value,
+        "状态：",
+        productStatus.value
+      );
+    });
 }
-function getProductName() {
-  console.log("名称：", productName.value);
-}
-function focus() {
-  // console.log("focus");
-}
+
 function handleChange(value) {
   productStatus.value = value;
-  console.log(`selected ${value}`);
+  // console.log(`selected ${value}`);
 }
 
 // modal
@@ -344,7 +364,9 @@ function showModal(title, index) {
 
 function handleOk() {
   visible.value = false;
-  console.log("submit!", toRaw(formState));
+  console.log("submit!", ...toRaw(formState));
+
+  // handleProductSort({name,imgPath,icon	,orderNo,isQuickProductType	,status}).then(res=>{console.log(res)}).catch(err=>{console.log(err);})
   // formRef.value.resetFields();
 }
 
@@ -389,9 +411,6 @@ const handlePreviewIcon = async (file) => {
 };
 
 // status
-function focusStatus() {
-  console.log("focusStatus");
-}
 function handleChangeStauts(value) {
   formState.status = value;
   console.log(`selected-Stauts ${value}`);

@@ -1,17 +1,49 @@
 <template>
   <a-layout-content>
-    <a-card title="宣传图管理">
+    <a-card title="地市促销管理">
+      <template #extra
+        ><a-button type="primary" ghost @click="handlBtn"
+          >新增</a-button
+        ></template
+      >
       <div class="cardGrid">
         <ImgCard
-          titleInfo="我是产品类型"
+          :desc="true"
+          titleInfo="我是产品"
+          descInfo="我是市名"
           @click="handlBtn('edit')"
           src="https://192.168.0.202/img/sample.png"
         />
-        <ImgCard src="https://192.168.0.202/img/sample.png" />
-        <ImgCard src="https://192.168.0.202/img/sample.png" />
-        <ImgCard src="https://192.168.0.202/img/sample.png" />
-        <ImgCard src="https://192.168.0.202/img/sample.png" />
-        <ImgCard src="https://192.168.0.202/img/sample.png" />
+        <ImgCard
+          :desc="true"
+          titleInfo="我是产品"
+          descInfo="我是市名"
+          src="https://192.168.0.202/img/sample.png"
+        />
+        <ImgCard
+          :desc="true"
+          titleInfo="我是产品"
+          descInfo="我是市名"
+          src="https://192.168.0.202/img/sample.png"
+        />
+        <ImgCard
+          :desc="true"
+          titleInfo="我是产品"
+          descInfo="我是市名"
+          src="https://192.168.0.202/img/sample.png"
+        />
+        <ImgCard
+          :desc="true"
+          titleInfo="我是产品"
+          descInfo="我是市名"
+          src="https://192.168.0.202/img/sample.png"
+        />
+        <ImgCard
+          :desc="true"
+          titleInfo="我是产品"
+          descInfo="我是市名"
+          src="https://192.168.0.202/img/sample.png"
+        />
       </div>
     </a-card>
     <a-drawer
@@ -22,11 +54,38 @@
       cancelText="取消"
     >
       <a-form
-        :label-col="{ span: 8 }"
+        :label-col="{ span: 6 }"
         :wrapper-col="{ span: 16 }"
         :model="addState"
       >
-        <a-form-item name="poster" label="宣传图">
+        <a-form-item name="city" label="市名">
+          <a-input
+            v-model:value="city"
+            disabled="”true“"
+            placeholder="请输入市名"
+          />
+        </a-form-item>
+        <a-form-item name="sort" label="序号">
+          <a-input
+            v-model:value="sort"
+            type="number"
+            placeholder="请输入序号"
+          />
+        </a-form-item>
+        <a-form-item name="clissify" label="产品">
+          <a-select
+            ref="select"
+            placeholder="请选择产品"
+            v-model:value="productClissify"
+            @focus="focus"
+            @change="handleChangeClissify"
+          >
+            <a-select-option value="iron">钢铁侠</a-select-option>
+            <a-select-option value="enterprise">企业业务</a-select-option>
+            <a-select-option value="private">个人业务</a-select-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item name="poster" label="促销图">
           <a-upload
             v-model:file-list="fileList"
             action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -60,13 +119,23 @@ import { message } from "ant-design-vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 
 const addNewVisible = ref(false);
+const city = ref("");
 // const previewVisible = ref(false);
 // const previewImage = ref("");
 // const previewTitle = ref("");
 const previewVisible = ref(false);
 const previewImage = ref("");
 const previewTitle = ref("");
+const productClissify = ref("iron");
 const fileList = ref([]);
+
+function focus() {
+  console.log("focus");
+}
+function handleChangeClissify(value) {
+  productClissify.value = value;
+  console.log(`selected ${value}`);
+}
 
 const handleCancel = () => {
   previewVisible.value = false;
@@ -77,7 +146,6 @@ const handlePreview = async (file) => {
   if (!file.url && !file.preview) {
     // file.preview = await getBase64(file.originFileObj);
   }
-
   previewImage.value = file.url || file.preview;
   previewVisible.value = true;
   previewTitle.value =
@@ -114,23 +182,6 @@ function handleChangePoster(info) {
     message.error(`${info.file.name} file upload failed.`);
   }
 }
-
-// const handlePreview = async (file) => {
-//   if (!file.url && !file.preview) {
-//     // file.preview = await getBase64(file.originFileObj);
-//     file.preview = file.originFileObj;
-//   }
-//   previewImage.value = file.url || file.preview;
-//   console.log(previewImage.value.name);
-//   previewVisible.value = true;
-//   previewTitle.value =
-//     file.name || file.url.substring(file.url.lastIndexOf("/") + 1);
-// };
-
-// const handleCancelPreview = () => {
-//   previewVisible.value = false;
-//   previewTitle.value = "";
-// };
 </script>
 <style scoped>
 .cardGrid {
@@ -143,6 +194,9 @@ function handleChangePoster(info) {
 .cardGrid > div {
   margin-bottom: 25px;
   margin-right: 25px;
+}
+header {
+  margin-bottom: 20px;
 }
 .avatar-uploader > .ant-upload {
   width: 128px;
