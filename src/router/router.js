@@ -96,10 +96,10 @@ const routes = [
                         path:"page4",
                         name:"page4",
                         component:()=>import('@src/views/pages/saleManage.vue')
-                    },{
-                        path:"page5",
-                        name:"page5",
-                        component:()=>import('@src/views/pages/citySaleManage')
+                    // },{
+                    //     path:"page5",
+                    //     name:"page5",
+                    //     component:()=>import('@src/views/pages/citySaleManage')
                     },{
                         path:"promotion1",
                         name:"promotion1",

@@ -153,7 +153,7 @@ import {
   PlusOutlined,
 } from "@ant-design/icons-vue";
 
-import { getProductInfo } from "@src/api/requests.js";
+import { productVideoInfo } from "@src/api/requests.js";
 
 const videoName = ref("");
 
@@ -274,7 +274,7 @@ onMounted(() => {
   let current = 1;
   let pages = 1;
   let size = 10;
-  getProductInfo({ current, pages, size }).then((res) => {
+  productVideoInfo({ current, pages, size }).then((res) => {
     let temp = res.data.data;
     if (temp.list.length > 0) {
       temp.list.map((item) => {
@@ -284,6 +284,7 @@ onMounted(() => {
     }
     productInfo.value = temp;
   });
+
   //   dialog
 });
 

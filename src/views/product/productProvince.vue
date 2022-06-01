@@ -18,7 +18,6 @@
             ref="select"
             style="margin: 0 2px"
             placeholder="请选择产品类别"
-            @focus="focus"
             @change="handleChangeClissify"
           >
             <a-select-option value="all">全部</a-select-option>
@@ -238,7 +237,7 @@ import {
 import { QuillEditor } from "@vueup/vue-quill";
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 
-import { getProductInfo } from "@src/api/requests.js";
+import { productProvinceInfo } from "@src/api/requests.js";
 
 const productName = ref("");
 const productClissify = ref("");
@@ -386,7 +385,7 @@ onMounted(() => {
   let current = 1;
   let pages = 1;
   let size = 10;
-  getProductInfo({ current, pages, size }).then((res) => {
+  productProvinceInfo({ current, pages, size }).then((res) => {
     let temp = res.data.data;
     if (temp.list.length > 0) {
       temp.list.map((item) => {
@@ -431,9 +430,6 @@ function onSearch() {
     "弹窗标题：",
     modalTitle.value
   );
-}
-function focus() {
-  console.log("focus");
 }
 
 // modal
