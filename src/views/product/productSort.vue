@@ -195,7 +195,11 @@ import {
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 
-import { getProductInfo, searchProductInfo } from "@src/api/requests.js";
+import {
+  ProductSortInfo,
+  productSortSearch,
+  productSortOperate,
+} from "@src/api/requests.js";
 // handleProductSort
 const productName = ref("");
 let productInfo = ref("");
@@ -273,7 +277,7 @@ onMounted(() => {
   let current = 1;
   let pages = 1;
   let size = 10;
-  getProductInfo({ current, pages, size }).then((res) => {
+  ProductSortInfo({ current, pages, size }).then((res) => {
     let temp = res.data.data;
     if (temp.list.length > 0) {
       temp.list.map((item) => {
@@ -296,6 +300,13 @@ function edit(key) {
 
 function onSearch() {
   modalTitle.value = "编辑";
+  productSortOperate(
+    { name: productName.value }
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err))
+  );
   console.log(
     "onSearch",
     "名称：",
@@ -303,7 +314,7 @@ function onSearch() {
     "状态：",
     productStatus.value
   );
-  searchProductInfo({
+  productSortSearch({
     name: productName.value,
     status: productStatus.value,
   })

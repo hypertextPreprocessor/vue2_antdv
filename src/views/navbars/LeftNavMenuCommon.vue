@@ -42,7 +42,7 @@
       <a-menu-item key="page2">宣传图管理</a-menu-item>
       <a-menu-item key="page3">公告管理</a-menu-item>
       <a-menu-item key="page4">促销管理</a-menu-item>
-      <a-menu-item key="page5">地市促销管理</a-menu-item>
+      <!-- <a-menu-item key="page5">地市促销管理</a-menu-item> -->
     </a-sub-menu>
     <a-sub-menu key="promotion">
       <template #icon><RocketOutlined /></template>
