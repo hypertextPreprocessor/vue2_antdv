@@ -61,9 +61,7 @@
                                 </a-input-search>-->
                             </template>
                         </a-tree>
-                        <a-empty v-else :image="simpleImage" >
-                            <template #description>暂无数据</template>
-                        </a-empty>
+                        <RenderEmpty v-else/>
                         </template>
                     </a-col>
                 </a-row>
@@ -112,9 +110,7 @@
                 :tree-data="treeDataSample"
             >
                 <template #notFoundContent>
-                    <a-empty :image="simpleImage" >
-                        <template #description>暂无数据</template>
-                    </a-empty>
+                    <RenderEmpty/>
                 </template>
                 <template #title="{name}">
                     {{name}}
@@ -129,7 +125,8 @@
     import {ref,onMounted,reactive} from 'vue';
     import {EditOutlined,DeleteOutlined} from '@ant-design/icons-vue';
     import {loadOrgzTree,addNewOrgz,editAOrgz,delAOrgz} from "@api";
-    import { Empty,message } from 'ant-design-vue';
+    import { message } from 'ant-design-vue';
+    import {RenderEmpty} from '@coms/frequentUsed.js';
     const drawerSending = ref(false);
     const insertAorgValue = ref('');
     const drawerAddvalue = ref();
@@ -153,7 +150,6 @@
         value:'id',
         key:'id'
     }
-    var simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
     function onSearch(){
         console.log(serchValue.value);
         loadTree(serchValue.value);

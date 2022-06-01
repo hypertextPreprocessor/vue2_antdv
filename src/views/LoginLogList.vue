@@ -28,7 +28,11 @@
                     </a-form-item>
                 </a-form>
                 <a-divider />
-                <a-table :dataSource="dataSource" :columns="columns" />
+                <a-table :dataSource="dataSource" :columns="columns" :loading="dataLoading" :pagination="pagination" @change="tableChange">
+                    <template #emptyText>
+                        <RenderEmpty/>
+                    </template>
+                </a-table>
             </a-card>
         </a-layout-content>
     </a-layout>
@@ -38,39 +42,66 @@
     import locale from 'ant-design-vue/es/date-picker/locale/zh_CN';
     import {SearchOutlined} from '@ant-design/icons-vue';
     import {loginLog} from '@api';
+    import {RenderEmpty} from '@coms/frequentUsed.js';
+    const pagination = reactive({
+        total:0,
+        defaultPageSize:10,
+        showSizeChanger:false,
+        showTotal:(total)=>`共${total}条数据`
+    });
+    function tableChange(pagination){
+        var {current,pageSize} = pagination;
+        loadTableData({current,pageSize});
+    }
+    function loadTableData({current=1,pageSize=10,title="",startDate="",endDate=""}={}){
+        loginLog({logType:9,current:current,size:pageSize,title,startDate,endDate}).then(res=>{
+            var {code,data} = res.data;
+            if(code==1){
+                var {total} = data;
+                dataSource.value = data.records;
+                pagination.total = total;
+            }else{
+                dataSource.value=[];
+            }
+            dataLoading.value = false;
+        });
+    }
     onMounted(()=>{
-        loginLog({logType:9,current:1,title:"random"})
+        loadTableData();
     });
     const columns = [
         {
             title: '登录用户',
-            dataIndex: 'user',
-            key: 'user',
+            dataIndex: 'title',
+            key: 'title',
         },{
             title: '登录账号',
-            dataIndex: 'userAccount',
-            key: 'userAccount',
+            dataIndex: 'params',
+            key: 'params',
         },{
             title: '登录时间',
-            dataIndex: 'loginTime',
-            key: 'loginTime',
+            dataIndex: 'createTime',
+            key: 'createTime',
         },{
             title: 'IP地址',
-            dataIndex: 'ipAddress',
-            key: 'ipAddress',
+            dataIndex: 'remoteAddr',
+            key: 'remoteAddr',
         }
     ]
-    const dataSource = ref([{
-        user: 'tanglin',
-        userAccount: 'super',
-        loginTime:"2022-05-20",
-        ipAddress: '192.168.11.127',
-    }]);
+    const dataLoading = ref(true);
+    const dataSource = ref(null);
     const formState = reactive({
-        user:""
+        user:"",
+        dateRange:null
     });
     const handleFinish=()=>{
-        console.log(formState.dateRange);
+        if(formState.dateRange!=null){
+            var startDate = formState.dateRange[0].toISOString();
+            var endDate = formState.dateRange[1].toISOString();
+            loadTableData({title:formState.user,startDate,endDate});
+        }else{
+            loadTableData({title:formState.user});
+        }
     }
     const handleFinishFailed=()=>{
 
