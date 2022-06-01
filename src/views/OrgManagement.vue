@@ -36,9 +36,17 @@
                                         <template #icon><EditOutlined /></template>
                                     </a-button>
                                     <span style="margin-left:13px;"></span>
-                                    <a-button type="primary" shape="default" size="small" danger ghost>
-                                        <template #icon><DeleteOutlined /></template>
-                                    </a-button>
+                                    <a-popconfirm
+                                        title="确定删除?"
+                                        ok-text="确定"
+                                        cancel-text="点错了"
+                                        @confirm="()=>{confirmDel(id)}"
+                                    >
+                                        <a-button type="primary" shape="default" size="small" danger ghost >
+                                            <template #icon><DeleteOutlined /></template>
+                                        </a-button>
+                                    </a-popconfirm>
+                                    
                                 </span>
                
                                 <!--<a-input-search
@@ -74,6 +82,8 @@
             v-model:visible="visible"
             title="编辑"
             :confirm-loading="confirmLoading"
+            cancelText="取消"
+            okText="确定"
             @ok="handleOk"
         >
             <p><a-input v-model:value="addAorgzValue" placeholder="输入组织名称" /></p>
@@ -118,8 +128,8 @@
 <script setup>
     import {ref,onMounted,reactive} from 'vue';
     import {EditOutlined,DeleteOutlined} from '@ant-design/icons-vue';
-    import {loadOrgzTree,addNewOrgz,editAOrgz} from "@api";
-    import { Empty } from 'ant-design-vue';
+    import {loadOrgzTree,addNewOrgz,editAOrgz,delAOrgz} from "@api";
+    import { Empty,message } from 'ant-design-vue';
     const drawerSending = ref(false);
     const insertAorgValue = ref('');
     const drawerAddvalue = ref();
@@ -188,7 +198,7 @@
    };
     const showModal = () => {
       visible.value = true;
-      addAorgzValue.value = editingItem.name.value;   
+      addAorgzValue.value = editingItem.name;   
     };
     function addNewItem(){
         console.log(treeData.value);
@@ -197,19 +207,29 @@
     const handleOk = ()=>{
         confirmLoading.value = true;
         var params = {
-          deptId:editingItem.id.value,
-          parentId:editingItem.parentId.value,
-          name:addAorgzValue.value
+          deptId:editingItem.id,
+          parentId:editingItem.parentId,
+          name:addAorgzValue.value,
+          sortOrder:1
         }
         editAOrgz(params).then(res=>{
             confirmLoading.value = false;
             console.log(res);
         });
     }
+    function confirmDel(id){
+        delAOrgz(id).then((res)=>{
+            var {code,msg} = res.data;
+            if(code==1){
+                message.success(msg);
+                loadTree();
+            }
+        })
+    }
     function editItem(name,id,parentId){
-        editingItem.name.value = name;
-        editingItem.id.value = id;
-        editingItem.parentId.value = parentId;
+        editingItem.name = name;
+        editingItem.id = id;
+        editingItem.parentId = parentId;
         showModal();
     }
     function loadTree(name=""){

@@ -86,7 +86,7 @@ async function loadOrgzTree(deptName=""){
 }
 //系统管理-组织管理：新增一个组织
 async function addNewOrgz(params){
-    var response = await httpReq.post('/admin/dept',params);
+    var response = await httpReq.post('/admin/dept',{...params});
     handleErrPop(response);
     return response;
 }
@@ -98,6 +98,14 @@ async function editAOrgz(params){
     handleErrPop(response);
     return response;
 }
+//系统管理-组织管理：删除一个组织
+function delAOrgz(id){
+    return httpReq.delete(`/admin/dept/${id}`);
+}
+//系统管理-登录日志列表
+function loginLog(data){
+    return httpReq.get("/admin/log/page",{params:{...data}});
+}
 //统一规范错误抛出弹窗
 function handleErrPop(res){
     var {code,msg} = res.data;
@@ -105,4 +113,4 @@ function handleErrPop(res){
         message.error(msg);
     }
 }
-export {getVercode,login,loadOrgzTree,getProductInfo,addNewOrgz,editAOrgz,usrLogout};
+export {getVercode,login,loadOrgzTree,getProductInfo,addNewOrgz,editAOrgz,usrLogout,delAOrgz,loginLog};

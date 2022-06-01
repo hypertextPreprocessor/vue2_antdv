@@ -81,7 +81,7 @@ module.exports = defineConfig({
   devServer: {
     proxy: {
       '/api': {
-        target: proxyAddr,
+        target:proxyAddr,
         changeOrigin:true,  // needed for virtual hosted sites
         pathRewrite: {'^/api': '/'}
       }

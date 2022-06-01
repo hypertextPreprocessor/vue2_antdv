@@ -34,9 +34,13 @@
     </a-layout>
 </template>
 <script setup>
-    import {reactive,ref} from 'vue';
+    import {reactive,ref,onMounted} from 'vue';
     import locale from 'ant-design-vue/es/date-picker/locale/zh_CN';
     import {SearchOutlined} from '@ant-design/icons-vue';
+    import {loginLog} from '@api';
+    onMounted(()=>{
+        loginLog({logType:9,current:1,title:"random"})
+    });
     const columns = [
         {
             title: '登录用户',
