@@ -12,7 +12,6 @@
           />
           <a-range-picker
             v-model:value="value1"
-            :locale="locale"
             @change="onRangeChange"
           />
           <a-button type="primary" @click="onSearch">
@@ -33,7 +32,6 @@
 </template>
 <script setup>
 // import { EditOutlined, DeleteOutlined } from "@ant-design/icons-vue";
-import locale from "ant-design-vue/es/date-picker/locale/zh_CN";
 import { SearchOutlined } from "@ant-design/icons-vue";
 import { ref } from "vue";
 

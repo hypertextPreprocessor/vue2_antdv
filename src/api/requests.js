@@ -34,11 +34,18 @@ async function login({username,password,grantType="password",randomStr="clickWor
     });
   const params = new URLSearchParams({username,password:encrypted.toString()});
   var uri_params = new URLSearchParams({grant_type:grantType,randomStr,code})
+  /*
+  var httpHeaders = {
+      "Authorization": "Basic bWluaS1wcm9kOm1pbmktcHJvZA==",
+      "Content-Type":"application/x-www-form-urlencoded"
+  };
+  var myHeaders = new Headers(httpHeaders);
+  */
   var uri = uri_params.toString();
   var response = await httpReq.post(`/auth/oauth/token?${uri}`,params,{
-    headers: {
-      "Authorization": "Basic bWluaS1wcm9kOm1pbmktcHJvZA==",
-      'Content-Type': "application/x-www-form-urlencoded"
+    headers:{
+        "Authorization": "Basic bWluaS1wcm9kOm1pbmktcHJvZA==",
+        "Content-Type":"application/x-www-form-urlencoded"
     }
   });
     var {access_token} = response.data;

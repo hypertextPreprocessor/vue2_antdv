@@ -46,7 +46,6 @@
         breads.value = arr;
     })
     onMounted(()=>{
-        
         document.querySelector('.ant-layout').style.height = window.document.documentElement.clientHeight+"px";
     });
 </script>

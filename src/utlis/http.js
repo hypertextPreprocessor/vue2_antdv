@@ -7,12 +7,22 @@ import { message } from 'ant-design-vue';
 
 const httpReq = axios.create({
     timeout: 5000,
-    headers:{'content-type':'application/json'}
+    headers:process.env.NODE_ENV=="development"?{
+        'Content-Type':'application/json',
+        "VERSION":"dev" //生产环境注释
+    }:{
+        'Content-Type':'application/json',
+    }
 });
 httpReq.interceptors.request.use(function(config){
     var store = useConfig();
     config.baseURL = store.apiHost;
-    if(store.userToken){
+    /*
+    if(/GET/i.test(config.method)){
+        config.data = { unused: 0 };
+    }
+    */
+    if(store.userToken!=undefined&&store.userToken!=null&&store.userToken!=""){
         config.headers['Authorization'] = 'bearer '+store.userToken;
     }
     return config;

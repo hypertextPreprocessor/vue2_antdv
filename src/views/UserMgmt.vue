@@ -40,7 +40,7 @@
                 :model="scoreFormState"
             >
                 <a-form-item>
-                    <a-range-picker v-model:value="scoreFormState.dateRange" :locale="locale"/>
+                    <a-range-picker v-model:value="scoreFormState.dateRange"/>
                 </a-form-item>
                 <a-form-item>
                     <a-select
@@ -79,7 +79,6 @@
     </a-layout>
 </template>
 <script setup>
-import locale from 'ant-design-vue/es/date-picker/locale/zh_CN';
 import {reactive,ref} from 'vue';
 const filterState = reactive({});
 const scoreFormState = reactive({});

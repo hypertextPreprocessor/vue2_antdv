@@ -2,7 +2,7 @@ const webpack = require('webpack');
 const path = require('path')
 const {GitRevisionPlugin} = require('git-revision-webpack-plugin');
 const {defineConfig} = require('@vue/cli-service');
-const {proxyAddr} = require('./config/config');
+//const {proxyAddr} = require('./config/config');
 const gitRevisionPlugin = new GitRevisionPlugin();
 const buildDate = JSON.stringify(new Date().toLocaleString())
 

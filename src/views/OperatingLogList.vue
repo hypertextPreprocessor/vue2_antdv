@@ -24,7 +24,6 @@
           <a-form-item name="dateRange">
             <a-range-picker
               v-model:value="formState.dateRange"
-              :locale="locale"
             />
           </a-form-item>
           <a-form-item>
@@ -50,7 +49,6 @@
 <script setup>
 import {RenderEmpty} from '@coms/frequentUsed.js';
 import { reactive, ref,onMounted } from "vue";
-import locale from "ant-design-vue/es/date-picker/locale/zh_CN";
 import {loginLog} from '@api';
 const dataLoading = ref(true);
 const pagination = reactive({
@@ -79,6 +77,9 @@ function loadTableData({current=1,pageSize=10,title=""}={}){
 onMounted(()=>{
   loadTableData();
 });
+function handleChange(x){
+  console.log(x);
+}
 const filterOption = (input, option) => {
   return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 };

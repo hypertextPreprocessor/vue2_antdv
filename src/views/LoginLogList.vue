@@ -16,7 +16,7 @@
                         </a-input>
                     </a-form-item>
                     <a-form-item name="dateRange">
-                        <a-range-picker v-model:value="formState.dateRange" :locale="locale"/>
+                        <a-range-picker v-model:value="formState.dateRange"/>
                     </a-form-item>
                     <a-form-item>
                         <a-button
@@ -28,21 +28,15 @@
                     </a-form-item>
                 </a-form>
                 <a-divider />
-                <a-table :dataSource="dataSource" :columns="columns" :loading="dataLoading" :pagination="pagination" @change="tableChange">
-                    <template #emptyText>
-                        <RenderEmpty/>
-                    </template>
-                </a-table>
+                <a-table :dataSource="dataSource" :columns="columns" :loading="dataLoading" :pagination="pagination" @change="tableChange"></a-table>
             </a-card>
         </a-layout-content>
     </a-layout>
 </template>
 <script setup>
     import {reactive,ref,onMounted} from 'vue';
-    import locale from 'ant-design-vue/es/date-picker/locale/zh_CN';
     import {SearchOutlined} from '@ant-design/icons-vue';
     import {loginLog} from '@api';
-    import {RenderEmpty} from '@coms/frequentUsed.js';
     const pagination = reactive({
         total:0,
         defaultPageSize:10,

@@ -16,7 +16,7 @@
                         </a-input>
                     </a-form-item>
                     <a-form-item name="dateRange">
-                        <a-range-picker v-model:value="formState.dateRange" :locale="locale"/>
+                        <a-range-picker v-model:value="formState.dateRange"/>
                     </a-form-item>
                     <a-form-item name="coper">
                         <a-select
@@ -151,7 +151,6 @@
 </template>
 <script setup>
     import {reactive,ref} from 'vue';
-    import locale from 'ant-design-vue/es/date-picker/locale/zh_CN';
     import {SearchOutlined,DownloadOutlined,FileExcelFilled} from '@ant-design/icons-vue';
     const formAddState = reactive({
       oppucation: '',
