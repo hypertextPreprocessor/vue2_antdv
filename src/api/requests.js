@@ -62,12 +62,12 @@ function usrLogout(){
 }
 // product sort
  export async function ProductSortInfo(query){
-    var response = await httpReq.get('/mini/productCategory/page',query);
+    var response = await httpReq.get('/mini/productCategory/page',{params:query});
     handleErrPop(response);
     return response;
 }
 export async function productSortSearch(query){
-    var response = await httpReq.get('/mini/productCategory/list',query);
+    var response = await httpReq.get('/mini/productCategory/list',{params:query});
     handleErrPop(response);
     return response;
 }
@@ -79,7 +79,7 @@ export async function productSortOperate(params){
 
 // product province
 export async function productProvinceInfo(query){
-    var response = await httpReq.get('/mini/cityProduct/getSysFilePage',query);
+    var response = await httpReq.get('/mini/cityProduct/getSysFilePage',{params:query});
     handleErrPop(response);
     return response;
 }
@@ -96,7 +96,7 @@ export async function productProvinceSingleInfo(id){
 
 // product video
 export async function productVideoInfo(query){
-    var response = await httpReq.get('/mini/productVideo/page',query);
+    var response = await httpReq.get('/mini/productVideo/page',{params:query});
     handleErrPop(response);
     return response;
 }

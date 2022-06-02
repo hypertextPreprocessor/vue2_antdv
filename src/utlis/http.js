@@ -6,7 +6,7 @@ import { message } from 'ant-design-vue';
 //axios.defaults.baseURL = apiHost;
 
 const httpReq = axios.create({
-    timeout: 5000,
+    timeout: 8000,
     headers:{'content-type':'application/json'}
 });
 httpReq.interceptors.request.use(function(config){

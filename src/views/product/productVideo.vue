@@ -18,7 +18,7 @@
             <template #icon><SearchOutlined /></template>
           </a-button>
         </header>
-        <section>
+        <body>
           <a-table
             :columns="columns"
             :data-source="productInfo.list"
@@ -47,7 +47,7 @@
             </template>
           </a-table>
           <a-button class="add" type="primary" @click="edit()">新增</a-button>
-        </section>
+        </body>
         <a-modal v-model:visible="visible" :title="modalTitle" :footer="null">
           <a-form
             :model="formState"
@@ -381,7 +381,7 @@ header {
 .editable-row-operations a {
   margin-right: 8px;
 }
-section {
+body {
   position: relative;
   margin-top: 12px;
   .add {

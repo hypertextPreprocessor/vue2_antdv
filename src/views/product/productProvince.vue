@@ -28,7 +28,6 @@
             ref="select"
             style="margin: 0 2px"
             placeholder="请选择状态"
-            @focus="focus"
             @change="handleChangeStauts"
           >
             <a-select-option value="all">全部</a-select-option>
@@ -39,12 +38,14 @@
             <template #icon><SearchOutlined /></template>
           </a-button>
         </header>
-        <section>
+        <body>
           <a-table
             :columns="columns"
             :data-source="productInfo.list"
             bordered
             :locale="{ emptyText: '暂无数据' }"
+            :pagination="pagination"
+            @change="tableChange"
           >
             <template #headerCell="{ column }">
               <template v-if="column.key === 'dataIndex'">
@@ -68,7 +69,7 @@
             </template>
           </a-table>
           <a-button class="add" type="primary" @click="edit">新增</a-button>
-        </section>
+        </body>
         <a-modal
           v-model:visible="visible"
           :title="modalTitle"
@@ -90,7 +91,6 @@
                 ref="select"
                 placeholder="请选择产品类别"
                 v-model:value="formState.productClissify"
-                @focus="focus"
                 @change="handleChangeClissify"
               >
                 <a-select-option value="ticket">芬兰船票</a-select-option>
@@ -188,7 +188,6 @@
                 ref="select"
                 placeholder="请选择客户经理"
                 :value="formState.Manager"
-                @focus="focusStatusManager"
                 @change="handleChangeManager"
               >
                 <a-select-option value="jack">Jack</a-select-option>
@@ -201,7 +200,6 @@
                 ref="select"
                 placeholder="请选择状态"
                 :value="formState.status"
-                @focus="focusStatus"
                 @change="handleChangeStautsModal"
               >
                 <a-select-option value="vaild">有效</a-select-option>
@@ -310,6 +308,16 @@ const columns = [
     key: "action",
   },
 ];
+const pagination = reactive({
+  total: 0,
+  defaultPageSize: 10,
+  showTotal: (total) => `共 ${total} 条数据`,
+  // showSizeChanger: true,
+  showSizeChanger: false,
+  // pageSizeOptions: ["5", "10", "15", "20"],
+  onShowSizeChange: (current, pageSize) => (this.pageSize = pageSize),
+});
+
 let productInfo = ref("");
 
 const formRef = ref("");
@@ -382,10 +390,11 @@ let validateGrade = async (_rule, value) => {
 };
 
 onMounted(() => {
-  let current = 1;
-  let pages = 1;
-  let size = 10;
-  productProvinceInfo({ current, pages, size }).then((res) => {
+  productProvincePage();
+});
+
+function productProvincePage({ current = 1, size = 10 } = {}) {
+  productProvinceInfo({ current, size }).then((res) => {
     let temp = res.data.data;
     if (temp.list.length > 0) {
       temp.list.map((item) => {
@@ -393,11 +402,16 @@ onMounted(() => {
         item.status = item.status == 1 ? "有效" : "失效";
       });
     }
+    pagination.total = temp.total;
     productInfo.value = temp;
   });
+}
 
-  //   dialog
-});
+function tableChange(pagination) {
+  const { current } = pagination;
+  console.log(current);
+  productProvincePage({ current });
+}
 
 function edit(key) {
   console.log("当前行索引：", key);
@@ -499,12 +513,7 @@ const handlePreview = async (file) => {
 };
 
 // status
-function focusStatusManager() {
-  console.log("manager");
-}
-function focusStatus() {
-  console.log("fromStatus");
-}
+
 function handleChangeStauts(value) {
   productStatus.value = value;
   console.log(`selected ${value}`);
@@ -526,7 +535,7 @@ header {
 .editable-row-operations a {
   margin-right: 8px;
 }
-section {
+body {
   position: relative;
   margin-top: 12px;
   .add {

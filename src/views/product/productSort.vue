@@ -29,12 +29,15 @@
               <template #icon><SearchOutlined /></template>
             </a-button>
           </header>
-          <section>
+          <body>
             <a-table
               :columns="columns"
               :data-source="productInfo.list"
               bordered
               :locale="{ emptyText: '暂无数据' }"
+              :pagination="pagination"
+              @change="tableChange"
+              rowKey="schedule_guid"
             >
               <template #headerCell="{ column }">
                 <template v-if="column.key === 'dataIndex'">
@@ -42,7 +45,7 @@
                 </template>
               </template>
 
-              <template #bodyCell="{ column, index }">
+              <template #bodyCell="{ column, index, record }">
                 <template v-if="column.key === 'dataIndex'">
                   {{ index + 1 }}
                 </template>
@@ -52,13 +55,13 @@
                 </template>
                 <template v-else-if="column.key === 'action'">
                   <span>
-                    <edit-outlined @click="edit(column.key, column.key)" />
+                    <edit-outlined @click="edit(column.key, record.orderNo)" />
                   </span>
                 </template>
               </template>
             </a-table>
             <a-button class="add" type="primary" @click="edit">新增</a-button>
-          </section>
+          </body>
 
           <a-modal v-model:visible="visible" :title="modalTitle" :footer="null">
             <a-form
@@ -195,11 +198,7 @@ import {
 } from "@ant-design/icons-vue";
 import { message } from "ant-design-vue";
 
-import {
-  ProductSortInfo,
-  productSortSearch,
-  productSortOperate,
-} from "@src/api/requests.js";
+import { ProductSortInfo } from "@src/api/requests.js";
 // handleProductSort
 const productName = ref("");
 let productInfo = ref("");
@@ -273,40 +272,51 @@ const columns = [
   },
 ];
 
+const pagination = reactive({
+  total: 0,
+  defaultPageSize: 10,
+  showTotal: (total) => `共 ${total} 条数据`,
+  // showSizeChanger: true,
+  showSizeChanger: false,
+  // pageSizeOptions: ["5", "10", "15", "20"],
+  onShowSizeChange: (current, pageSize) => (this.pageSize = pageSize),
+});
+
 onMounted(() => {
-  let current = 1;
-  let pages = 1;
-  let size = 10;
-  ProductSortInfo({ current, pages, size }).then((res) => {
+  // let current = 1;
+  // // let pages = 1;
+  // let size = 10;
+  productSortPage();
+
+  //   dialog
+});
+
+function productSortPage({ current = 1, size = 10 } = {}) {
+  ProductSortInfo({ current, size }).then((res) => {
+    console.log(current);
     let temp = res.data.data;
+    console.log(temp);
     if (temp.list.length > 0) {
       temp.list.map((item) => {
         item.isToOrder = item.isToOrder == 1 ? "是" : "否";
         item.status = item.status == 1 ? "有效" : "失效";
       });
+
+      // page
+      pagination.total = temp.total;
+      // pagination.current = temp.pageNum;
     }
     productInfo.value = temp;
   });
+}
 
-  //   dialog
-});
-
-function edit(key) {
-  console.log("当前行索引：", key);
-  key = key == undefined ? "新增" : "编辑";
-  let title = modalTitle.value;
-  showModal(title, key);
+function edit(key, orderId) {
+  console.log("当前行索引：", orderId);
+  modalTitle.value = key == "action" ? "编辑" : "新增";
+  showModal(modalTitle.value, orderId);
 }
 
 function onSearch() {
-  modalTitle.value = "编辑";
-  productSortOperate(
-    { name: productName.value }
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err))
-  );
   console.log(
     "onSearch",
     "名称：",
@@ -314,7 +324,7 @@ function onSearch() {
     "状态：",
     productStatus.value
   );
-  productSortSearch({
+  ProductSortInfo({
     name: productName.value,
     status: productStatus.value,
   })
@@ -330,7 +340,7 @@ function onSearch() {
       console.log(res.data);
       // reset
       productName.value = "";
-      productStatus.value = "";
+      productStatus.value = null;
     })
     .catch((err) => {
       console.log(err);
@@ -344,6 +354,12 @@ function onSearch() {
         productStatus.value
       );
     });
+}
+
+function tableChange(pagination) {
+  const { current } = pagination;
+  console.log(current);
+  productSortPage({ current });
 }
 
 function handleChange(value) {
@@ -435,7 +451,7 @@ header {
 .editable-row-operations a {
   margin-right: 8px;
 }
-section {
+body {
   position: relative;
   margin-top: 12px;
   .add {
