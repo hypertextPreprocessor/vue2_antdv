@@ -19,7 +19,7 @@ export function reqCheck(data) {
     const params = new URLSearchParams({...data});
     console.log(params.toString());
     return httpReq.post('/code/check',params,{
-        headers:{'content-type':'application/x-www-form-urlencoded'}
+        headers:{'Content-Type':'application/x-www-form-urlencoded'}
     });
     */
 }
@@ -38,7 +38,7 @@ async function login({username,password,grantType="password",randomStr="clickWor
   var response = await httpReq.post(`/auth/oauth/token?${uri}`,params,{
     headers: {
       "Authorization": "Basic bWluaS1wcm9kOm1pbmktcHJvZA==",
-      'content-type': "application/x-www-form-urlencoded"
+      'Content-Type': "application/x-www-form-urlencoded"
     }
   });
     var {access_token} = response.data;
@@ -337,13 +337,13 @@ async function loadOrgzTree(deptName=""){
     //const params = new URLSearchParams({deptName:deptName});
     var response = await httpReq.get('/admin/dept/tree',{params:{
         deptName:deptName
-    }},{headers: {'content-type': 'application/x-www-form-urlencoded'}})
+    }},{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
     handleErrPop(response);
     return response;
 }
 //系统管理-组织管理：新增一个组织
 async function addNewOrgz(params){
-    var response = await httpReq.post('/admin/dept',params);
+    var response = await httpReq.post('/admin/dept',{...params});
     handleErrPop(response);
     return response;
 }
@@ -355,14 +355,16 @@ async function editAOrgz(params){
     handleErrPop(response);
     return response;
 }
-
-//信息管理-楼宇管家管理：获取分页数据
-export async function infoLoftInfo(query){
-    var response = await httpReq.get('/mini/buildingManagement/getSysFilePage',query);
-    handleErrPop(response);
-    return response;
+//系统管理-组织管理：删除一个组织
+function delAOrgz(id){
+    return httpReq.delete(`/admin/dept/${id}`);
 }
-
+//系统管理-登录日志列表
+function loginLog(data){
+    return httpReq.get("/admin/log/page",{params:{...data}},{
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    });
+}
 //统一规范错误抛出弹窗
 function handleErrPop(res){
     var {code,msg} = res.data;
@@ -370,4 +372,4 @@ function handleErrPop(res){
         message.error(msg);
     }
 }
-export {getVercode,login,loadOrgzTree,addNewOrgz,editAOrgz,usrLogout};
+export {getVercode,login,loadOrgzTree,addNewOrgz,editAOrgz,usrLogout,delAOrgz,loginLog};

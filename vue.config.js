@@ -78,13 +78,15 @@ module.exports = defineConfig({
       }
     }
   },
+  /* 
   devServer: {
-    // proxy: {
-    //   '/api': {
-    //     target: proxyAddr,
-    //     changeOrigin:true,  // needed for virtual hosted sites
-    //     pathRewrite: {'^/': '/'}
-    //   }
-    // }
+    proxy: {
+      '/api': {
+        target:proxyAddr,
+        changeOrigin:true,  // needed for virtual hosted sites
+        pathRewrite: {'^/api':''}
+      }
+    }
   }
+  */
 })
