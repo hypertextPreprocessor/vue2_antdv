@@ -144,9 +144,14 @@ const routes = [
                 },
                 children:[
                     {
-                        path:"alter-pass",
-                        name:"alterPass",
-                        component:{template:"<h1>修改密码</h1>"}
+                        path:"profile",
+                        name:"profile",
+                        component:{template:"<h1>用户资料</h1>"}
+                    },
+                    {
+                        path:"sys-setting",
+                        name:"sysSetting",
+                        component:()=>import('@src/views/setting/SysSetting')
                     },{
                         path:"",
                         name:"blank2",

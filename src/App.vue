@@ -4,16 +4,22 @@
     </a-config-provider>
 </template>
 <script setup>
-    import {ref,onMounted} from 'vue';
+    import {ref,onMounted,watch} from 'vue';
     import zhCN from 'ant-design-vue/es/locale/zh_CN';
     import enUS from 'ant-design-vue/es/locale/en_US';
     import esEs from 'ant-design-vue/es/locale/es_ES';
     import {useConfig} from '@store';
-    const language = ref(zhCN.locale);
-    onMounted(()=>{
-        var store = useConfig();
-        console.log(store.local);
-        switch(store.local){
+    var store = useConfig();
+    const language = ref(zhCN);
+    watch(
+        ()=>store.local,
+        (n,o)=>{
+            console.log(n,o);
+            alterLocale(n);
+        }
+    )
+    function alterLocale(str){
+        switch(str){
             case 'Chinese':
                 language.value=zhCN;
                 break;
@@ -26,6 +32,9 @@
             default:
                 language.value=zhCN;
         }
+    }
+    onMounted(()=>{
+        alterLocale(store.local);
         /*
         console.log(language.value);    //zh-cn
         console.log(enUS.locale);       //en

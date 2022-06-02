@@ -16,8 +16,6 @@
               style="width: 200px"
               :options="options"
               :filter-option="filterOption"
-              @focus="handleFocus"
-              @blur="handleBlur"
               @change="handleChange"
             ></a-select>
           </a-form-item>
@@ -61,8 +59,8 @@ function tableChange(pagination){
     var {current,pageSize} = pagination;
     loadTableData({current,pageSize});
 }
-function loadTableData({current=1,pageSize=10,title=""}={}){
-    loginLog({logType:0,current:current,size:pageSize,title}).then(res=>{
+function loadTableData({current=1,pageSize=10,title="",startDate="",endDate=""}={}){
+    loginLog({logType:0,current:current,size:pageSize,title,startDate,endDate}).then(res=>{
         var {code,data} = res.data;
         if(code==1){
             var {total} = data;
