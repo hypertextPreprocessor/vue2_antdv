@@ -2,8 +2,9 @@ const webpack = require('webpack');
 const path = require('path')
 const {GitRevisionPlugin} = require('git-revision-webpack-plugin');
 const {defineConfig} = require('@vue/cli-service');
-//const {proxyAddr} = require('./config/config');
+const {proxyAddr} = require('./config/config');
 const gitRevisionPlugin = new GitRevisionPlugin();
+var address = require('address');
 const buildDate = JSON.stringify(new Date().toLocaleString())
 
 function resolve(dir) {
@@ -20,6 +21,7 @@ module.exports = defineConfig({
         APP_VERSION: `"${require('./package.json').version}"`,
         GIT_HASH: JSON.stringify(gitRevisionPlugin.commithash()),
         BUILD_DATE: buildDate,
+        IP_ADDR:JSON.stringify(address.ip())
         /*
         'process.env': {
           NODE_ENV: JSON.stringify(process.env.NODE_ENV)
@@ -67,7 +69,12 @@ module.exports = defineConfig({
       args[0].template = resolve('public/index.ejs');
       return args;
     })
-    
+    /*
+    if(process.env.NODE_ENV === 'development'){
+      config.resolve.set('fallback',{"os": require.resolve("os")})
+      config.externals([{os:require('os'),fs:require('fs')},{child_process:require('child_process')}]).end()
+    }
+    */
   },
   css: {
     loaderOptions: {
@@ -78,7 +85,6 @@ module.exports = defineConfig({
       }
     }
   },
-  /* 
   devServer: {
     proxy: {
       '/api': {
@@ -88,5 +94,4 @@ module.exports = defineConfig({
       }
     }
   }
-  */
 })

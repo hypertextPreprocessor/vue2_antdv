@@ -53,7 +53,7 @@ module.exports = {
       ecmaVersion: 2020,
       sourceType: 'module'
     },
-    
+    ignorePatterns:['vue.config.js','src/store/store.js'],
     rules: {
       'vue/no-v-for-template-key': 'off',
       "vue/no-v-model-argument": "off",

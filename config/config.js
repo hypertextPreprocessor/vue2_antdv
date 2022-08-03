@@ -1,11 +1,8 @@
 /**
- * 
+ * 开发环境才需要配置此处;
  * 所有的配置文件全部统一在store文件里进行管理;
  */
-const apiHost = "http://192.168.11.120:8080/api";
-const proxyAddr = "http://192.168.11.5:9999";
-//export default apiHost;
-module.exports={
-    apiHost,
-    proxyAddr
-}
+ const proxyAddr = "http://192.168.11.106";
+ module.exports={
+     proxyAddr
+ }
