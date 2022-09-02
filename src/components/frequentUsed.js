@@ -525,9 +525,9 @@ export const ImportFromLocal={    //上传2，导入功能，不渲染所上传�
                             icon:()=>slots.default?slots.default():(
                                 <>
                                     <UploadOutlined></UploadOutlined>
-                                    {props.btnTxt}
                                 </>
-                            )
+                            ),
+			   default:()=>{props.btnTxt}
                         }}
                         
                     </a-button>
