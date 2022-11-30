@@ -4,7 +4,7 @@
   "description": "企业通信管家联通沃企管理平台",
   "author": "Tang Lin,Huang Zuobin",
   "scripts": {
-    "start": "NODE_ENV=development vue-cli-service serve",
+    "start": "set NODE_ENV=development && vue-cli-service serve",
     "build": "NODE_ENV=production vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,6 +13,7 @@
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
     "@vue/cli": "^5.0.4",
+    "@vue/cli-service": "^5.0.8",
     "@vueup/vue-quill": "^1.0.0-beta.8",
     "address": "^1.2.0",
     "ant-design-vue": "^3.2.3",

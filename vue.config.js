@@ -63,7 +63,7 @@ module.exports = defineConfig({
     );
     */
     config.plugin('html').tap(args=>{
-      args[0].title = '沃企+管理后台';
+      args[0].title = '趣野营运营商管理后台';
       args[0].favicon = resolve('src/assets/favicon.ico');
       //args[0].templateParameters = {'BASE_URL':resolve('src/assets/')};
       args[0].template = resolve('public/index.ejs');

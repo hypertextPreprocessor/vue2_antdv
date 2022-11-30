@@ -1,7 +1,6 @@
 //这里放置使用非常频繁的组件;
-import { h,onMounted,toRefs,ref } from "vue";
+import { h,toRefs,ref } from "vue";
 import {Empty} from 'ant-design-vue';
-import {occupactionDict,loadOrgzTree,loadOrgzTreePage,productList,ManagerSelectList,associatedAttrsList} from '@api';
 import {useConfig} from '@store';
 import {/*LoadingOutlined,*/PlusOutlined, UploadOutlined} from '@ant-design/icons-vue'
 import {message} from 'ant-design-vue';
@@ -29,190 +28,6 @@ const WorKTypeCom={ //用工形式字典
                 placeholder={placeholder}
                 {...attrs}
                 options={options}
-                filter-option={filterOption}
-                onChange={(v)=>{
-                    emit('change',v)
-                }}
-                onSelect={(v)=>{
-                    emit('update:value',v)
-                }}
-            >
-            </a-select>
-        )
-    }
-}
-const OccupationSelectCom={ //组织字典三级联动
-    props:{
-        placeholder:{type:String,default:"组织所在区域"},
-        lazyLoad:{type:Boolean,default:false},
-        showSearch:{type:Boolean,default:true}
-    },
-    emits:['change','update:value'],
-    setup(props,{attrs,emit}){
-        const citis = ref([]);
-        const loadData = selectedOptions =>{
-            const targetOption = selectedOptions[selectedOptions.length - 1];
-            targetOption.loading = true;
-            console.log(targetOption);
-        }
-        onMounted(()=>{
-            if(props.lazyLoad){
-                loadOrgzTreePage({current:1,size:9999}).then(res=>{
-                    var {code,data} = res.data;
-                    if(code==1){
-                        console.log(data);
-                    }
-                })
-            }else{
-                loadOrgzTree().then(res=>{
-                    var {code,data} = res.data;
-                    if(code==1){
-                        citis.value = data;
-                    }
-                });
-            }
-            
-        });
-        return ()=>h(
-            <>
-                {
-                    props.lazyLoad?
-                    <a-cascader
-                        v-model={[props.value,"value"]}
-                        options={citis.value}
-                        field-names={{label:"name",value:"id"}}
-                        {...attrs}
-                        change-on-select
-                        load-data={loadData}
-                        expand-trigger="hover"
-                        placeholder={props.placeholder}
-                        onChange={(val)=>{
-                            emit('change',val);
-                            emit('update:value',val);
-                        }}
-                    />
-                    :
-                    <a-cascader
-                        v-model={[props.value,"value"]}
-                        options={citis.value}
-                        field-names={{label:"name",value:"id"}}
-                        {...attrs}
-                        change-on-select
-                        showSearch={props.showSearch}
-                        expand-trigger="hover"
-                        placeholder={props.placeholder}
-                        onChange={(val)=>{
-                            emit('change',val);
-                            emit('update:value',val);
-                        }}
-                    />
-                }
-            </>
-        )
-    }
-}
-export const OccupationSelectName={ //组织字典三级联动
-    props:{
-        placeholder:{type:String,default:"组织所在区域"},
-        lazyLoad:{type:Boolean,default:false},
-        showSearch:{type:Boolean,default:true}
-    },
-    emits:['change','update:value'],
-    setup(props,{attrs,emit}){
-        const citis = ref([]);
-        const loadData = selectedOptions =>{
-            const targetOption = selectedOptions[selectedOptions.length - 1];
-            targetOption.loading = true;
-            console.log(targetOption);
-        }
-        onMounted(()=>{
-            if(props.lazyLoad){
-                loadOrgzTreePage({current:1,size:9999}).then(res=>{
-                    var {code,data} = res.data;
-                    if(code==1){
-                        console.log(data);
-                    }
-                })
-            }else{
-                loadOrgzTree().then(res=>{
-                    var {code,data} = res.data;
-                    if(code==1){
-                        citis.value = data;
-                    }
-                });
-            }
-            
-        });
-        return ()=>h(
-            <>
-                {
-                    props.lazyLoad?
-                    <a-cascader
-                        v-model={[props.value,"value"]}
-                        options={citis.value}
-                        field-names={{label:"name",value:"id"}}
-                        {...attrs}
-                        change-on-select
-                        load-data={loadData}
-                        expand-trigger="hover"
-                        placeholder={props.placeholder}
-                        onChange={(val)=>{
-                            emit('change',val);
-                            emit('update:value',val);
-                        }}
-                    />
-                    :
-                    <a-cascader
-                        v-model={[props.value,"value"]}
-                        options={citis.value}
-                        field-names={{label:"name",value:"name"}}
-                        {...attrs}
-                        change-on-select
-                        showSearch={props.showSearch}
-                        expand-trigger="hover"
-                        placeholder={props.placeholder}
-                        onChange={(val)=>{
-                            emit('change',val);
-                            emit('update:value',val);
-                        }}
-                    />
-                }
-            </>
-        )
-    }
-}
-const OrgzSelectCom={   //职位字典列表
-    props:{
-        placeholder:{type:String,default:"选择一个职位"},
-        value:{type:String,default:undefined}
-    },
-    emits:['change','update:value'],
-    setup(props,{attrs,emit}){
-        //const {placeholder,value} = toRefs(props);
-        const options = ref([]);
-        const selectedVal=ref(props.value);
-        onMounted(()=>{
-            occupactionDict().then((res)=>{
-                var {code,data} = res.data;
-                if(code==1){
-                    if(data.length!=0){
-                        var arr = [];
-                        data.forEach(ele=>{
-                            arr.push({label:ele.roleName,value:ele.roleId});
-                        });
-                        options.value=arr;
-                    }
-                }
-            });
-        });
-        return ()=>h(
-            <a-select
-                allowClear={true}
-                v-model={[selectedVal.value,"value"]}
-                show-search
-                placeholder={props.placeholder}
-                {...attrs}
-                options={options.value}
                 filter-option={filterOption}
                 onChange={(v)=>{
                     emit('change',v)
@@ -302,80 +117,6 @@ export const Bstas={    //商机状态列表
                 {...attrs}
                 filter-option={filterOption}
                 options={options}
-                onChange={(v)=>{
-                    emit('change',v)
-                }}
-                onSelect={(v)=>{
-                    emit('update:value',v)
-                }}
-            ></a-select>
-        );
-    }
-}
-export const ProductItemList={  //产品列表
-    props:{
-        placeholder:{type:String,default:"选择产品"}
-    },
-    emits:['change','update:value'],
-    setup(props,{attrs,emit}){
-        const options = ref([]);
-        onMounted(()=>{
-            productList().then(res=>{
-                var {code,data} = res.data;
-                if(code==1){
-                    var arr = [];
-                    for(var i=0;i<data.length;i++){
-                        arr.push({value:data[i].productId,label:data[i].name});
-                    }
-                    options.value = arr;
-                }
-            });
-        });
-        return()=>h(
-            <a-select
-                v-model={[props.value,"value"]}
-                show-search
-                placeholder={props.placeholder}
-                {...attrs}
-                filter-option={filterOption}
-                options={options.value}
-                onChange={(v)=>{
-                    emit('change',v)
-                }}
-                onSelect={(v)=>{
-                    emit('update:value',v)
-                }}
-            ></a-select>
-        );
-    }
-}
-export const ManagerList={  //客户经理列表
-    props:{
-        placeholder:{type:String,default:"选择客户经理"}
-    },
-    emits:['change','update:value'],
-    setup(props,{attrs,emit}){
-        const options = ref([]);
-        onMounted(()=>{
-            ManagerSelectList().then(res=>{
-                var {code,data} = res.data;
-                if(code==1){
-                    var arr = [];
-                    for(var i=0;i<data.length;i++){
-                        arr.push({label:data[i].ROLE_NAME+' '+data[i].PHONE,value:data[i].USER_ID});
-                    }
-                    options.value = arr;
-                }
-            });
-        });
-        return ()=>h(
-            <a-select
-                v-model={[props.value,"value"]}
-                show-search
-                placeholder={props.placeholder}
-                {...attrs}
-                filter-option={filterOption}
-                options={options.value}
                 onChange={(v)=>{
                     emit('change',v)
                 }}
@@ -526,8 +267,7 @@ export const ImportFromLocal={    //上传2，导入功能，不渲染所上传�
                                 <>
                                     <UploadOutlined></UploadOutlined>
                                 </>
-                            ),
-			   default:()=>{props.btnTxt}
+                            ),default: ()=>{props.btnTxt}
                         }}
                         
                     </a-button>
@@ -571,46 +311,4 @@ export const BdgLevelCom={  //楼宇等级
         );
     }
 }
-export const AsAttrList={
-    props:{
-        placeholder:{type:String,default:"请选择"},
-        value:{type:String,default:undefined}
-    },
-    emits:['change','update:value'],
-    setup(props,{attrs,emit}){
-        const options = ref([]);
-        onMounted(()=>{
-            associatedAttrsList().then(res=>{
-                var {code,data,msg} = res.data;
-                if(code==1){
-                    if(data!=null){
-                        if(data.questionOptions!=null && data.questionOptions.length){
-                            options.value = data.questionOptions;
-                        }
-                    }
-                }else{
-                    message.error(msg);
-                }
-            })
-        });
-        return ()=>h(
-            <a-select
-                v-model={[props.value,'value']}
-                show-search
-                placeholder={props.placeholder}
-                {...attrs}
-                options={options.value}
-                filter-option={filterOption}
-                field-names={{label:"optionName",value:"id"}}
-                onChange={(v)=>{
-                    var obj = options.value.filter((ele)=>ele.id===v);
-                    emit('change',obj[0]);
-                }}
-                onSelect={(v)=>{
-                    emit('update:value',v)
-                }}
-            ></a-select>
-        )
-    }
-}
-export {RenderEmpty,WorKTypeCom,OrgzSelectCom,OccupationSelectCom,ActionConfirm};
+export {RenderEmpty,WorKTypeCom,ActionConfirm};
