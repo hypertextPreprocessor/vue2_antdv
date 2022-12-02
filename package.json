@@ -4,7 +4,7 @@
   "description": "企业通信管家联通沃企管理平台",
   "author": "Tang Lin,Huang Zuobin",
   "scripts": {
-    "start": "set NODE_ENV=development && vue-cli-service serve",
+    "start": "NODE_ENV=development vue-cli-service serve",
     "build": "NODE_ENV=production vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test": "echo \"Error: no test specified\" && exit 1"

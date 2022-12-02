@@ -6,7 +6,7 @@
     @select="menuSelect"
     @openChange="onOpenChange"
     mode="inline"
-  >
+  > 
     <a-sub-menu key="sys">
       <template #icon><DesktopOutlined /></template>
       <template #title>系统管理</template>
@@ -67,7 +67,7 @@
   </a-menu>
 </template>
 <script setup>
-import { ref, reactive, toRefs } from "vue";
+import { ref, reactive, toRefs,onMounted } from "vue";
 import {
   DesktopOutlined,
   GiftOutlined,
@@ -78,6 +78,7 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
+import {getRouteList} from "@api";
 const router = useRouter();
 const state = reactive({
   rootSubmenuKeys: [
@@ -91,6 +92,7 @@ const state = reactive({
   ],
   openKeys: [],
   selectedKeys: [],
+  MenuList:[]
 });
 const onOpenChange = (openKeys) => {
   const latestOpenKey = openKeys.find(
@@ -102,7 +104,7 @@ const onOpenChange = (openKeys) => {
     state.openKeys = latestOpenKey ? [latestOpenKey] : [];
   }
 };
-var { openKeys, selectedKeys } = toRefs(state);
+var { openKeys, selectedKeys,MenuList} = toRefs(state);
 var theme = ref("light");
 function menuSelect({ item, key, selectedKeys }) {
   console.log(item);
@@ -110,4 +112,12 @@ function menuSelect({ item, key, selectedKeys }) {
   console.log(selectedKeys);
   router.push({ name: key });
 }
+onMounted(()=>{
+  getRouteList().then(res=>{
+    var {code,data} = res.data;
+    if(code==200){
+      state.MenuList = data;
+    }
+  });
+});
 </script>

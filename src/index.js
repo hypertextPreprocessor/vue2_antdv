@@ -17,7 +17,6 @@ const router = createRouter({
 });
 router.beforeEach((to)=>{
     var store = useConfig();
-    console.log(to.name);
     if(store.userToken==null){  //用户未登录
         if(to.name != "login"){
             return {name:"login"}
@@ -25,6 +24,7 @@ router.beforeEach((to)=>{
             return true;
         }
     }else{
+        
         return true;
     }
     
