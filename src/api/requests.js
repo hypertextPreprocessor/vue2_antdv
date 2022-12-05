@@ -1,4 +1,4 @@
-import httpReq from '@src/utlis/http.js';
+import httpReq from '@src/utils/http.js';
 import {useConfig} from '@store';
 //import { message } from 'ant-design-vue';
 var CryptoJS = require("crypto-js");

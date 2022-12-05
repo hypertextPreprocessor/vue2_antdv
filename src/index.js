@@ -24,7 +24,6 @@ router.beforeEach((to)=>{
             return true;
         }
     }else{
-        
         return true;
     }
     

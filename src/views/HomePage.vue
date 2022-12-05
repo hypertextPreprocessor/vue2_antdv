@@ -4,7 +4,7 @@
     import {useConfig} from '@store';
     import  { MenuFoldOutlined,MenuUnfoldOutlined,UserOutlined} from '@ant-design/icons-vue';
     //import routes from '@src/router/router.js';
-    import {breadFactory} from '@src/utlis/util.js';
+    import {breadFactory} from '@src/utils/util.js';
     import {usrLogout} from '@api';
     var collapsed = ref(false);
     var activeTab = ref(["1"]);

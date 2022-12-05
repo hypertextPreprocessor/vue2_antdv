@@ -45,8 +45,8 @@
      * VerifySlide
      * @description 滑块
      * */
-    import {aesEncrypt} from "@/utlis/ase.js";
-    import {resetSize} from '@/utlis/util.js';
+    import {aesEncrypt} from "@/utils/ase.js";
+    import {resetSize} from '@/utils/util.js';
     import {reqGet,reqCheck}  from "@api";
  import { computed, onMounted, reactive, ref,watch,nextTick,toRefs,getCurrentInstance} from 'vue';
     //  "captchaType":"blockPuzzle",

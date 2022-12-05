@@ -78,7 +78,6 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons-vue";
 import { useRouter } from "vue-router";
-import {getRouteList} from "@api";
 const router = useRouter();
 const state = reactive({
   rootSubmenuKeys: [
@@ -104,7 +103,8 @@ const onOpenChange = (openKeys) => {
     state.openKeys = latestOpenKey ? [latestOpenKey] : [];
   }
 };
-var { openKeys, selectedKeys,MenuList} = toRefs(state);
+var { openKeys, selectedKeys} = toRefs(state);
+
 var theme = ref("light");
 function menuSelect({ item, key, selectedKeys }) {
   console.log(item);
@@ -113,11 +113,6 @@ function menuSelect({ item, key, selectedKeys }) {
   router.push({ name: key });
 }
 onMounted(()=>{
-  getRouteList().then(res=>{
-    var {code,data} = res.data;
-    if(code==200){
-      state.MenuList = data;
-    }
-  });
+  //console.log(router.getRoutes());
 });
 </script>

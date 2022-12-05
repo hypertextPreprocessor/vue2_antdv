@@ -127,7 +127,14 @@ export function breadFactory(fullPath){
     }
     return breadArr;
 }
-
+export async function loadComponentForRoute(componentNameString){
+    try{
+        await import(`@src/views/${componentNameString}`);
+        return ()=>import(`@src/views/${componentNameString}`);
+    }catch(e){
+        return ()=>import('@src/views/NotExist');
+    }
+}
 
 export function resetSize(vm) {
     var img_width, img_height, bar_width, bar_height;	//图片的宽度、高度，移动条的宽度、高度

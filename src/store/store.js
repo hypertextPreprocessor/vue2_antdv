@@ -12,7 +12,8 @@ const useConfig = defineStore("config",{
         local:"Chinese",
         userToken:userToken,
         userId:null,
-        role:'admin'
+        role:'admin',
+        dynamicRoute:false      //是否采用服务端的路由进行动态渲染;
     })
 });
 export {useConfig};
