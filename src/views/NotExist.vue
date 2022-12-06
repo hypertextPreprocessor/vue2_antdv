@@ -18,6 +18,9 @@
         overflow:'hidden'
     });
     onMounted(()=>{
+        if(document.querySelector('#app').clientHeight===0){
+            document.querySelector('#app').style.height = '100%';
+        }
         var Application = ( function () {
                 var canvas;
                 var ctx;

@@ -6,6 +6,8 @@
     //import routes from '@src/router/router.js';
     import {breadFactory} from '@src/utils/util.js';
     import {usrLogout} from '@api';
+    import { useI18n} from "vue-i18n";
+    const {t}  = useI18n({ useScope: 'global' });
     var collapsed = ref(false);
     var activeTab = ref(["1"]);
     var theme = ref("light");
@@ -56,7 +58,7 @@
     <a-layout>
         <a-layout-header style="background:#fff;">
             <a-row justify="space-between">
-                <a-col :span="4">企业通信管家</a-col>
+                <a-col :span="4">{{t("headBar.title")}}</a-col>
                 <a-col :span="16">
                     <a-menu
                         v-model:selectedKeys="activeTab"
@@ -64,8 +66,8 @@
                         mode="horizontal"
                         :style="{ lineHeight: '64px' }"
                     >
-                        <a-menu-item key="1" @click="commonNav">常规</a-menu-item>
-                        <a-menu-item key="2" @click="settingNav">设置</a-menu-item>
+                        <a-menu-item key="1" @click="commonNav">{{t("headBar.common")}}</a-menu-item>
+                        <a-menu-item key="2" @click="settingNav">{{t("headBar.setting")}}</a-menu-item>
                     </a-menu>
                 </a-col>
                 <a-col :span="4">
@@ -75,10 +77,10 @@
                         </a-avatar>
                         <div style="width:12px;"></div>
                         <a-dropdown :trigger="['click']">
-                            <a class="ant-dropdown-link" @click.prevent>游客用户</a>
+                            <a class="ant-dropdown-link" @click.prevent>{{t('headBar.defaultUsr')}}</a>
                             <template #overlay>
                                 <a-menu>
-                                    <a-menu-item @click="logout" key="logout">退出登录</a-menu-item>
+                                    <a-menu-item @click="logout" key="logout">{{t("headBar.logout")}}</a-menu-item>
                                 </a-menu>
                             </template>
                         </a-dropdown>
@@ -109,7 +111,7 @@
             </a-layout-content>
         </a-layout>
         <a-layout-footer>
-            <div style="text-align:center;">广州衡纬科技有限公司</div>
+            <div style="text-align:center;">{{t('footerBar.content')}}</div>
         </a-layout-footer>
     </a-layout>
 </template>

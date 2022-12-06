@@ -1,5 +1,15 @@
 const TextFields = {
     Chinese:{
+        headBar:{
+            title:"运营商",
+            common:"常规",
+            setting:"设置",
+            defaultUsr:"游客用户",
+            logout:"登出"
+        },
+        footerBar:{
+            content:'广州衡纬科技有限公司'
+        },
         login:{
             panelTitle:"沃企-更好的工作方式"
         },
@@ -15,6 +25,16 @@ const TextFields = {
         }
     },
     English:{
+        headBar:{
+            title:"Operator",
+            common:"common",
+            setting:"setting",
+            defaultUsr:"Guest",
+            logout:"logout"
+        },
+        footerBar:{
+            content:'Guang Zhou Headway Co.,Ltd'
+        },
         login:{
             panelTitle:"woqi- a better way of working"
         },
@@ -30,6 +50,16 @@ const TextFields = {
        }
     },
     Spanish:{
+        headBar:{
+            title:"Operadores",
+            common:"común",
+            setting:"ajuste",
+            defaultUsr:"Huésped",
+            logout:"Cerrar sesión"
+        },
+        footerBar:{
+            content:'Guang Zhou Headway Tecnología Co., Ltd'
+        },
         login:{
             panelTitle:"woqi - una mejor forma de trabajar"
         },

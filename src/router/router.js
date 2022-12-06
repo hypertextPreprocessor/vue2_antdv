@@ -29,83 +29,148 @@ const routes = [    //基础路由
         name:"regiester",
         component:{template:'<div>regiester</div>'}
     },{
-        path:"/:notMatch(.*)*",
+        path:'/:notMatch(.*)*',
         name:"notExist",
         component:()=>import('@src/views/NotExist')
     } 
 ];
 //页面路由，或可在服务器端配置此路由结构返回到前端动态渲染；
+//注意"notExist"规则只能添加在父级（第一层）不能添加到子路由中去;
+//菜单渲染展示如果不需要国际化，则在navbars文件夹下的文件修改相应地方，取路由的meta上的title进行渲染
+//icon 在子菜单定义无效（不会渲染）;
 export var pageRoute = [
     {
         path: "homeBoard",
         name: "homeBoard",
-        component: "HomeBoard"
+        component: "HomeBoard",
+        meta:{
+            title:"首页",
+            icon:"HomeOutlined"
+        }
     },{
         path:"spot",
         name:"spot",
         component:"Spot",
+        meta:{
+            title:"标的管理",
+            icon:"FlagOutlined"
+        },
         children:[
             {
                 path:"",    //留空确保大菜单无路由，默认的大导航菜单始终导航到此子路由
                 name:"course",
-                component:"Course"
+                component:"Course",
+                meta:{
+                    title:"课程管理"
+                }
             },
             {
                 path:"timeTable",
                 name:"timeTable",
-                component:"TimeTable"
+                component:"TimeTable",
+                meta:{
+                    title:"排课管理"
+                }
             },
             {
                 path:"comment",
                 name:"comment",
-                component:"Comment"
+                component:"Comment",
+                meta:{
+                    title:"评论管理"
+                }
             }
         ]
     },{
         path:"group",
         name:"group",
-        component:"Group"
+        component:"Group",
+        meta:{
+            title:"群聊管理",
+            icon:"TeamOutlined"
+        }
     },{
         path:"order",
         name:"order",
         component:"Order",
+        meta:{
+            title:"订单管理",
+            icon:"AccountBookOutlined"
+        }, 
         children:[{
             path:"",
             name:"detail",
-            component:"detail"
+            component:"detail",
+            meta:{
+                title:"订单管理"
+            }
         },{
             path:"refund",
             name:"refund",
-            component:"Refund"
+            component:"Refund",
+            meta:{
+                title:"退款管理"
+            }
         }]
     },{
         path:"dataChart",
         name:"dataChart",
-        component:"DataChart"
+        component:"DataChart",
+        meta:{
+            title:"数据报表",
+            icon:"AreaChartOutlined"
+        }
     },{
         path:"dataAnalyse",
         name:"dataAnalyse",
-        component:"DataAnalyse"
+        component:"DataAnalyse",
+        meta:{
+            title:"数据分析",
+            icon:"ConsoleSqlOutlined"
+        }
     },{
         path:"operators",
         name:"operators",
         component:"Operators",
+        meta:{
+            title:"运营商管理",
+            icon:"ReconciliationOutlined"
+        },
         children:[{
             path:"",
+            name:"mainInfo",
+            component:"MainInfo",
+            meta:{
+                title:"主体信息管理"
+            }
+        },{
+            path:"addr",
             name:"addr",
-            component:"Addr"
+            component:"Addr",
+            meta:{
+                title:"营地管理"
+            }
         },{
             path:"area",
             name:"area",
-            component:"Area"
+            component:"Area",
+            meta:{
+                title:"营区管理"
+            }
         },{
             path:"guider",
             name:"guider",
-            component:"Guider"
+            component:"Guider",
+            meta:{
+                title:"导师管理"
+            }
         },{
             path:"balance",
             name:"balance",
-            component:"Balance"
+            component:"Balance",
+            meta:{
+                title:"余额管理"
+            }
         }]
     },{
         path:"/:notMatch(.*)*",
@@ -116,11 +181,19 @@ export var pageRoute = [
 export var systemRoute=[{
     path:"profile",
     name:"profile",
-    component:"Profile"
+    component:"Profile",
+    meta:{
+        title:"个人资料",
+        icon:"ProfileOutlined"
+    }
 },{
     path:"sysSetting",
     name:"sysSetting",
-    component:"SysSetting"
+    component:"SysSetting",
+    meta:{
+        title:"系统设置",
+        icon:"SettingOutlined"
+    }
 },{
     path:"/:notMatch(.*)*",
     name:"notExist",

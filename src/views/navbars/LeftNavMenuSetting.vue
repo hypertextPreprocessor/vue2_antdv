@@ -6,24 +6,36 @@
         @openChange="onOpenChange"
         @select="menuSelect"
         mode="inline"
-    >
-        <a-menu-item key="profile">
-            <span>个人资料</span>
+    >   
+    <template v-for="item in state.MenuList">
+      <template v-if="item.children">
+        <a-sub-menu :key="item.name">
+          <template #icon v-if="item.meta.icon">
+            <component :is="item.meta.icon"></component>
+          </template>
+          <template #title>{{item.name}}</template>
+          <a-menu-item v-for="itm in item.children" :key="itm.name">{{itm.name}}</a-menu-item>
+        </a-sub-menu>
+      </template>
+      <template v-else>
+        <a-menu-item :key="item.name">
+          <template #icon v-if="item.meta.icon">
+            <Icon :component="item.meta.icon" />
+          </template>
+          <span>{{item.name}}</span>
         </a-menu-item>
-        <a-menu-item key="sysSetting">
-            <span>系统设置</span>
-        </a-menu-item>
-        <a-menu-item key="logout">
-            <span>退出登录</span>
-        </a-menu-item>
+      </template>
+    </template>
     </a-menu>
 </template>
 <script setup>
-    import {ref,reactive,toRefs} from 'vue';
+    import {ref,reactive,toRefs,onMounted} from 'vue';
     import { useRouter } from "vue-router";
     import {usrLogout} from '@api';
     import {useConfig} from '@store';
     import {Modal} from 'ant-design-vue';
+    import myRoute from '@src/router/myRoute.js';
+    import Icon from "@ant-design/icons-vue";
     const router = useRouter();
     var store = useConfig();
     var theme = ref("light");
@@ -31,6 +43,7 @@
       rootSubmenuKeys: ['profile','sysSetting', 'logout'],
       openKeys: [],
       selectedKeys: [],
+      MenuList:[]
     });
     function logout(){
         usrLogout().then(res=>{
@@ -79,4 +92,10 @@
       }
     };
     var {openKeys,selectedKeys} = toRefs(state);
+    onMounted(()=>{
+      myRoute(store,false).then(res=>{
+        state.MenuList = res.system.filter(item=>item.name!='notExist');
+      })
+     
+    })
 </script>

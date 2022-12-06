@@ -4,17 +4,15 @@
     </a-config-provider>
 </template>
 <script setup>
-    import {ref,onMounted,watch,reactive} from 'vue';
+    import {ref,onMounted,watch} from 'vue';
     import zhCN from 'ant-design-vue/es/locale/zh_CN';
     import enUS from 'ant-design-vue/es/locale/en_US';
     import esEs from 'ant-design-vue/es/locale/es_ES';
     import {useConfig} from '@store';
-    import {loadComponentForRoute} from '@src/utils/util.js';
+    import myRoute from '@src/router/myRoute.js';
     import {useRouter} from 'vue-router';
     var store = useConfig();
     const language = ref(zhCN);
-    var pageList = reactive([]);
-    var sysList = reactive([]);
     var router = useRouter();
     watch(
         ()=>store.local,
@@ -38,69 +36,30 @@
                 language.value=zhCN;
         }
     }
-    async function routeHandle(routes){
-        for(var i=0;i<routes.length;i++){
-            routes[i].component = await loadComponentForRoute(routes[i].component);
-            if(routes[i].children){
-                await routeHandle(routes[i].children);
-            }
-        }
-        return routes;
-        
-    }
     function addRouteListAtBranch({branch:branch,routes:Rs}){
         if(Rs.length){
             for(var i=0;i<Rs.length;i++){
                 router.addRoute(branch,Rs[i]);
                 if(Rs[i].children){
-                    console.log(Rs[i].name);
-                    //addRouteListAtBranch({branch:Rs[i].name,routes:Rs[i].children});
+                    addRouteListAtBranch({branch:Rs[i].name,routes:Rs[i].children});
                 }
             }
         }
-        console.log(router.getRoutes());
     }
+   
     onMounted(()=>{
         alterLocale(store.local);
+        myRoute(store,true,(obj)=>{
+            addRouteListAtBranch(obj);
+        }).then(()=>{
+            //路由被动态添加成功回调
+            //console.log(router.getRoutes());
+        });
         /*
         console.log(language.value);    //zh-cn
         console.log(enUS.locale);       //en
         console.log(esEs.locale);       //es
         */
-        if(store.dynamicRoute){
-            import('@api').then(({getRouteList})=>{
-                getRouteList().then(res=>{
-                    var {code,data} = res.data;
-                    if(code==200){
-                        pageList = data.page;
-                        sysList = data.system;
-                        routeHandle(pageList).then(r1=>{
-                            addRouteListAtBranch({branch:'mainCommon',routes:r1});
-                        });
-                        routeHandle(sysList).then(r2=>{
-                            addRouteListAtBranch({branch:'mainSetting',routes:r2});
-                        });
-                    }
-                });
-            });
-        }else{
-            import('@src/router/router').then(({pageRoute})=>{
-                pageList = pageRoute;
-                routeHandle(pageRoute).then(r1=>{
-                    addRouteListAtBranch({branch:'mainCommon',routes:r1});
-                    //console.log(router.getRoutes());
-                    //console.log(router.hasRoute('homeBoard'));
-                });
-            });
-            /*
-            import('@src/router/router').then(({systemRoute})=>{
-                sysList = systemRoute;
-                routeHandle(systemRoute).then(r2=>{
-                    addRouteListAtBranch({branch:'mainCommon',routes:r2});
-                });
-            });
-            */
-        }
     });
 </script>
 <style>
