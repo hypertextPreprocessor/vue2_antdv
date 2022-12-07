@@ -29,6 +29,7 @@ function myRoute(store,loadCom,callback){//参数2：是否有加载组件需求
                                     callback && callback({branch:'mainCommon',routes:r1});
                                     routeHandle(data.system).then(r2=>{
                                         callback && callback({branch:'mainSetting',routes:r2});
+                                        store.menuList = {page:r1,system:r2}
                                         resolve({page:r1,system:r2});
                                     });
                                 });
@@ -48,6 +49,7 @@ function myRoute(store,loadCom,callback){//参数2：是否有加载组件需求
                                 callback && callback({branch:'mainCommon',routes:r1});
                                 routeHandle(systemRoute).then(r2=>{
                                     callback && callback({branch:'mainSetting',routes:r2});
+                                    store.menuList = {page:r1,system:r2}
                                     resolve({page:r1,system:r2});
                                 });
                             });

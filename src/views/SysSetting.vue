@@ -1,6 +1,6 @@
 <template>
     <a-layout-content>
-        <a-card :title='t("setting.sysSetting.title")'>
+        <!-- <a-card :title='t("setting.sysSetting.title")'> </a-card> -->
             <a-form
                 :model="formState"
                 name="basic"
@@ -22,7 +22,7 @@
                     </a-select>
                 </a-form-item>
             </a-form>
-        </a-card>
+       
     </a-layout-content>    
 </template>
 <script setup>

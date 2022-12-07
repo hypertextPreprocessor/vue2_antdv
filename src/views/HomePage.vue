@@ -4,7 +4,7 @@
     import {useConfig} from '@store';
     import  { MenuFoldOutlined,MenuUnfoldOutlined,UserOutlined} from '@ant-design/icons-vue';
     //import routes from '@src/router/router.js';
-    import {breadFactory} from '@src/utils/util.js';
+    //import {breadFactory} from '@src/utils/util.js';
     import {usrLogout} from '@api';
     import { useI18n} from "vue-i18n";
     const {t}  = useI18n({ useScope: 'global' });
@@ -36,16 +36,23 @@
         });
         
     }
-    watch(()=>route.path,(now,pre)=>{
+    watch(()=>route.path,(now)=>{
+        /*
         console.log("现在:");
         console.log(now);
         console.log("之前:");
         console.log(pre);
         console.log(route.matched);
-        var arr = breadFactory(router.currentRoute.value.fullPath);
+        */
+        if(now=='/main-common'){
+            router.replace({name:"homeBoard"});
+        }else if(now=='/main-setting'){
+            router.replace({name:"profile"});
+        }
+        //var arr = breadFactory(router.currentRoute.value.fullPath);
         //var arr = findRoute(routes,{name:route.name});
         //breads.value = Array.prototype.filter.call(arr,(x)=>(x.name!="home"&&x.name!="blank"));
-        breads.value = arr;
+        //breads.value = arr;
     })
     onMounted(()=>{
        if(route.name === "home"){

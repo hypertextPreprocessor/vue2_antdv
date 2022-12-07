@@ -13,8 +13,8 @@
           <template #icon v-if="item.meta.icon">
             <component :is="item.meta.icon"></component>
           </template>
-          <template #title>{{item.name}}</template>
-          <a-menu-item v-for="itm in item.children" :key="itm.name">{{itm.name}}</a-menu-item>
+          <template #title>{{t(`navMenu.${item.name}`)}}</template>
+          <a-menu-item v-for="itm in item.children" :key="itm.name">{{t(`navMenu.${itm.name}`)}}</a-menu-item>
         </a-sub-menu>
       </template>
       <template v-else>
@@ -22,7 +22,7 @@
           <template #icon v-if="item.meta.icon">
             <Icon :component="item.meta.icon" />
           </template>
-          <span>{{item.name}}</span>
+          <span>{{t(`navMenu.${item.name}`)}}</span>
         </a-menu-item>
       </template>
     </template>
@@ -34,15 +34,17 @@
     import {usrLogout} from '@api';
     import {useConfig} from '@store';
     import {Modal} from 'ant-design-vue';
-    import myRoute from '@src/router/myRoute.js';
+    //import myRoute from '@src/router/myRoute.js';
     import Icon from "@ant-design/icons-vue";
+    import { useI18n } from 'vue-i18n'
+    const { t } = useI18n({ useScope: 'global' });
     const router = useRouter();
     var store = useConfig();
     var theme = ref("light");
     const state = reactive({
-      rootSubmenuKeys: ['profile','sysSetting', 'logout'],
+      rootSubmenuKeys: [],
       openKeys: [],
-      selectedKeys: [],
+      selectedKeys: ["profile"],
       MenuList:[]
     });
     function logout(){
@@ -93,9 +95,17 @@
     };
     var {openKeys,selectedKeys} = toRefs(state);
     onMounted(()=>{
+      state.MenuList = store.menuList.system.filter(item=>item.name!='notExist');
+      store.menuList.system.map(it=>{
+        state.rootSubmenuKeys.push(it.name);
+      });
+      /*
       myRoute(store,false).then(res=>{
         state.MenuList = res.system.filter(item=>item.name!='notExist');
+        res.system.map(it=>{
+          state.rootSubmenuKeys.push(it.name);
+        });
       })
-     
+     */
     })
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <a-config-provider :locale="language">
+    <a-config-provider :locale="language" v-if="routerReady">
         <router-view/>
     </a-config-provider>
 </template>
@@ -14,6 +14,7 @@
     var store = useConfig();
     const language = ref(zhCN);
     var router = useRouter();
+    var routerReady = ref(false);
     watch(
         ()=>store.local,
         (n,o)=>{
@@ -49,12 +50,17 @@
    
     onMounted(()=>{
         alterLocale(store.local);
-        myRoute(store,true,(obj)=>{
-            addRouteListAtBranch(obj);
-        }).then(()=>{
-            //路由被动态添加成功回调
-            //console.log(router.getRoutes());
-        });
+        if(store.userToken!=null){
+            myRoute(store,true,(obj)=>{
+                addRouteListAtBranch(obj);
+            }).then(()=>{
+                routerReady.value = true;
+                //路由被动态添加成功回调
+                //console.log(router.getRoutes());
+            });
+        }else{
+            routerReady.value = true;
+        }
         /*
         console.log(language.value);    //zh-cn
         console.log(enUS.locale);       //en
