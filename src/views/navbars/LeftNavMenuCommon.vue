@@ -64,10 +64,12 @@ function menuSelect({ item, key, selectedKeys }) {
   router.push({ name: key });
 }
 onMounted(()=>{
-  state.MenuList = store.menuList.page.filter(item=>item.name!='notExist');
-  store.menuList.page.map(it=>{
-    state.rootSubmenuKeys.push(it.name);
-  });
+  if(store.dynamicRoute){
+    state.MenuList = store.menuList.page.filter(item=>item.name!='notExist');
+    store.menuList.page.map(it=>{
+      state.rootSubmenuKeys.push(it.name);
+    });
+  }
   /*
   myRoute(store,false).then(res=>{
     state.MenuList = res.page.filter(item=>item.name!='notExist');

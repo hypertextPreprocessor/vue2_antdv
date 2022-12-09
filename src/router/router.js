@@ -100,7 +100,7 @@ export var pageRoute = [
         children:[{
             path:"",
             name:"detail",
-            component:"detail",
+            component:"Detail",
             meta:{
                 title:"订单管理"
             }

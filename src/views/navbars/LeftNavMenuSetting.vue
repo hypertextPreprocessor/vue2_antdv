@@ -95,10 +95,12 @@
     };
     var {openKeys,selectedKeys} = toRefs(state);
     onMounted(()=>{
-      state.MenuList = store.menuList.system.filter(item=>item.name!='notExist');
-      store.menuList.system.map(it=>{
-        state.rootSubmenuKeys.push(it.name);
-      });
+      if(store.dynamicRoute){
+        state.MenuList = store.menuList.system.filter(item=>item.name!='notExist');
+        store.menuList.system.map(it=>{
+          state.rootSubmenuKeys.push(it.name);
+        });
+      }
       /*
       myRoute(store,false).then(res=>{
         state.MenuList = res.system.filter(item=>item.name!='notExist');

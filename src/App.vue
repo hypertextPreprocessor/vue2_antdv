@@ -50,6 +50,7 @@
    
     onMounted(()=>{
         alterLocale(store.local);
+        if(store.dynamicRoute){
         if(store.userToken!=null){
             myRoute(store,true,(obj)=>{
                 addRouteListAtBranch(obj);
@@ -59,6 +60,8 @@
                 //console.log(router.getRoutes());
             });
         }else{
+            routerReady.value = true;
+        }}else{
             routerReady.value = true;
         }
         /*

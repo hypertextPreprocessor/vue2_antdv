@@ -2,7 +2,8 @@ import {createApp} from 'vue';
 import {createRouter,createWebHistory} from 'vue-router';
 import {createI18n} from 'vue-i18n';
 import MyApp from '@src/App.vue';
-import routes from '@src/router/router'
+//import routes from '@src/router/router'
+import staticRoute from '@src/router/static';
 import TextFields from '@src/local/local'
 import Antd from 'ant-design-vue/es';
 import {createPinia} from 'pinia';
@@ -12,7 +13,7 @@ import 'ant-design-vue/dist/antd.css';
 
 const router = createRouter({
     history:createWebHistory(),
-    routes,
+    routes:staticRoute,
     strict: true
 });
 router.beforeEach((to)=>{
