@@ -55,9 +55,11 @@
         //breads.value = arr;
     })
     onMounted(()=>{
+        /*
        if(route.name === "home"){
         router.replace({name:"mainCommon"});
        }
+       */
         document.querySelector('.ant-layout').style.height = window.document.documentElement.clientHeight+"px";
     });
 </script>

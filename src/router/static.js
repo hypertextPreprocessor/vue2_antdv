@@ -3,6 +3,7 @@ import {
     AreaChartOutlined,ConsoleSqlOutlined,ReconciliationOutlined,
     ProfileOutlined,SettingOutlined
 } from '@ant-design/icons-vue';
+
 async function tryImport(moduleName){
     try{
         await import(`@src/views/${moduleName}`);
@@ -11,6 +12,7 @@ async function tryImport(moduleName){
         return import("@src/views/NotExist");
     }
 }
+
 var staticRoute = [
     {
         path:"/",
@@ -179,7 +181,7 @@ var staticRoute = [
                         path:"/:notMatch(.*)*",
                         name:"notExist",
                         component:async()=>await tryImport('NotExist'),
-                        //component:"NotExist"
+                        //component:()=>import('@src/views/NotExist')
                     }
                 ]
             },{
@@ -212,7 +214,7 @@ var staticRoute = [
                         path:"/:notMatch(.*)*",
                         name:"notExist",
                         component:async()=>await tryImport('NotExist'),
-                        //component:"NotExist"
+                        //component:()=>import('@src/views/NotExist')
                     }
                 ]
             }  

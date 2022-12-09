@@ -14,7 +14,7 @@
     var store = useConfig();
     const language = ref(zhCN);
     var router = useRouter();
-    var routerReady = ref(false);
+    var routerReady = ref(true);
     watch(
         ()=>store.local,
         (n,o)=>{
@@ -47,21 +47,21 @@
             }
         }
     }
-   
     onMounted(()=>{
         alterLocale(store.local);
         if(store.dynamicRoute){
-        if(store.userToken!=null){
-            myRoute(store,true,(obj)=>{
-                addRouteListAtBranch(obj);
-            }).then(()=>{
+            if(store.userToken!=null){
+                myRoute(store,true,(obj)=>{
+                    addRouteListAtBranch(obj);
+                }).then(()=>{
+                    routerReady.value = true;
+                    //路由被动态添加成功回调
+                    //console.log(router.getRoutes());
+                });
+            }else{
                 routerReady.value = true;
-                //路由被动态添加成功回调
-                //console.log(router.getRoutes());
-            });
+            }
         }else{
-            routerReady.value = true;
-        }}else{
             routerReady.value = true;
         }
         /*
