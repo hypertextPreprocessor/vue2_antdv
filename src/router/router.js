@@ -29,6 +29,10 @@ const routes = [    //基础路由
         name:"regiester",
         component:{template:'<div>regiester</div>'}
     },{
+        path:"/role",
+        name:"role",
+        component:()=>import('@src/views/RoleList')
+    },{
         path:'/:notMatch(.*)*',
         name:"notExist",
         component:()=>import('@src/views/NotExist')

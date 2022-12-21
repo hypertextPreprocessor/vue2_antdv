@@ -1,16 +1,47 @@
 import httpReq from '@src/utils/http.js';
 import {useConfig} from '@store';
 //import { message } from 'ant-design-vue';
-var CryptoJS = require("crypto-js");
 async function getVercode(){
     var response = await httpReq.post('/code/check');
     return response;
+}
+//图形验证码的产生
+export async function imgCode(){
+    const store = useConfig();
+    const axios = require('axios');
+    axios.defaults.baseURL = `${store.apiHost}`;
+    //var url = "https://miniprogram.yeyingqu.cn/camping/captcha.jpg";
+    var url = '/captcha.jpg';
+    var para=new Date().getTime();
+    var response = await axios.get(url,{
+        params:{
+            uuid:para
+        },
+        responseType:"blob"
+    });
+    var src = URL.createObjectURL(response.data);
+    return [src,para];
+}
+//获得publicKey
+export function getPublicKey(){
+    return httpReq.get('/getRsaPublicKey');
 }
 //获取验证图片  以及token
 export function reqGet(data) {
     return httpReq.post('/code',data);
 }
-
+//发送短信
+export function sendSmsCode(){
+    return httpReq.get('/sms/send');
+}
+//验证码方式登录
+export function loginBySmsCode({userName,smsCode,smsId,valicateCode,valicateId}){
+    return httpReq.get('/loginBySmsCode',{
+        params:{
+            userName,smsCode,smsId,valicateCode,valicateId
+        }
+    });
+}
 //滑动或者点选验证
 export function reqCheck(data) {
     var uri = encodeURIComponent(`captchaType=${data.captchaType}&pointJson=${data.pointJson}&token=${data.token}`);
@@ -24,48 +55,34 @@ export function reqCheck(data) {
     */
 }
 //登录接口
-async function login({username,password,grantType="password",randomStr="clickWord",code}){
-    var key = "pigxpigxpigxpigx";
-    let iv = CryptoJS.enc.Latin1.parse(key);
-    var encrypted = CryptoJS.AES.encrypt(password,iv,{
-        iv:iv,
-        mode: CryptoJS.mode.CFB,
-        padding: CryptoJS.pad.NoPadding
-    });
-  const params = new URLSearchParams({username,password:encrypted.toString()});
-  var uri_params = new URLSearchParams({grant_type:grantType,randomStr,code})
-  /*
-  var httpHeaders = {
-      "Authorization": "Basic bWluaS1wcm9kOm1pbmktcHJvZA==",
-      "Content-Type":"application/x-www-form-urlencoded"
-  };
-  var myHeaders = new Headers(httpHeaders);
-  */
-  var uri = uri_params.toString();
-  var response = await httpReq.post(`/auth/oauth/token?${uri}`,params,{
-    headers:{
-        "Authorization": "Basic bWluaS1wcm9kOm1pbmktcHJvZA==",
-        "Content-Type":"application/x-www-form-urlencoded"
-    }
-  });
-    var {access_token} = response.data;
-    sessionStorage.setItem('userToken',access_token);
-    var store = useConfig();
-    store.userToken = access_token;
-    if(!response.data.code){
-        var rex = {
-            code:1,
-            data:response.data,
-            msg:"登录成功"
+function login({userName,password,validateCode,validateCodeId}){
+    return httpReq.get('/loginByPassword',{params:{
+        userName,password,validateCode,validateCodeId
+    }});
+}
+//设置新密码
+export function setNewPassword({password,rePassword}){
+    httpReq.get('/resetUserPassword',{
+        params:{
+            password,rePassword
         }
-        return rex;
-    }else{
-        return response.data;
-    }
+    })
+}
+//加载角色列表
+export function loadRoleList(){
+    return httpReq.get('/operationList');
+}
+//选择一个角色登录
+export function chooseARole(operationId){
+    return httpReq.get('/createTokenByOperationId',{
+        params:{
+            operationId:operationId
+        }
+    });
 }
 //退出登录
 function usrLogout(){
-    return httpReq.delete('/auth/token/logout');
+    return httpReq.delete('/logout');
 }
 //获得路由列表
 export function getRouteList(){

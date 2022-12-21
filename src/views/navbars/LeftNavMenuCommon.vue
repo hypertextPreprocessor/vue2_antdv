@@ -32,7 +32,7 @@
 import { ref, reactive, toRefs,onMounted } from "vue";
 import Icon from '@ant-design/icons-vue';
 import { useRouter } from "vue-router";
-//import myRoute from '@src/router/myRoute.js';
+import {myStaticRoute} from '@src/router/myRoute.js';
 import {useConfig} from '@store';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n({ useScope: 'global' });
@@ -65,6 +65,12 @@ function menuSelect({ item, key, selectedKeys }) {
 }
 onMounted(()=>{
   if(store.dynamicRoute){
+    state.MenuList = store.menuList.page.filter(item=>item.name!='notExist');
+    store.menuList.page.map(it=>{
+      state.rootSubmenuKeys.push(it.name);
+    });
+  }else{
+    myStaticRoute(store);
     state.MenuList = store.menuList.page.filter(item=>item.name!='notExist');
     store.menuList.page.map(it=>{
       state.rootSubmenuKeys.push(it.name);

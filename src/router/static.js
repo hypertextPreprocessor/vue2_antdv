@@ -228,6 +228,10 @@ var staticRoute = [
         name:"regiester",
         component:{template:'<div>regiester</div>'}
     },{
+        path:"/role",
+        name:"role",
+        component:async()=>await tryImport('RoleList'),
+    },{
         path:'/:notMatch(.*)*',
         name:"notExist",
         component:()=>import('@src/views/NotExist')

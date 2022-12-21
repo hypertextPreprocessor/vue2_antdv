@@ -11,6 +11,7 @@
     import {useConfig} from '@store';
     import myRoute from '@src/router/myRoute.js';
     import {useRouter} from 'vue-router';
+
     var store = useConfig();
     const language = ref(zhCN);
     var router = useRouter();

@@ -1,74 +1,251 @@
 <template>
-    <!--
-  This was created based on the Dribble shot by Deepak Yadav that you can find at https://goo.gl/XRALsw
-  I'm @hk95 on GitHub. Feel free to message me anytime.
--->
-
 <section class="user">
   <div class="user_options-container">
     <div class="user_options-text">
       <div class="user_options-unregistered">
-        <h2 class="user_unregistered-title">Don't have an account?</h2>
-        <p class="user_unregistered-text">Banjo tote bag bicycle rights, High Life sartorial cray craft beer whatever street art fap.</p>
-        <button class="user_unregistered-signup" ref="signupButton">Sign up</button>
+        <h2 class="user_unregistered-title">{{t("login.yzt")}}</h2>
+        <p class="user_unregistered-text">{{t("login.yztDesc")}}</p>
+        <button class="user_unregistered-signup" ref="signupButton">{{t("login.change")}}</button>
       </div>
 
       <div class="user_options-registered">
-        <h2 class="user_registered-title">Have an account?</h2>
-        <p class="user_registered-text">Banjo tote bag bicycle rights, High Life sartorial cray craft beer whatever street art fap.</p>
-        <button class="user_registered-login" ref="loginButton">Login</button>
+        <h2 class="user_registered-title">{{t("login.panelTitle")}}</h2>
+        <p class="user_registered-text">{{t("login.psldesc")}}</p>
+        <button class="user_registered-login" ref="loginButton">{{t("login.change")}}</button>
       </div>
     </div>
-    
+    <!--密码登录方式-->
     <div class="user_options-forms" ref="userOptionsForms">
       <div class="user_forms-login">
-        <h2 class="forms_title">Login</h2>
+        <h2 class="forms_title">{{t("login.panelTitle")}}</h2>
         <form class="forms_form">
           <fieldset class="forms_fieldset">
             <div class="forms_field">
-              <input type="email" placeholder="Email" class="forms_field-input" required autofocus />
+              <input type="text"  v-model="userName" :placeholder='t("login.m.phone")' class="forms_field-input" required autofocus />
             </div>
             <div class="forms_field">
-              <input type="password" placeholder="Password" class="forms_field-input" required />
+              <input type="password" v-model="password" :placeholder='t("login.m.pwd")' class="forms_field-input" required />
+            </div>
+            <div class="forms_field" style="display:flex;flex-flow:row nowrap;">
+              <input type="text" v-model="validateCode" :placeholder='t("login.m.vcd")' class="forms_field-input" required/>
+              <img :src="validateCodeUrl" @click="imgCodeGen" style="cursor: pointer;"/>
             </div>
           </fieldset>
-          <div class="forms_buttons">
-            <button type="button" class="forms_buttons-forgot">Forgot password?</button>
-            <input type="submit" value="Log In" class="forms_buttons-action">
+          <div class="forms_buttons" style="justify-content:flex-end;">
+            <!--<button type="button" class="forms_buttons-forgot">Forgot password?</button>-->
+            <input type="button" :value='t("login.loginBtn")' class="forms_buttons-action" @click="loginByPwd">
           </div>
         </form>
       </div>
       <div class="user_forms-signup">
-        <h2 class="forms_title">Sign Up</h2>
+        <h2 class="forms_title">{{t("login.yzt")}}</h2>
         <form class="forms_form">
           <fieldset class="forms_fieldset">
             <div class="forms_field">
-              <input type="text" placeholder="Full Name" class="forms_field-input" required />
+              <input type="text" v-model="userName" :placeholder='t("login.s.phone")' class="forms_field-input" required />
             </div>
-            <div class="forms_field">
-              <input type="email" placeholder="Email" class="forms_field-input" required />
+            <div class="forms_field" style="display:flex;flex-flow:row nowrap;">
+              <input type="text" v-model="smsCode" :placeholder='t("login.s.sms")' class="forms_field-input" required />
+              <a-button type="primary" style="width:100px;color:#ffffff;background:#e8716d;" @click="getSmsCode" :disabled="canGetCode">{{ btnText }}</a-button>
             </div>
-            <div class="forms_field">
-              <input type="password" placeholder="Password" class="forms_field-input" required />
+            <div class="forms_field" style="display:flex;flex-flow:row nowrap;">
+              <input type="text" v-model="validateCode" :placeholder='t("login.s.imgc")' class="forms_field-input" required />
+              <img :src="validateCodeUrl" @click="imgCodeGen" style="cursor: pointer;"/>
             </div>
           </fieldset>
           <div class="forms_buttons">
-            <input type="submit" value="Sign up" class="forms_buttons-action">
+            <input type="button" :value='t("login.loginBtn")' class="forms_buttons-action" @click="loginBySms">
           </div>
         </form>
       </div>
     </div>
   </div>
+  <a-modal :maskClosable="false" :cancelText='t("login.popModal.cancelText")' :okText='t("login.popModal.okText")' v-model:visible="visible" :title='t("login.popModal.title")' @ok="handleOk" @cancel="handleCancel">
+    <a-form
+      ref="formRef"
+      :model="formState"
+    >
+      <a-form-item
+        label=""
+        name="password"
+        :rules="[{ required: true, message: '密码不能为空' }]"
+      >
+        <a-input-password v-model:value="formState.password" :placeholder='t("login.popModal.p1")'/>
+      </a-form-item>
+      <a-form-item
+        label=""
+        name="rePassword"
+        :rules="[
+          { required: true, message: '密码不能为空' },
+          {validator:repassValidate}
+        ]"
+      >
+        <a-input-password v-model:value="formState.rePassword" :placeholder='t("login.popModal.p2")'/>
+      </a-form-item>
+    </a-form>
+  </a-modal>
 </section>
 </template>
 <script setup>
-import {ref, onMounted } from 'vue';
+import {ref, onMounted ,reactive} from 'vue';
+import { useI18n } from 'vue-i18n';
+import { message } from 'ant-design-vue';
+import { useConfig } from '@store';
+import { useRouter } from 'vue-router'
+import {imgCode,/*getPublicKey,*/login,sendSmsCode,loginBySmsCode,setNewPassword} from "@api";
+const formRef = ref();
+const store = useConfig();
 const signupButton = ref(null);
 const loginButton = ref(null);
 const userOptionsForms = ref(null);
+const { t } = useI18n({ useScope: 'global'});
+const validateCodeUrl = ref(null);
+const validateCode = ref(null);
+const validateCodeId = ref(null);
+const smsCode = ref(null);
+const btnText = ref("获取");
+//const publicKey = ref(null);
+//const rsaId = ref(null);
+const userName = ref(null);
+const password = ref(null);
+const canGetCode = ref(false);
+const smsId = ref(null);
+const visible = ref(false);
+var interval;
+const router = useRouter();
+const formState = reactive({
+  password:undefined,
+  rePassword:undefined
+});
+const onFinish = () => {
+  formRef.value.validate().then(()=>{
+    setNewPassword({password:formState.password,rePassword:formState.rePassword}).then(res=>{
+      var {code} = res.data;
+      if(code===1){
+        routeToRoleList();
+      }
+    })
+  })
+};
+async function repassValidate(_rule,value){
+  if(formState.password !== value){
+    return Promise.reject('两次输入的密码不一致');
+  }else{
+    return Promise.resolve();
+  }
+}
+function imgCodeGen(){
+  imgCode().then(c=>{
+    validateCodeUrl.value = c[0];
+    validateCodeId.value = c[1];
+  });
+}
+function routeToRoleList(){
+  router.push({name:"role"})
+}
+function getSmsCode(){
+  if(userName.value==null || userName.value==""){
+    message.error("手机号不能为空");
+  }else if(/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/.test(userName.value)){
+    canGetCode.value = true;
+    if(interval)clearInterval(interval);
+    var tick = 10;
+    interval = setInterval(()=>{
+      btnText.value= tick + 's';
+      tick--;
+      if(tick<0){
+        canGetCode.value = false;
+        clearInterval(interval);
+        btnText.value= "获取";
+      }
+    },1000);
+    //获取验证码
+    sendSmsCode().then(({data})=>{
+      var {code,data:D} = data;
+      if(code===1){
+        smsId.value = D;
+      }
+    })
+  }else{
+    message.error("手机号码输入有误");
+  }
+}
+function handleOk(){
+  onFinish();
+}
+function handleCancel(){
+  routeToRoleList();
+}
+function loginBySms(){
+  if(userName.value==null || userName.value==""){
+    message.error("手机号不能为空");
+  }else if(smsCode.value==null || smsCode.value==""){
+    message.error("短信验证码不能为空");
+  }else if(validateCode.value==null || validateCode.value==""){
+    message.error("图形验证码不能为空");
+  }else if(smsId.value==null){
+    message.error("非法途径获取的验证码");
+  }else{
+    if(/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/.test(userName.value)){
+      loginBySmsCode({
+        userName:userName.value,
+        smsCode:smsCode.value,
+        smsId:smsId.value,
+        validateCode:validateCode.value,
+        validateCodeId:validateCodeId.value
+      }).then(({data})=>{
+        var {code,data:D} = data;
+        if(code===1){
+          store.userToken = D;
+          sessionStorage.setItem("userToken",D);
+          visible.value = true;
+        }
+      });
+    }else{
+      message.error("手机号码输入有误");
+    }
+  }
+}
+function loginByPwd(){
+  if(userName.value==null || userName.value==""){
+    message.error("手机号不能为空");
+  }else if(password.value==null || password.value==""){
+    message.error("密码不能为空");
+  }else if(validateCode.value==null || validateCode.value==""){
+    message.error("验证码不能为空");
+  }else{
+    if(/^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/.test(userName.value)){
+      login({
+        userName:userName.value,
+        password:password.value,
+        validateCode:validateCode.value,
+        validateCodeId:validateCodeId.value
+      }).then(({data})=>{
+        var {code,data:D} = data;
+        if(code===1){
+          store.userToken = D;
+          sessionStorage.setItem("userToken",D);
+          routeToRoleList();
+        }
+      })
+      /*无需加密
+      getPublicKey().then(res=>{
+        var {code,data} = res.data;
+        if(code==1){
+          publicKey.value = data.publicKey;
+          rsaId.value = data.rsaId;
+          var publicKeyStr =`-----BEGIN PUBLIC KEY-----\n${data.publicKey}\n-----END PUBLIC KEY-----`;
+        }
+      })
+      */
 
-
+    }else{
+      message.error("手机号码输入有误");
+    }
+  }
+}
 onMounted(()=>{
+  imgCodeGen();
     /**
  * Add event listener to the "Sign Up" button
  */

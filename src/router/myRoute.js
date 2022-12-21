@@ -1,4 +1,5 @@
 import {loadComponentForRoute} from '@src/utils/util.js';
+import staticRoute from '@src/router/static';
 async function routeHandle(routes){
     for(var i=0;i<routes.length;i++){
         routes[i].component = await loadComponentForRoute(routes[i].component);
@@ -71,5 +72,23 @@ function myRoute(store,loadCom,callback){//参数2：是否有加载组件需求
         }
     });
     
+}
+export function myStaticRoute(store){    //纯静态路由
+    var page=[],system=[];
+    for(var i=0;i<staticRoute.length;i++){
+        if(staticRoute[i].name==="home"){
+            var pageRoute = staticRoute[i].children;
+            for(var j=0;j<pageRoute.length;j++){
+                if(pageRoute[j].name === "mainCommon"){
+                    page = pageRoute[j].children;
+                }
+                if(pageRoute[j].name === "mainSetting"){
+                    system = pageRoute[j].children;
+                }
+            }
+        }
+    }
+    store.menuList = {page:page,system:system};
+    return {page:page,system:system};
 }
 export default myRoute;

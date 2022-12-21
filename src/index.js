@@ -18,6 +18,7 @@ const router = createRouter({
 });
 router.beforeEach((to)=>{
     var store = useConfig();
+    store.userToken = sessionStorage.getItem("userToken");
     if(store.userToken==null){  //用户未登录
         if(to.name != "login"){
             return {name:"login"}

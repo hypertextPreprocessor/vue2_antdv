@@ -34,7 +34,7 @@
     import {usrLogout} from '@api';
     import {useConfig} from '@store';
     import {Modal} from 'ant-design-vue';
-    //import myRoute from '@src/router/myRoute.js';
+    import {myStaticRoute} from '@src/router/myRoute.js';
     import Icon from "@ant-design/icons-vue";
     import { useI18n } from 'vue-i18n'
     const { t } = useI18n({ useScope: 'global' });
@@ -96,6 +96,12 @@
     var {openKeys,selectedKeys} = toRefs(state);
     onMounted(()=>{
       if(store.dynamicRoute){
+        state.MenuList = store.menuList.system.filter(item=>item.name!='notExist');
+        store.menuList.system.map(it=>{
+          state.rootSubmenuKeys.push(it.name);
+        });
+      }else{
+        myStaticRoute(store);
         state.MenuList = store.menuList.system.filter(item=>item.name!='notExist');
         store.menuList.system.map(it=>{
           state.rootSubmenuKeys.push(it.name);
