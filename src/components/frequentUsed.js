@@ -60,7 +60,7 @@ const ActionConfirm={
             >
                 <a-button type="primary" shape="default" size={props.btnSize} danger ghost >
                     {{
-                        icon:()=>slots.iconbtn?slots.iconbtn():"删除",
+                        icon:()=>slots.iconbtn?slots.iconbtn():"",
                         default:()=>slots.default?slots.default():""
                     }}
                 </a-button>

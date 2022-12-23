@@ -55,6 +55,7 @@ module.exports = {
     },
     ignorePatterns:['vue.config.js','src/store/store.js'],
     rules: {
+      "vue/multi-word-component-names": "off",
       'vue/no-v-for-template-key': 'off',
       "vue/no-v-model-argument": "off",
       'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
