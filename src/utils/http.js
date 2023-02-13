@@ -40,12 +40,22 @@ httpReq.interceptors.request.use(function(config){
 },{runWhen:atLoginApi});
 */
 httpReq.interceptors.response.use(function(response){
-    var store = useConfig();
-    if(store.environment==="dev"){
-        console.log(response);
-    }
-    if(response.data.code!=1){
-        message.error(response.data.msg);
+    if(response.status === 200){
+        var store = useConfig();
+        if(store.environment==="development"){
+            console.log(response);
+        }
+        if(!response.data.code){ //这里通常处理数据流
+            if(response.headers["excel-content"]!=undefined && response.headers["excel-content"]=="download"){
+                //console.log(response.headers["excel-content"]);
+            }
+        }else{
+            if(response.data.code!=1){
+                message.error(response.data.msg);
+            }
+        }
+    }else{
+        message.error(response.statusText);
     }
     return response;
 },function(error){
