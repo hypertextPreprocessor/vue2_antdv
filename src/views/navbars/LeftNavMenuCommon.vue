@@ -31,12 +31,13 @@
 <script setup>
 import { ref, reactive, toRefs,onMounted } from "vue";
 import Icon from '@ant-design/icons-vue';
-import { useRouter } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import {myStaticRoute} from '@src/router/myRoute.js';
 import {useConfig} from '@store';
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n({ useScope: 'global' });
 const router = useRouter();
+const route = useRoute()
 var store = useConfig();
 const state = reactive({
   rootSubmenuKeys: [],
@@ -64,6 +65,7 @@ function menuSelect({ item, key, selectedKeys }) {
   router.push({ name: key });
 }
 onMounted(()=>{
+  state.selectedKeys = [route.name];
   if(store.dynamicRoute){
     state.MenuList = store.menuList.page.filter(item=>item.name!='notExist');
     store.menuList.page.map(it=>{
@@ -85,4 +87,10 @@ onMounted(()=>{
   })
   */
 });
+watch(
+  () => route.name,
+  async newName => {
+    state.selectedKeys = [newName];
+  }
+)
 </script>

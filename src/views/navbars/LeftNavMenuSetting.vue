@@ -29,8 +29,8 @@
     </a-menu>
 </template>
 <script setup>
-    import {ref,reactive,toRefs,onMounted} from 'vue';
-    import { useRouter } from "vue-router";
+    import {ref,reactive,toRefs,onMounted,watch} from 'vue';
+    import { useRouter,useRoute } from "vue-router";
     import {usrLogout} from '@api';
     import {useConfig} from '@store';
     import {Modal} from 'ant-design-vue';
@@ -39,6 +39,7 @@
     import { useI18n } from 'vue-i18n'
     const { t } = useI18n({ useScope: 'global' });
     const router = useRouter();
+    const route = useRoute()
     var store = useConfig();
     var theme = ref("light");
     const state = reactive({
@@ -95,6 +96,7 @@
     };
     var {openKeys,selectedKeys} = toRefs(state);
     onMounted(()=>{
+      state.selectedKeys = [route.name];
       if(store.dynamicRoute){
         state.MenuList = store.menuList.system.filter(item=>item.name!='notExist');
         store.menuList.system.map(it=>{
@@ -116,4 +118,10 @@
       })
      */
     })
+watch(
+  () => route.name,
+  async newName => {
+    state.selectedKeys = [newName];
+  }
+)
 </script>

@@ -54,6 +54,9 @@ function moveMapTo(pos){
     map.value.setCenter(pos);
     map.value.setZoom(13);
     searchResultList.value = null;
+    getAddress(pos).then(result=>{
+        searchCity.value = result.regeocode.addressComponent.citycode;
+    });
 }
 function onSearch(value){
     if(value==""){
