@@ -4,6 +4,7 @@ import {Empty} from 'ant-design-vue';
 import {useConfig} from '@store';
 import {/*LoadingOutlined,*/PlusOutlined, UploadOutlined} from '@ant-design/icons-vue'
 import {message} from 'ant-design-vue';
+import QiniuUpload from "@src/utils/qiniu.js";
 const filterOption = (input, option) => {
     return option.value.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 };
@@ -445,73 +446,73 @@ export const UploadFileCom={    //上传1，渲染上传list
     }
 }
 export const ImportFromLocal = {
-    //上传2，导入功能，不渲染所上传对象的列表;
-    props: {
-      btn: { type: Boolean, default: true },
-      btnTxt: { type: String, default: "上传" },
-      name: { type: String, default: "file" },
-      fileList: { type: Array, default: [] },
-      action: { type: String, default: "" },
-    },
-    emits: ["change", "update:fileList"],
-    setup(props, { emit, slots }) {
-      var store = useConfig();
-      const header = { Authorization: "bearer " + store.userToken };
-      var action = `${store.apiHost}${props.action}`;
-      const loading = ref(false);
-      return () =>
-        h(
-          <a-upload
-            v-model={[props.fileList, "fileList"]}
-            name={props.name}
-            action={action}
-            headers={header}
-            max-count={1}
-            show-upload-list={false}
-            onChange={(value) => {
-              if (value.file.response) {
-                loading.value = false;
-                var { response } = value.file;
-                if (response.code == 1) {
-                  emit("change", value);
-                  emit("update:fileList", value.fileList);
-                  message.success(response.msg);
-                } else {
-                  message.error(response.msg);
-                }
+  //上传2，导入功能，不渲染所上传对象的列表;
+  props: {
+    btn: { type: Boolean, default: true },
+    btnTxt: { type: String, default: "上传" },
+    name: { type: String, default: "file" },
+    fileList: { type: Array, default: [] },
+    action: { type: String, default: "" },
+  },
+  emits: ["change", "update:fileList"],
+  setup(props, { emit, slots }) {
+    var store = useConfig();
+    const header = { Authorization: "bearer " + store.userToken };
+    var action = `${store.apiHost}${props.action}`;
+    const loading = ref(false);
+    return () =>
+      h(
+        <a-upload
+          v-model={[props.fileList, "fileList"]}
+          name={props.name}
+          action={action}
+          headers={header}
+          max-count={1}
+          show-upload-list={false}
+          onChange={(value) => {
+            if (value.file.response) {
+              loading.value = false;
+              var { response } = value.file;
+              if (response.code == 1) {
+                emit("change", value);
+                emit("update:fileList", value.fileList);
+                message.success(response.msg);
+              } else {
+                message.error(response.msg);
               }
-            }}
-          >
-            {props.btn ? (
-              <a-button loading={loading.value}>
-                {{
-                  icon: () =>
-                    slots.default ? (
-                      slots.default()
-                    ) : (
-                      <>
-                        <UploadOutlined></UploadOutlined>
-                      </>
-                    ),
-                  default: () => {
-                    props.btnTxt;
-                  },
-                }}
-              </a-button>
-            ) : (
-              <>
-                {slots.default ? (
-                  slots.default()
-                ) : (
-                  <UploadOutlined></UploadOutlined>
-                )}
-                {props.btnTxt}
-              </>
-            )}
-          </a-upload>
-        );
-    },
-  };
+            }
+          }}
+        >
+          {props.btn ? (
+            <a-button loading={loading.value}>
+              {{
+                icon: () =>
+                  slots.icon ? (
+                    slots.icon()
+                  ) : (
+                    <>
+                      <UploadOutlined></UploadOutlined>
+                    </>
+                  ),
+                default: () =><>
+                  {props.btnTxt?(<span>{props.btnTxt}</span>):(<UploadOutlined></UploadOutlined>)}
+                </>,
+              }}
+            </a-button>
+          ) : (
+            <>
+              {slots.default ? (
+                slots.default()
+              ) : (
+                <UploadOutlined></UploadOutlined>
+              )}
+              {props.btnTxt}
+            </>
+          )}
+        </a-upload>
+      );
+  },
+};
 export const BdgLevelCom={  //楼宇等级
     props:{
         placeholder:{type:String,default:"选择一个楼宇等级"},
