@@ -460,16 +460,37 @@ export const ImportFromLocal = {
     const header = { Authorization: "bearer " + store.userToken };
     var action = `${store.apiHost}${props.action}`;
     const loading = ref(false);
+    const {fileList} = toRefs(props);
+    const files = ref([]);
+    onMounted(() => {
+      files.value = fileList.value;
+    });
+    watch(
+      () => props.fileList,
+      (fl, prFL) => {
+        files.value = fileList.value;
+        if (fl != prFL && fl.length == 0) {
+          //重置了
+          files.value = [];
+        }
+      }
+    );
     return () =>
       h(
         <a-upload
-          v-model={[props.fileList, "fileList"]}
+          v-model={[fileList.value, "fileList"]}
+          file-list={files.value}
           name={props.name}
           action={action}
           headers={header}
           max-count={1}
           show-upload-list={false}
           onChange={(value) => {
+            files.value = value.fileList;
+            console.log(value);
+            if(value.file.status==="done"){
+              console.log(value.file);
+            }
             if (value.file.response) {
               loading.value = false;
               var { response } = value.file;
