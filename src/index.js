@@ -16,6 +16,7 @@ const router = createRouter({
     routes:staticRoute,
     strict: true
 });
+
 router.beforeEach((to)=>{
     var store = useConfig();
     store.userToken = sessionStorage.getItem("userToken");
@@ -30,6 +31,7 @@ router.beforeEach((to)=>{
     }
     
 });
+
 const i18n = createI18n({
     legacy: false,
     globalInjection:true,

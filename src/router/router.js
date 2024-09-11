@@ -56,127 +56,19 @@ export var pageRoute = [
         name:"spot",
         component:"Spot",
         meta:{
-            title:"标的管理",
+            title:"商会成员",
             icon:"FlagOutlined"
-        },
-        children:[
-            {
-                path:"",    //留空确保大菜单无路由，默认的大导航菜单始终导航到此子路由
-                name:"course",
-                component:"Course",
-                meta:{
-                    title:"课程管理"
-                }
-            },
-            {
-                path:"timeTable",
-                name:"timeTable",
-                component:"TimeTable",
-                meta:{
-                    title:"排课管理"
-                }
-            },
-            {
-                path:"comment",
-                name:"comment",
-                component:"Comment",
-                meta:{
-                    title:"评论管理"
-                }
-            }
-        ]
+        }
     },{
         path:"group",
         name:"group",
         component:"Group",
         meta:{
-            title:"群聊管理",
+            title:"风云人物",
             icon:"TeamOutlined"
         }
-    },{
-        path:"order",
-        name:"order",
-        component:"Order",
-        meta:{
-            title:"订单管理",
-            icon:"AccountBookOutlined"
-        }, 
-        children:[{
-            path:"",
-            name:"detail",
-            component:"Detail",
-            meta:{
-                title:"订单管理"
-            }
-        },{
-            path:"refund",
-            name:"refund",
-            component:"Refund",
-            meta:{
-                title:"退款管理"
-            }
-        }]
-    },{
-        path:"dataChart",
-        name:"dataChart",
-        component:"DataChart",
-        meta:{
-            title:"数据报表",
-            icon:"AreaChartOutlined"
-        }
-    },{
-        path:"dataAnalyse",
-        name:"dataAnalyse",
-        component:"DataAnalyse",
-        meta:{
-            title:"数据分析",
-            icon:"ConsoleSqlOutlined"
-        }
-    },{
-        path:"operators",
-        name:"operators",
-        component:"Operators",
-        meta:{
-            title:"运营商管理",
-            icon:"ReconciliationOutlined"
-        },
-        children:[{
-            path:"",
-            name:"mainInfo",
-            component:"MainInfo",
-            meta:{
-                title:"主体信息管理"
-            }
-        },{
-            path:"addr",
-            name:"addr",
-            component:"Addr",
-            meta:{
-                title:"营地管理"
-            }
-        },{
-            path:"area",
-            name:"area",
-            component:"Area",
-            meta:{
-                title:"营区管理"
-            }
-        },{
-            path:"guider",
-            name:"guider",
-            component:"Guider",
-            meta:{
-                title:"导师管理"
-            }
-        },{
-            path:"balance",
-            name:"balance",
-            component:"Balance",
-            meta:{
-                title:"余额管理"
-            }
-        }]
-    },{
+    },
+    {
         path:"/:notMatch(.*)*",
         name:"notExist",
         component:"NotExist"

@@ -108,7 +108,7 @@
                     <MenuFoldOutlined v-else class="trigger" @click="() => (collapsed = !collapsed)" />
                 </div>
                 <!--侧边栏菜单-->
-                <router-view name="LeftSidebar"></router-view>
+                <router-view style="height:100%;" name="LeftSidebar"></router-view>
             </a-layout-sider>
             <a-layout-content>
                 <a-breadcrumb v-if="breads.length" style="padding:10px;background:#ffffff;">
@@ -119,7 +119,7 @@
                 <router-view name="RightSidebar"></router-view>
             </a-layout-content>
         </a-layout>
-        <a-layout-footer>
+        <a-layout-footer style="z-index:999;">
             <div style="text-align:center;">{{t('footerBar.content')}}</div>
         </a-layout-footer>
     </a-layout>
