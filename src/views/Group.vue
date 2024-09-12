@@ -10,13 +10,12 @@
     </div>
 </template>
 <script setup>
-import {ref,h,provide} from "vue";
-import MemberTable from "@src/views/member/Table";
-import MemberForm from "@src/views/member/Form";
-const panes = ref([{title:"成员列表",content:()=><MemberTable ref={listRef} onAddMember={addcourse} onEditMember={editcourse} />,key:"0",closable:false}]);
+import {ref,h} from "vue";
+import MemberTable from "@src/views/group/Table";
+import MemberForm from "@src/views/group/Form";
+const panes = ref([{title:"人物列表",content:()=><MemberTable ref={listRef} onAddMember={addcourse} onEditMember={editcourse} />,key:"0",closable:false}]);
 const activeKey = ref(panes.value[0].key);
 const listRef = ref();
-provide("listRef",listRef);
 const newTabIndex = ref(0);
 const add = (title,func) => {
     newTabIndex.value++;
@@ -28,21 +27,21 @@ const add = (title,func) => {
     activeKey.value = String(newTabIndex.value);
 };
 function addcourse(){
-    var arr = panes.value.filter(it=>it.title==="成员新增");
+    var arr = panes.value.filter(it=>it.title==="人物新增");
     if(arr.length){
         activeKey.value = arr[0].key;
         arr[0].content = ()=><MemberForm />;
     }else{
-        add("成员新增",()=>h(<MemberForm />));
+        add("人物新增",()=>h(<MemberForm />));
     }
 }
 function editcourse(data){
-    var arr = panes.value.filter(it=>it.title==="成员修改");
+    var arr = panes.value.filter(it=>it.title==="人物修改");
     if(arr.length){
         activeKey.value = arr[0].key;
-        arr[0].content = ()=><MemberForm member-id={data.courseId}/>;
+        arr[0].content = ()=><MemberForm course-id={data.courseId}/>;
     }else{
-        add("成员修改",()=>h(<MemberForm member-id={data.courseId}/>));
+        add("人物修改",()=>h(<MemberForm course-id={data.courseId}/>));
     }
 }
 const remove = targetKey => {

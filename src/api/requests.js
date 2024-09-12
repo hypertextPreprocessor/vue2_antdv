@@ -88,4 +88,58 @@ function usrLogout(){
 export function getRouteList(){
     return httpReq.get('/getRouter');
 }
+//商会成员 - 分页列表
+export function loadMemberPageList({memberName="",legalName="",current=1,size=10}={}){
+    return httpReq.get('/member/page',{
+        params:{
+            memberName,legalName,size,current
+        }
+    })
+}
+//商会成员 - 详情信息
+export function loadMemberById(id){
+    return httpReq.get('/member/info',{
+        params:{id}
+    });
+}
+//商会成员 - 新增成员
+export function addMember(data){
+    return httpReq.post('/member/save',data);
+}
+//商会成员 - 修改成员
+export function editMember(data){
+    return httpReq.put('/member/update',data);
+}
+//商会成员 - 删除成员
+export function delMember(id){
+    return httpReq.delete('/member/delete',{data:{id}});
+}
+
+
+//商会成员 - 分页列表
+export function loadGroupPageList({starName="",company="",current=1,size=10}={}){
+    return httpReq.get('/star/page',{
+        params:{
+            starName,company,size,current
+        }
+    })
+}
+//商会成员 - 详情信息
+export function loadGroupById(id){
+    return httpReq.get('/star/info',{
+        params:{id}
+    });
+}
+//商会成员 - 新增成员
+export function addGroup(data){
+    return httpReq.post('/star/save',data);
+}
+//商会成员 - 修改成员
+export function editGroup(data){
+    return httpReq.put('/star/update',data);
+}
+//商会成员 - 删除成员
+export function delGroup(id){
+    return httpReq.delete('/star/delete',{data:{id}});
+}
 export {getVercode,login,usrLogout};

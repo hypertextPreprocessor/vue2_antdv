@@ -131,11 +131,17 @@
     </div>
 </template>
 <script setup>
-import {ref,reactive} from "vue";
+import {ref,reactive,onMounted,inject} from "vue";
+import {loadMemberById,addMember,editMember} from "@api";
+import { message } from "ant-design-vue";
 import RichTextEditor from "@coms/RichTextEditor.vue";
 const formRef = ref();
+const listRef = inject("listRef")
+const props = defineProps(['memberId']);
 const submiting = ref(false);
+const formStatus = ref("add");
 const formState = reactive({
+    id:undefined,
     memberName:undefined,
     companyType:undefined,
     tradeType:undefined,
@@ -150,9 +156,63 @@ const formState = reactive({
     status:undefined,
     info:[]
 });
+function memberInfo(id){
+    loadMemberById(id).then(({data:D})=>{
+        var {code,data} = D;
+        if(code === 1){
+            formState.id=data.id;
+            formState.memberName=data.memberName;
+            formState.companyType=data.companyType;
+            formState.tradeType=data.tradeType;
+            formState.regAddress=data.regAddress;
+            formState.joinDate=data.joinDate;
+            formState.legalName=data.legalName;
+            formState.legalJob=data.legalJob;
+            formState.legalPhone=data.legalPhone;
+            formState.comName=data.comName;
+            formState.comPhone=data.comPhone;
+            formState.remark=data.remark;
+            formState.status=data.status;
+            //这里是一个bug,照常理不应该这样做。应该解决app上的副文本编辑器与H5的副文本不兼容的问题;
+            data.info = data.info.replace(/"source"/g,"\"image\"");
+            //===================但是先这样子吧====================================
+            formState.info = {ops:JSON.parse(data.info)};
+        }
+    });
+}
+onMounted(()=>{
+    if(props.memberId!=undefined){
+        formStatus.value = "edit";
+        memberInfo(props.courseId);
+    }
+});
 function handleFinish(values){
     console.log(values);
     submiting.value = true;
+    if(props.memberId==undefined){
+        addMemberSubmit(values);
+    }else{
+        values.courseId = props.courseId;
+        editMemberSubmit(values);
+    }
+}
+function addMemberSubmit(data){
+    addMember(data).then(res=>{
+        submiting.value = false;
+        if(res.data.code === 1){
+            message.success(res.data.msg);
+            listRef.value.loadData();
+        }
+    })
+}
+function editMemberSubmit(data){
+    editMember(data).then(res=>{
+        submiting.value = false;
+        if(res.data.code === 1){
+            message.success(res.data.msg);
+            listRef.value.loadData();
+        }
+    })
 }
 function resetForm(){
     formRef.value.resetFields();

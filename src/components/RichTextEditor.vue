@@ -219,17 +219,12 @@ onMounted(()=>{
     initQuill();
 });
 </script>
-<style scoped>
+<style>
 @import "~quill/dist/quill.core.css";
 @import "~quill/dist/quill.snow.css";
 @import "~highlight.js/styles/vs2015.css";
 @import "~quill-better-table/dist/quill-better-table.css";
-.ql-ui{
-    color:#333333;
-}
-.ql-code-block-container{
-    background-color: none;
-}
+
 .ql-code-block-container .ql-ui{
     color:red;
 }

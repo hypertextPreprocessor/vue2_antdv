@@ -207,6 +207,8 @@ function loginBySms(){
   }
 }
 function loginByPwd(){
+  sessionStorage.setItem("userToken","fackToken");
+  router.push({name:"homeBoard"});
   if(userName.value==null || userName.value==""){
     message.error("手机号不能为空");
   }else if(password.value==null || password.value==""){

@@ -41,16 +41,29 @@
             <template #bodyCell="{column,record}">
                 <template v-if="column.dataIndex==='actions'">
                     <a-button @click="emit('editMember',record)">修改</a-button>
+                    <ActionConfirm @clickyes="()=>{
+                            deleteMember(record,index);
+                        }" btn-size="middle">删除</ActionConfirm>
                 </template>
             </template>
         </a-table> 
     </div>
 </template>
 <script setup>
-import {reactive,ref} from "vue";
+import {reactive,ref,onMounted} from "vue";
+import {loadMemberPageList,delMember} from "@api";
+import {ActionConfirm} from "@coms/frequentUsed.js";
+import { message } from "ant-design-vue";
 const formState = reactive({memberName:"",legalName:""});
 const emit = defineEmits(["addMember","editMember"]);
 const dataSource = ref([]);
+const pagination = reactive({
+    defaultPageSize:10,
+    showSizeChanger: false,
+    total:0,
+    showTotal: (total) => `共${total}条数据`,
+});
+const tableLoading = ref(true);
 const formRef = ref();
 const columns=[
     {
@@ -75,7 +88,46 @@ const columns=[
         key:"actions"
     }
 ];
+const current = ref(1);
+function tableChange(pagination){
+    var { current, pageSize } = pagination;
+    var memberName = formState.memberName;
+    var legalName = formState.legalName;
+    loadData({current:current,size:pageSize,memberName,legalName});
+}
+onMounted(()=>{
+    loadData({current:current.value});
+})
+function loadData({current=1,size=10,memberName="",legalName=""}={}){
+    loadMemberPageList({current,size,memberName,legalName}).then(({data:D})=>{
+        var {code,data} = D;
+        tableLoading.value = false;
+        if(code === 1){
+            dataSource.value = data.records;
+            pagination.total = data.total;
+            pagination.current = current;
+            pagination.defaultPageSize = data.size;
+        }
+    })
+}
+function onFinish(values){
+    pagination.defaultPageSize = 10;
+    pagination.total = 0;
+    pagination.current = 1;
+    tableLoading.value = true;
+    loadData({current:1,size:10,memberName:values.memberName,legalName:values.legalName});
+}
 const resetForm = () => {
     formRef.value.resetFields();
 };
+function deleteMember(r,i){
+    delMember(r.id).then(({data:D})=>{
+        var {code,msg} = D;
+        if(code === 1){
+            message.success(msg);
+            dataSource.value.splice(i,1);
+        }
+    });
+}
+defineExpose({loadData});
 </script>
