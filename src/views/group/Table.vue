@@ -36,22 +36,44 @@
             @change="tableChange"
         >
             <template #title>
-                <a-button type="primary" @click="emit('addMember')">新增</a-button>
+                <a-button type="primary" @click="emit('addGroup')">新增</a-button>
             </template>
             <template #bodyCell="{column,record}">
                 <template v-if="column.dataIndex==='actions'">
-                    <a-button @click="emit('editMember',record)">修改</a-button>
+                    <a-space>
+                        <a-button size="small" @click="emit('editGroup',record)">修改</a-button>
+                        <ActionConfirm @clickyes="()=>{
+                                deleteGroup(record,index);
+                            }" btn-size="small">删除</ActionConfirm>
+                    </a-space>
                 </template>
             </template>
         </a-table> 
     </div>
 </template>
 <script setup>
-import {reactive,ref} from "vue";
+import {reactive,ref,onMounted} from "vue";
+import { delGroup,loadGroupPageList } from "@api";
+import {ActionConfirm} from "@coms/frequentUsed.js";
+import { message } from "ant-design-vue";
 const formState = reactive({starName:"",company:""});
-const emit = defineEmits(["addMember","editMember"]);
+const emit = defineEmits(["addGroup","editGroup"]);
 const dataSource = ref([]);
 const formRef = ref();
+const pagination = reactive({
+    defaultPageSize:10,
+    showSizeChanger: false,
+    total:0,
+    showTotal: (total) => `共${total}条数据`,
+});
+const tableLoading = ref(true);
+const current = ref(1);
+function tableChange(pagination){
+    var { current, pageSize } = pagination;
+    var starName = formState.starName;
+    var company = formState.company;
+    loadData({current:current,size:pageSize,starName,company});
+}
 const columns=[
     {
         title:"名称",
@@ -71,7 +93,39 @@ const columns=[
         key:"actions"
     }
 ];
+onMounted(()=>{
+    loadData({current:current.value});
+})
+function loadData({current=1,size=10,starName="",company=""}={}){
+    loadGroupPageList({current,size,starName,company}).then(({data:D})=>{
+        var {code,data} = D;
+        tableLoading.value = false;
+        if(code === 1){
+            dataSource.value = data.records;
+            pagination.total = data.total;
+            pagination.current = current;
+            pagination.defaultPageSize = data.size;
+        }
+    })
+}
+function onFinish(values){
+    pagination.defaultPageSize = 10;
+    pagination.total = 0;
+    pagination.current = 1;
+    tableLoading.value = true;
+    loadData({current:1,size:10,starName:values.starName,company:values.company});
+}
 const resetForm = () => {
     formRef.value.resetFields();
 };
+function deleteGroup(r,i){
+    delGroup(r.id).then(({data:D})=>{
+        var {code,msg} = D;
+        if(code === 1){
+            message.success(msg);
+            dataSource.value.splice(i,1);
+        }
+    });
+}
+defineExpose({loadData});
 </script>

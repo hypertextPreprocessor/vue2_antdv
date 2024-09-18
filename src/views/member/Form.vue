@@ -23,7 +23,7 @@
                 :wrapperCol="{span:6}"
                 :rules="[{ required: true, message: '成员类型必填' }]"
             >
-                <a-input v-model:value="formState.companyType" placeholder="最多20个字符"/>
+                <MemberType v-model:value="formState.companyType"/>
             </a-form-item>
             <a-form-item
                 label="行业分类"
@@ -32,7 +32,7 @@
                 :wrapperCol="{span:6}"
                 :rules="[{ required: true, message: '行业分类必填' }]"
             >
-                <a-input v-model:value="formState.tradeType" placeholder="最多20个字符"/>
+                <Carrera v-model:value="formState.tradeType" @change="tradeTypeChange"/>
             </a-form-item>
             <a-form-item
                 label="注册地址"
@@ -49,8 +49,9 @@
                 :labelCol="{span:3,offset:0}"
                 :wrapperCol="{span:6}"
                 :rules="[{ required: true, message: '入会时间必填' }]"
-            >
-                <a-input v-model:value="formState.joinDate" placeholder="最多20个字符"/>
+            ><!--[YYYYescape] YYYY-MM-DDTHH:mm:ssZ[Z]-->
+                <a-date-picker style="width: 100%;" v-model:value="formState.joinDate" format="YYYY-MM-DD HH:mm:ss" show-time placeholder="请选择时间" @change="onChange" @ok="onOk" />
+                
             </a-form-item>
             <a-form-item
                 label="代表人"
@@ -110,7 +111,7 @@
                 :wrapperCol="{span:6}"
                 :rules="[{ required: true, message: '注册地址必填' }]"
             >
-                <a-input v-model:value="formState.status" placeholder="最多20个字符"/>
+                <MemberStatus v-model:value="formState.status"></MemberStatus>
             </a-form-item>
             <a-form-item
                 label="详细介绍"
@@ -133,8 +134,13 @@
 <script setup>
 import {ref,reactive,onMounted,inject} from "vue";
 import {loadMemberById,addMember,editMember} from "@api";
+import {Carrera,MemberType,MemberStatus} from "@coms/dict.js"
 import { message } from "ant-design-vue";
 import RichTextEditor from "@coms/RichTextEditor.vue";
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import {carreralist} from "@apis/dictReq.js";
+dayjs.locale('zh-cn');
 const formRef = ref();
 const listRef = inject("listRef")
 const props = defineProps(['memberId']);
@@ -144,7 +150,8 @@ const formState = reactive({
     id:undefined,
     memberName:undefined,
     companyType:undefined,
-    tradeType:undefined,
+    tradeType:[],
+    tradeTypeStr:undefined,
     regAddress:undefined,
     joinDate:undefined,
     legalName:undefined,
@@ -163,9 +170,10 @@ function memberInfo(id){
             formState.id=data.id;
             formState.memberName=data.memberName;
             formState.companyType=data.companyType;
-            formState.tradeType=data.tradeType;
+            formState.tradeType= typeIdArrConvertor(data.tradeType);
+            formState.tradeTypeStr = data.tradeType;
             formState.regAddress=data.regAddress;
-            formState.joinDate=data.joinDate;
+            formState.joinDate=dayjs(data.joinDate,'YYYY-MM-DD HH:mm:ss');
             formState.legalName=data.legalName;
             formState.legalJob=data.legalJob;
             formState.legalPhone=data.legalPhone;
@@ -174,26 +182,33 @@ function memberInfo(id){
             formState.remark=data.remark;
             formState.status=data.status;
             //这里是一个bug,照常理不应该这样做。应该解决app上的副文本编辑器与H5的副文本不兼容的问题;
-            data.info = data.info.replace(/"source"/g,"\"image\"");
+            //data.info = data.info.replace(/"source"/g,"\"image\"");
             //===================但是先这样子吧====================================
-            formState.info = {ops:JSON.parse(data.info)};
+            try{
+                formState.info = JSON.parse(data.info).ops; //{ops:JSON.parse(data.info)};
+            }catch(e){
+                console.log(e)
+            }
         }
     });
 }
 onMounted(()=>{
     if(props.memberId!=undefined){
         formStatus.value = "edit";
-        memberInfo(props.courseId);
+        memberInfo(props.memberId);
     }
 });
 function handleFinish(values){
-    console.log(values);
     submiting.value = true;
+    var reqdata = Object.assign(values,{
+        tradeType:formState.tradeTypeStr,
+        info:JSON.stringify(formState.info)
+    });
     if(props.memberId==undefined){
-        addMemberSubmit(values);
+        addMemberSubmit(reqdata);
     }else{
-        values.courseId = props.courseId;
-        editMemberSubmit(values);
+        reqdata.id = props.memberId;
+        editMemberSubmit(reqdata);
     }
 }
 function addMemberSubmit(data){
@@ -216,5 +231,44 @@ function editMemberSubmit(data){
 }
 function resetForm(){
     formRef.value.resetFields();
+}
+function onChange(d){
+    formState.joinDate = d.format("YYYY-MM-DD HH:mm:ss");
+}
+function onOk(d){
+    formState.joinDate = d.format("YYYY-MM-DD HH:mm:ss");
+}
+function typeIdArrConvertor(commaSplittedStr){
+    var strArr = commaSplittedStr.split(",");
+    carreralist().then(({data:D})=>{
+        var {code,data}= D;
+        var ids = [];
+        if(code === 1){
+            for(var i=0;i<strArr.length;i++){
+                for(var j=0;j<data.length;j++){
+                    if(strArr[i] === data[j].tradeName){
+                        ids.push(data[j].id);
+                    }
+                }
+            }
+            formState.tradeType = ids;
+        }
+    });
+    return [];
+}
+function tradeTypeChange(c){
+    var arr = [];
+    carreralist().then(res=>{
+        if(res.data.code==1){
+            for(var j=0;j<c.length;j++){
+                for(var i=0;i<res.data.data.length;i++){
+                    if(c[j] == res.data.data[i].id){
+                        arr.push(res.data.data[i].tradeName);
+                    }
+                }
+            }
+        }
+        formState.tradeTypeStr = arr.toString();
+    })
 }
 </script>

@@ -14,6 +14,7 @@ function resolve(dir) {
 module.exports = defineConfig({
   runtimeCompiler: true,
   transpileDependencies: true,
+  publicPath:process.env.NODE_ENV === 'development'?'/':'/lanten/',
   configureWebpack: {
     plugins: [
       gitRevisionPlugin,

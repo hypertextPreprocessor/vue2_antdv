@@ -38,12 +38,24 @@
             <template #title>
                 <a-button type="primary" @click="emit('addMember')">新增</a-button>
             </template>
-            <template #bodyCell="{column,record}">
+            <template #bodyCell="{column,text,record}">
+                <template v-if="column.dataIndex === 'companyType'">
+                    <Mtp :type="text"></Mtp>
+                </template>
+                <template v-if="column.dataIndex === 'joinDate'">
+                    {{dayjs(text).format('YYYY-MM-DD HH:mm:ss')}}
+                </template>
                 <template v-if="column.dataIndex==='actions'">
-                    <a-button @click="emit('editMember',record)">修改</a-button>
-                    <ActionConfirm @clickyes="()=>{
-                            deleteMember(record,index);
-                        }" btn-size="middle">删除</ActionConfirm>
+                    <a-space>
+                        <a-button size="small" @click="emit('editMember',record)">修改</a-button>
+                        <ActionConfirm 
+                            @clickyes="()=>{
+                                deleteMember(record,index);
+                            }" 
+                            btn-size="small">
+                            删除
+                        </ActionConfirm>
+                    </a-space>
                 </template>
             </template>
         </a-table> 
@@ -54,6 +66,7 @@ import {reactive,ref,onMounted} from "vue";
 import {loadMemberPageList,delMember} from "@api";
 import {ActionConfirm} from "@coms/frequentUsed.js";
 import { message } from "ant-design-vue";
+import dayjs from 'dayjs';
 const formState = reactive({memberName:"",legalName:""});
 const emit = defineEmits(["addMember","editMember"]);
 const dataSource = ref([]);
@@ -128,6 +141,25 @@ function deleteMember(r,i){
             dataSource.value.splice(i,1);
         }
     });
+}
+const Mtp = {
+    props:{
+        type:{type:String,default:undefined}
+    },
+    setup(props){
+        return ()=><>
+            {props.type==1?
+                <a-tag color="pink">会长单位</a-tag>:
+            (props.type==2?
+                <a-tag color="orange">副会长单位</a-tag>:
+            (props.type==3?
+                <a-tag color="green">理事单位</a-tag>:
+            (props.type==4?
+                <a-tag color="cyan">成员单位</a-tag>:
+                <span>暂定</span>
+            )))}
+        </>
+    }
 }
 defineExpose({loadData});
 </script>

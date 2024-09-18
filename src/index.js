@@ -12,7 +12,7 @@ import 'ant-design-vue/dist/antd.css';
 //import { apply } from 'core-js/fn/reflect';
 
 const router = createRouter({
-    history:createWebHistory(),
+    history:process.env.NODE_ENV ==='development'?createWebHistory():createWebHistory("/lanten/"),
     routes:staticRoute,
     strict: true
 });

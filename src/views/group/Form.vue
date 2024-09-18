@@ -50,7 +50,7 @@
                 :wrapperCol="{span:6}"
                 :rules="[{ required: true, message: '注册地址必填' }]"
             >
-                <a-input v-model:value="formState.status" placeholder="最多20个字符"/>
+                <MemberStatus v-model:value="formState.status"/>
             </a-form-item>
             <a-form-item
                 label="详细介绍"
@@ -71,10 +71,16 @@
     </div>
 </template>
 <script setup>
-import {ref,reactive} from "vue";
+import {ref,reactive,onMounted,inject} from "vue";
+import {loadGroupById,addGroup,editGroup} from "@api";
+import { message } from "ant-design-vue";
 import RichTextEditor from "@coms/RichTextEditor.vue";
+import {MemberStatus} from "@coms/dict.js"
+const listRef = inject("listRef")
+const props = defineProps(['groupId']);
 const formRef = ref();
 const submiting = ref(false);
+const formStatus = ref("add");
 const formState = reactive({
     id:undefined,
     starName:undefined,
@@ -84,9 +90,58 @@ const formState = reactive({
     status:undefined,
     info:[]
 });
+function groupInfo(id){
+    loadGroupById(id).then(({data:D})=>{
+        var {code,data} = D;
+        if(code === 1){
+            formState.id=data.id;
+            formState.starName=data.starName;
+            formState.company=data.company;
+            formState.job=data.job;
+            formState.remark=data.remark;
+            formState.status=data.status;
+            //这里是一个bug,照常理不应该这样做。应该解决app上的副文本编辑器与H5的副文本不兼容的问题;
+            //data.info = data.info.replace(/"source"/g,"\"image\"");
+            //===================但是先这样子吧====================================
+            formState.info = JSON.parse(data.info).ops;// {ops:JSON.parse(data.info)};
+        }
+    });
+}
+onMounted(()=>{
+    if(props.groupId!=undefined){
+        formStatus.value = "edit";
+        groupInfo(props.groupId);
+    }
+});
 function handleFinish(values){
-    console.log(values);
+    var reqdata = Object.assign(values,{
+        info:JSON.stringify(formState.info)
+    });
     submiting.value = true;
+    if(props.groupId==undefined){
+        addGroupSubmit(reqdata);
+    }else{
+        reqdata.id = props.groupId;
+        editGroupSubmit(reqdata);
+    }
+}
+function addGroupSubmit(data){
+    addGroup(data).then(res=>{
+        submiting.value = false;
+        if(res.data.code === 1){
+            message.success(res.data.msg);
+            listRef.value.loadData();
+        }
+    })
+}
+function editGroupSubmit(data){
+    editGroup(data).then(res=>{
+        submiting.value = false;
+        if(res.data.code === 1){
+            message.success(res.data.msg);
+            listRef.value.loadData();
+        }
+    })
 }
 function resetForm(){
     formRef.value.resetFields();

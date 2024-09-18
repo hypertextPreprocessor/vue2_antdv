@@ -56,9 +56,9 @@ export function reqCheck(data) {
 }
 //登录接口
 function login({userName,password,validateCode,validateCodeId}){
-    return httpReq.get('/loginByPassword',{params:{
+    return httpReq.post('/loginByPassword',{
         userName,password,validateCode,validateCodeId
-    }});
+    });
 }
 //设置新密码
 export function setNewPassword({password,rePassword}){

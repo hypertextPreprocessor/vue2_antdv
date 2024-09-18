@@ -2,7 +2,8 @@
  * 开发环境才需要配置此处;
  * 所有的配置文件全部统一在store文件里进行管理;
  */
- const proxyAddr = "https://192.168.0.202/mock/29/convention";
+ //const proxyAddr = "http://192.168.11.102:2846/convention";
+const proxyAddr = "https://b2cmall.headwaycn.com/convention";
  module.exports={
      proxyAddr
  }
